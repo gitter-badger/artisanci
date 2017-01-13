@@ -1,0 +1,74 @@
+Artisan
+=======
+
+.. image:: https://img.shields.io/travis/SethMichaelLarson/artisan/master.svg
+    :target: https://travis-ci.org/SethMichaelLarson/artisan
+    :alt: Linux and MacOS Build Status
+.. image:: https://img.shields.io/appveyor/ci/SethMichaelLarson/artisan/master.svg
+    :target: https://ci.appveyor.com/project/SethMichaelLarson/artisan
+    :alt: Windows Build Status
+.. image:: https://img.shields.io/codecov/c/github/SethMichaelLarson/artisan/master.svg
+    :target: https://codecov.io/gh/SethMichaelLarson/artisan
+    :alt: Test Suite Coverage
+.. image:: https://img.shields.io/codeclimate/github/SethMichaelLarson/artisan.svg
+    :target: https://codeclimate.com/github/SethMichaelLarson/artisan
+    :alt: Code Health
+.. image:: https://readthedocs.org/projects/artisan/badge/?version=latest
+    :target: http://artisan.readthedocs.io
+    :alt: Documentation Build Status
+.. image:: https://pyup.io/repos/github/SethMichaelLarson/artisan/shield.svg
+     :target: https://pyup.io/repos/github/SethMichaelLarson/artisan
+     :alt: Dependency Versions
+.. image:: https://img.shields.io/pypi/v/artisan.svg
+    :target: https://pypi.python.org/pypi/artisan
+    :alt: PyPI Version
+.. image:: https://img.shields.io/badge/say-thanks-ff69b4.svg
+    :target: https://saythanks.io/to/SethMichaelLarson
+    :alt: Say Thanks to the Maintainers
+
+Modern, flexible, and platform-agnostic interface for automation, continuous integration, and farm management.
+
+Getting Started with Artisan
+----------------------------
+
+Artisan is available on PyPI can be installed with `pip <https://pip.pypa.io>`_.::
+
+    $ python -m pip install artisan
+
+To install the latest development version from `Github <https://github.com/SethMichaelLarson/artisan>`_::
+
+    $ python -m pip install git+git://github.com/SethMichaelLarson/artisan.git
+
+
+If your current Python installation doesn't have pip available, try `get-pip.py <bootstrap.pypa.io>`_
+
+After installing Artisan you can use it like any other Python module.
+Here's a very simple example:
+
+.. code-block:: python
+
+    import artisan
+    # Fill this section in with the common use-case.
+
+API Reference
+-------------
+
+The `API Reference on readthedocs.io <http://artisan.readthedocs.io>`_ provides API-level documentation.
+
+Support / Report Issues
+-----------------------
+
+All support requests and issue reports should be
+`filed on Github as an issue <https://github.com/SethMichaelLarson/artisan/issues>`_.
+Make sure to follow the template so your request may be as handled as quickly as possible.
+Please respect contributors by not using personal contacts for support requests.
+
+Contributing
+------------
+
+We happily welcome contributions, please see `our guide for Contributors <http://artisan.readthedocs.io/en/latest/contributing.html>`_ for the best places to start and help.
+
+License
+-------
+
+artisan is made available under the MIT License. For more details, see `LICENSE.txt <https://github.com/SethMichaelLarson/artisan/blob/master/LICENSE.txt>`_.
