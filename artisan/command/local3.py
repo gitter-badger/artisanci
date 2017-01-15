@@ -37,6 +37,6 @@ class Local3Command(BaseCommand):
             if self._proc and self._proc.returncode is not None:
                 self._exit_status = self._proc.returncode
         if stdout:
-            self._stdout.write(stdout)
+            self._write_data_to_stream(self._stdout, stdout)
         if stderr:
-            self._stderr.write(stderr)
+            self._write_data_to_stream(self._stderr, stderr)

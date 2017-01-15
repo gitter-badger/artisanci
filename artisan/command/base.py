@@ -1,6 +1,6 @@
+import io
 import platform
 import subprocess
-from .stream import CommandByteStream
 from ..compat import monotonic
 from ..exceptions import (CommandTimeoutException,
                           CommandExitStatusException)
@@ -26,15 +26,8 @@ class BaseCommand(object):
 
         self._cancelled = False
         self._exit_status = None
-        self._stdout = CommandByteStream()
-        self._stderr = CommandByteStream()
-
-    def _check_exit(self):
-        if self._is_not_complete():
-            self._read_all(0.0)
-        else:
-            self._stdout.close()
-            self._stderr.close()
+        self._stdout = io.BytesIO()
+        self._stderr = io.BytesIO()
 
     @property
     def pid(self):
@@ -142,3 +135,12 @@ class BaseCommand(object):
             environment["SYSTEMROOT"] = self.worker.environment["SYSTEMROOT"]
 
         return environment
+
+    def _check_exit(self):
+        if self._is_not_complete():
+            self._read_all(0.0)
+
+    def _write_data_to_stream(self, stream, data):
+        assert isinstance(stream, io.BytesIO)
+        stream.write(data)
+        stream.seek(-len(data), 1)

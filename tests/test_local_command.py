@@ -69,32 +69,3 @@ class TestLocalCommand(TestCase):
         self.assertEqual(stderr, b'Hello')
         self.assertEqual(stdout, b'')
         self.assertEqual(command.exit_status, 0)
-
-    def test_chunked_data_reading(self):
-        if sys.version_info > (3, 0, 0):
-            cmd = sys.executable + ' -c "import os, sys; sys.stdout.buffer.write(os.urandom(128))"'
-        else:
-            cmd = sys.executable + ' -c "import os, sys; sys.stdout.write(os.urandom(128))"'
-        command = LocalCommand(_FakeLocalWorker(), cmd)
-        command.wait(timeout=1.0)
-        self.assertEqual(command.exit_status, 0, command.stderr.read())
-
-        chunk_size = 8
-        for _ in range(int(128 / chunk_size)):
-            chunk = command.stdout.read(chunk_size=chunk_size)
-            self.assertLen(chunk, chunk_size)
-            self.assertIsInstance(chunk, bytes)
-
-        self.assertLen(command.stdout.read(), 0)
-
-    def test_streaming_data_reads(self):
-        cmd = sys.executable + (' -c "import time, sys; f=sys.stdout.flush; sys.stdout.write(\'this\'); f(); '
-                                'time.sleep(1.0); sys.stdout.write(\'is a\'); f(); time.sleep(1.0); '
-                                'sys.stdout.write(\'test\'); f();"')
-        command = LocalCommand(_FakeLocalWorker(), cmd)
-        command.wait(timeout=1.0)
-        self.assertIs(command.exit_status, None)
-        self.assertEqual(command.stdout.read(), b'this')
-        self.assertEqual(command.stdout.read(), b'is a')
-        self.assertEqual(command.stdout.read(), b'test')
-        self.assertEqual(command.exit_status, 0)

@@ -73,13 +73,13 @@ class Local2Command(BaseCommand):
             try:
                 while True:
                     data = self._queue_stdout.get_nowait()
-                    self._stdout.write(data)
+                    self._write_data_to_stream(self._stdout, data)
             except Empty:
                 pass
             try:
                 while True:
                     data = self._queue_stderr.get_nowait()
-                    self._stderr.write(data)
+                    self._write_data_to_stream(self._stderr, data)
             except Empty:
                 pass
             if timeout is not None and monotonic() - start_time <= timeout:
