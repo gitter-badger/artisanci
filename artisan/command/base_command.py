@@ -100,12 +100,6 @@ class BaseCommand(object):
         else:
             return True
 
-    def _is_not_complete(self):
-        return self._exit_status is None
-
-    def _read_all(self, timeout=0.0):
-        raise NotImplementedError()
-
     def cancel(self):
         """ Cancel the command."""
         raise NotImplementedError()
@@ -115,6 +109,12 @@ class BaseCommand(object):
         """ Boolean value whether the command
         has been manually cancelled. """
         return self._cancelled
+
+    def _is_not_complete(self):
+        return self._exit_status is None
+
+    def _read_all(self, timeout=0.0):
+        raise NotImplementedError()
 
     def _create_subprocess(self):
         return subprocess.Popen(self.command,

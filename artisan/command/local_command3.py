@@ -1,6 +1,6 @@
 """ LocalCommand implementation for Python 3.x+ """
 import subprocess
-from .base import BaseCommand
+from .base_command import BaseCommand
 
 __all__ = [
     "Local3Command"

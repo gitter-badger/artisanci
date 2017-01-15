@@ -75,4 +75,4 @@ class TestLocalCommand(TestCase):
                                [sys.executable, '-c', 'import sys, os; sys.stdout.write(str(os.getpid()))'])
         pid = command.pid
         command.wait(timeout=1.0)
-        self.assertEqual(command.stdout.read(), b'%d' % pid)
+        self.assertEqual(command.stdout.read(), str(pid).encode('utf-8'))

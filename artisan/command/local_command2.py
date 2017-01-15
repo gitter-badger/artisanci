@@ -2,7 +2,7 @@
 import time
 import threading
 from Queue import Queue, Empty
-from .base import BaseCommand
+from .base_command import BaseCommand
 from ..compat import monotonic
 
 __all__ = [
