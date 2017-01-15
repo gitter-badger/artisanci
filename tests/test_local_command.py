@@ -1,6 +1,6 @@
 import os
 import sys
-from ._support import TestCase, skipPython2, skipPython3
+from ._support import TestCase
 
 from artisan import LocalCommand
 
@@ -69,3 +69,10 @@ class TestLocalCommand(TestCase):
         self.assertEqual(stderr, b'Hello')
         self.assertEqual(stdout, b'')
         self.assertEqual(command.exit_status, 0)
+
+    def test_pid(self):
+        command = LocalCommand(_FakeLocalWorker(),
+                               [sys.executable, '-c', 'import sys, os; sys.stdout.write(str(os.getpid()))'])
+        pid = command.pid
+        command.wait(timeout=1.0)
+        self.assertEqual(command.stdout.read(), b'%d' % pid)

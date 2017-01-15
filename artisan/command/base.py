@@ -33,6 +33,11 @@ class BaseCommand(object):
     def pid(self):
         """
         Process ID of the command.
+
+         .. note::
+            This is different from the sub-commands
+            being run if using a shell rather than a
+            list of command argv values.
         """
         raise NotImplementedError()
 
@@ -113,7 +118,7 @@ class BaseCommand(object):
 
     def _create_subprocess(self):
         return subprocess.Popen(self.command,
-                                shell=True,
+                                shell=True if not isinstance(self.command, list) else False,
                                 cwd=self.worker.cwd,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
