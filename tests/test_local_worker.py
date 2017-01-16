@@ -35,12 +35,12 @@ class TestLocalWorker(unittest.TestCase):
     def test_execute_in_parallel(self):
         commands = []
         worker = LocalWorker()
-        start_time = time.monotonic()
+        start_time = time.time()
         for _ in range(3):
             commands.append(worker.execute(sys.executable + " -c \"import time; time.sleep(1.0)\""))
         for command in commands:
             command.wait(timeout=1.5)
-        end_time = time.monotonic()
+        end_time = time.time()
         for command in commands:
             self.assertEqual(command.exit_status, 0)
         self.assertLessEqual(end_time - start_time, 3.0)
@@ -105,7 +105,7 @@ class TestLocalWorker(unittest.TestCase):
         command = worker.execute(sys.executable + " -c \"import sys, time; time.sleep(0.5); sys.exit(2)\"")
         command.wait(0.1)
         self.assertIs(command.exit_status, None)
-        command.wait(0.5)
+        command.wait(1.0)
         self.assertEqual(command.exit_status, 2)
 
     def test_cancel_command(self):

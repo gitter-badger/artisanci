@@ -108,8 +108,6 @@ class TestLocalCommand(TestCase):
         command = LocalCommand(_FakeLocalWorker(),
                                sys.executable + ' -c "import time; time.sleep(1.0)"')
         self.assertIs(command.wait(timeout=0.1), False)
-        self.assertIs(command.wait(timeout=0.1), False)
-        self.assertIs(command.wait(timeout=0.1), False)
         self.assertIs(command.wait(timeout=2.0), True)
 
     def test_is_shell(self):
