@@ -7,6 +7,7 @@ from .exceptions import (JobTimeoutException,
                          CommandExitStatusException,
                          CommandTimeoutException,
                          WorkerLostException)
+from .worker import (FileAttributes)
 
 __author__ = 'Seth Michael Larson'
 __email__ = 'sethmichaellarson@protonmail.com'
@@ -23,5 +24,7 @@ __all__ = [
     'JobErrorException',
     'WorkerLostException',
     'CommandTimeoutException',
-    'CommandExitStatusException'
+    'CommandExitStatusException',
+
+    'FileAttributes'
 ]

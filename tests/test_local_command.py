@@ -5,6 +5,7 @@ import platform
 import unittest
 from ._support import TestCase
 
+import artisan
 from artisan import LocalCommand
 
 
@@ -24,7 +25,7 @@ class TestLocalCommand(TestCase):
             commands = []
             for _ in range(3):
                 commands.append(LocalCommand(_FakeLocalWorker(),
-                                             'sleep 1'))
+                                             sys.executable + ' -c "import time; time.sleep(1.0)"'))
             for command in commands:
                 command.wait(timeout=1.5)
                 self.assertEqual(command.exit_status, 0)
@@ -87,3 +88,26 @@ class TestLocalCommand(TestCase):
         command.signal(signal.SIGFPE)
         command.wait(timeout=3.0)
         self.assertEqual(command.exit_status, -signal.SIGFPE)
+
+    def test_error_on_timeout(self):
+        command = LocalCommand(_FakeLocalWorker(),
+                               sys.executable + ' -c "import time; time.sleep(3.0)"')
+        self.assertRaises(artisan.CommandTimeoutException, command.wait, timeout=1.0, error_on_timeout=True)
+
+    def test_error_on_exit(self):
+        for i in range(10):
+            command = LocalCommand(_FakeLocalWorker(),
+                                   sys.executable + ' -c "import time, sys; time.sleep(0.1); sys.exit(%d)"' % i)
+            if i == 0:
+                command.wait(timeout=1.0, error_on_exit=True)
+            else:
+                self.assertRaises(artisan.CommandExitStatusException, command.wait, timeout=1.0, error_on_exit=True)
+            self.assertEqual(command.exit_status, i)
+
+    def test_wait_returns_bool(self):
+        command = LocalCommand(_FakeLocalWorker(),
+                               sys.executable + ' -c "import time; time.sleep(1.0)"')
+        self.assertIs(command.wait(timeout=0.1), False)
+        self.assertIs(command.wait(timeout=0.1), False)
+        self.assertIs(command.wait(timeout=0.1), False)
+        self.assertIs(command.wait(timeout=2.0), True)

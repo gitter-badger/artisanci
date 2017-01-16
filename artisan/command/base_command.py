@@ -101,11 +101,9 @@ class BaseCommand(object):
         if not_complete:
             if error_on_timeout:
                 raise CommandTimeoutException(self.command, timeout)
-            return False
-        elif error_on_exit and self._exit_status != 0:
-            raise CommandExitStatusException(self.command, self._exit_status)
-        else:
-            return True
+            if error_on_exit and self._exit_status != 0:
+                raise CommandExitStatusException(self.command, self._exit_status)
+        return not self._is_not_complete()
 
     def cancel(self):
         """ Cancel the command."""
