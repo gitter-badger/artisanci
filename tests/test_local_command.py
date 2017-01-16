@@ -1,6 +1,8 @@
 import os
 import signal
 import sys
+import platform
+import unittest
 from ._support import TestCase
 
 from artisan import LocalCommand
@@ -78,6 +80,7 @@ class TestLocalCommand(TestCase):
         command.wait(timeout=1.0)
         self.assertEqual(command.stdout.read(), str(pid).encode('utf-8'))
 
+    @unittest.skipIf(platform.system() == 'Windows', 'Skip signal tests on Windows.')
     def test_signal_exit_status(self):
         command = LocalCommand(_FakeLocalWorker(),
                                sys.executable + ' -c "import time; time.sleep(3.0)"')
