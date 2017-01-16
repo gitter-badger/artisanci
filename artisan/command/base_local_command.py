@@ -12,8 +12,9 @@ class BaseLocalCommand(BaseCommand):
             self._proc.send_signal(signal)
 
     def _create_subprocess(self):
+        self.is_shell = True if not isinstance(self.command, list) else False
         return subprocess.Popen(self.command,
-                                shell=True if not isinstance(self.command, list) else False,
+                                shell=self.is_shell,
                                 cwd=self.worker.cwd,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,

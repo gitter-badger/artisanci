@@ -111,3 +111,12 @@ class TestLocalCommand(TestCase):
         self.assertIs(command.wait(timeout=0.1), False)
         self.assertIs(command.wait(timeout=0.1), False)
         self.assertIs(command.wait(timeout=2.0), True)
+
+    def test_is_shell(self):
+        command = LocalCommand(_FakeLocalWorker(),
+                               [sys.executable, '-c', 'import sys, os; sys.exit(0)'])
+        self.assertIs(command.is_shell, False)
+
+        command = LocalCommand(_FakeLocalWorker(),
+                               sys.executable + '-c "import sys, os; sys.exit(0)"')
+        self.assertIs(command.is_shell, True)

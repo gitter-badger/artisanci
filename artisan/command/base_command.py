@@ -22,6 +22,7 @@ class BaseCommand(object):
         self.worker = worker
         self.command = command
         self.environment = self._apply_minimum_environment(environment)
+        self.is_shell = False
 
         self._cancelled = False
         self._exit_status = None
