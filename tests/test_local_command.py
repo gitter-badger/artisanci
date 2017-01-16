@@ -1,4 +1,5 @@
 import os
+import signal
 import sys
 from ._support import TestCase
 
@@ -76,3 +77,10 @@ class TestLocalCommand(TestCase):
         pid = command.pid
         command.wait(timeout=1.0)
         self.assertEqual(command.stdout.read(), str(pid).encode('utf-8'))
+
+    def test_signal_exit_status(self):
+        command = LocalCommand(_FakeLocalWorker(),
+                               sys.executable + ' -c "import time; time.sleep(3.0)"')
+        command.signal(signal.SIGFPE)
+        command.wait(timeout=3.0)
+        self.assertEqual(command.exit_status, -signal.SIGFPE)

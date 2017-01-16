@@ -2,7 +2,7 @@
 import time
 import threading
 from Queue import Queue, Empty
-from .base_command import BaseCommand
+from .base_local_command import BaseLocalCommand
 from ..compat import monotonic
 
 __all__ = [
@@ -31,10 +31,9 @@ class _QueueThread(threading.Thread):
         self.stop = True
 
 
-class Local2Command(BaseCommand):
+class Local2Command(BaseLocalCommand):
     def __init__(self, worker, command, environment=None):
         super(Local2Command, self).__init__(worker, command, environment)
-        self._proc = self._create_subprocess()
 
         # Create the two monitoring threads.
         self._queue_threads = [_QueueThread(self._proc.stdout),

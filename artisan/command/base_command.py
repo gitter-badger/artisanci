@@ -1,6 +1,5 @@
 import io
 import platform
-import subprocess
 from ..compat import monotonic
 from ..exceptions import (CommandTimeoutException,
                           CommandExitStatusException)
@@ -66,6 +65,14 @@ class BaseCommand(object):
         self._check_exit()
         return self._exit_status
 
+    def signal(self, signal):
+        """
+        Sends a signal to the process.
+
+        :param int signal: Signal number to send to the child.
+        """
+        raise NotImplementedError()
+
     def wait(self, timeout=None, error_on_exit=False, error_on_timeout=False):
         """
         Wait for the command to complete.
@@ -115,14 +122,6 @@ class BaseCommand(object):
 
     def _read_all(self, timeout=0.0):
         raise NotImplementedError()
-
-    def _create_subprocess(self):
-        return subprocess.Popen(self.command,
-                                shell=True if not isinstance(self.command, list) else False,
-                                cwd=self.worker.cwd,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
-                                env=self.environment)
 
     def _apply_minimum_environment(self, environment):
         """ Modifies the environment that will be passed
