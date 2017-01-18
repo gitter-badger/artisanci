@@ -9,7 +9,8 @@ from .exceptions import (JobTimeoutException,
                          WorkerLostException)
 from .worker import (FileAttributes,
                      BaseWorker,
-                     LocalWorker)
+                     LocalWorker,
+                     SshWorker)
 
 __author__ = 'Seth Michael Larson'
 __email__ = 'sethmichaellarson@protonmail.com'

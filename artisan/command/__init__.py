@@ -1,5 +1,6 @@
-from .base_command import BaseCommand
 import sys
+from .base_command import BaseCommand
+from .ssh_command import SshCommand
 
 if sys.version_info >= (3, 0, 0):
     from .local_command3 import Local3Command as LocalCommand
@@ -8,5 +9,6 @@ else:
 
 __all__ = [
     'BaseCommand',
-    'LocalCommand'
+    'LocalCommand',
+    'SshCommand'
 ]

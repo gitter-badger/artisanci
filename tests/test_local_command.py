@@ -104,11 +104,16 @@ class TestLocalCommand(TestCase):
                 self.assertRaises(artisan.CommandExitStatusException, command.wait, timeout=1.0, error_on_exit=True)
             self.assertEqual(command.exit_status, i)
 
-    def test_wait_returns_bool(self):
+    @unittest.skipIf(sys.version_info[0] == 2, 'Python 2.x subprocess.Popen.poll() blocks.')
+    def test_wait_returns_bool_false(self):
         command = LocalCommand(_FakeLocalWorker(),
                                sys.executable + ' -c "import time; time.sleep(1.0)"')
         self.assertIs(command.wait(timeout=0.1), False)
-        self.assertIs(command.wait(timeout=2.0), True)
+
+    def test_wait_returns_bool_true(self):
+        command = LocalCommand(_FakeLocalWorker(),
+                               sys.executable + ' -c "import time; time.sleep(0.1)"')
+        self.assertIs(command.wait(timeout=1.0), True)
 
     def test_is_shell(self):
         command = LocalCommand(_FakeLocalWorker(),

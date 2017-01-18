@@ -2,11 +2,12 @@ import io
 import platform
 from ..compat import monotonic
 from ..exceptions import (CommandTimeoutException,
-                          CommandExitStatusException)
+                          CommandExitStatusException,
+                          OperationNotSupported)
 
 
 __all__ = [
-    "BaseCommand"
+    'BaseCommand'
 ]
 
 
@@ -39,7 +40,7 @@ class BaseCommand(object):
             being run if using a shell rather than a
             list of command argv values.
         """
-        raise NotImplementedError()
+        raise OperationNotSupported('pid', 'command')
 
     @property
     def stderr(self):
@@ -72,7 +73,7 @@ class BaseCommand(object):
 
         :param int signal: Signal number to send to the child.
         """
-        raise NotImplementedError()
+        raise OperationNotSupported('signal()', 'command')
 
     def wait(self, timeout=None, error_on_exit=False, error_on_timeout=False):
         """
@@ -130,12 +131,12 @@ class BaseCommand(object):
             environment = self.worker.environment.copy()
 
         # PATH should be in the environment to be able to find binaries.
-        if "PATH" not in environment and "PATH" in self.worker.environment:
-            environment["PATH"] = self.worker.environment["PATH"]
+        if 'PATH' not in environment and 'PATH' in self.worker.environment:
+            environment['PATH'] = self.worker.environment['PATH']
 
         # Windows requires SYSTEMROOT environment variable to be set before executing.
-        if platform.system() == "Windows" and "SYSTEMROOT" in self.worker.environment:
-            environment["SYSTEMROOT"] = self.worker.environment["SYSTEMROOT"]
+        if platform.system() == 'Windows' and 'SYSTEMROOT' in self.worker.environment:
+            environment['SYSTEMROOT'] = self.worker.environment['SYSTEMROOT']
 
         return environment
 

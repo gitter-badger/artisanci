@@ -6,6 +6,7 @@ Artisan
     :maxdepth: 2
 
     api_reference/index
+    cli_reference/index
     changelog
     contributing
     about

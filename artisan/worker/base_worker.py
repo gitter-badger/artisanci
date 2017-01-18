@@ -1,3 +1,4 @@
+from ..exceptions import OperationNotSupported
 __all__ = [
     'BaseWorker'
 ]
@@ -27,21 +28,21 @@ class BaseWorker(object):
             variables to override the default worker environment.
         :return: :class:`artisan.BaseCommand` instance.
         """
-        raise NotImplementedError()
+        raise OperationNotSupported('execute()', 'worker')
 
     @property
     def cwd(self):
         """
         The current working directory for the worker.
         """
-        raise NotImplementedError()
+        raise OperationNotSupported('cwd', 'worker')
 
     def change_directory(self, path):
         """
         Changes the current working directory for the worker.
         :param str path: Path to change workers cwd to.
         """
-        raise NotImplementedError()
+        raise OperationNotSupported('change_directory()', 'worker')
 
     def list_directory(self, path="."):
         """
@@ -49,7 +50,7 @@ class BaseWorker(object):
         :param str path: Path to the directory to list.
         :return: List of filenames as strings.
         """
-        raise NotImplementedError()
+        raise OperationNotSupported('list_directory()', 'worker')
 
     def get_file(self, remote_path, local_path):
         """
@@ -58,7 +59,7 @@ class BaseWorker(object):
         :param str remote_path: Path to the file on the worker.
         :param str local_path: Local directory to put the file.
         """
-        raise NotImplementedError()
+        raise OperationNotSupported('get_file()', 'worker')
 
     def put_file(self, local_path, remote_path):
         """
@@ -68,7 +69,7 @@ class BaseWorker(object):
         :param str remote_path: Directory on the worker to put the file.
         :return:
         """
-        raise NotImplementedError()
+        raise OperationNotSupported('put_file()', 'worker')
 
     def stat_file(self, path, follow_symlinks=True):
         """
@@ -78,7 +79,7 @@ class BaseWorker(object):
         :param bool follow_symlinks: If True, will follow symlinks. Set to False to stat symlinks.
         :return: :class:`artisan.FileAttributes` object.
         """
-        raise NotImplementedError()
+        raise OperationNotSupported('stat_file()', 'worker')
 
     def is_directory(self, path):
         """
@@ -86,7 +87,7 @@ class BaseWorker(object):
         :param str path: Path to the directory.
         :return: True if the path is a directory, False otherwise.
         """
-        raise NotImplementedError()
+        raise OperationNotSupported('is_directory()', 'worker')
 
     def is_file(self, path):
         """
@@ -94,7 +95,7 @@ class BaseWorker(object):
         :param str path: Path to the file.
         :return: True if the path is a file, False otherwise.
         """
-        raise NotImplementedError()
+        raise OperationNotSupported('is_file()', 'worker')
 
     def open_file(self, path, mode="r"):
         """
@@ -114,10 +115,10 @@ class BaseWorker(object):
             for more information about this parameter. Default is read-only.
         :return: File-like object.
         """
-        raise NotImplementedError()
+        raise OperationNotSupported('open_file()', 'worker')
 
     def remove_file(self, path):
-        raise NotImplementedError()
+        raise OperationNotSupported('remove_file()', 'worker')
 
     @property
     def closed(self):

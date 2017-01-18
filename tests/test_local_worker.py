@@ -27,9 +27,9 @@ class TestLocalWorker(unittest.TestCase):
 
     def test_execute_async(self):
         worker = LocalWorker()
-        start_time = time.monotonic()
+        start_time = time.time()
         worker.execute("sleep 1")
-        end_time = time.monotonic()
+        end_time = time.time()
         self.assertLess(end_time - start_time, 1.0)
 
     def test_execute_in_parallel(self):
@@ -93,6 +93,7 @@ class TestLocalWorker(unittest.TestCase):
             command.wait(1.0)
             self.assertEqual(command.exit_status, exit_status)
 
+    @unittest.skipIf(sys.version_info[0] == 2, 'Python 2.x subprocess.Popen.poll() blocks.')
     def test_exit_time(self):
         worker = LocalWorker()
         command = worker.execute(sys.executable + " -c \"import sys, time; time.sleep(0.3); sys.exit(2)\"")
@@ -100,6 +101,7 @@ class TestLocalWorker(unittest.TestCase):
         time.sleep(1.0)
         self.assertEqual(command.exit_status, 2)
 
+    @unittest.skipIf(sys.version_info[0] == 2, 'Python 2.x subprocess.Popen.poll() blocks.')
     def test_wait_timeout(self):
         worker = LocalWorker()
         command = worker.execute(sys.executable + " -c \"import sys, time; time.sleep(0.5); sys.exit(2)\"")

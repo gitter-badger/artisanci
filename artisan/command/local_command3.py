@@ -3,7 +3,7 @@ import subprocess
 from .base_local_command import BaseLocalCommand
 
 __all__ = [
-    "Local3Command"
+    'Local3Command'
 ]
 
 
@@ -20,7 +20,7 @@ class Local3Command(BaseLocalCommand):
 
     def cancel(self):
         if self._cancelled:
-            raise ValueError("Command is already cancelled.")
+            raise ValueError('Command is already cancelled.')
         self._proc.kill()
         self._proc = None
         self._cancelled = True
