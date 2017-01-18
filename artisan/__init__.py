@@ -31,5 +31,6 @@ __all__ = [
 
     'FileAttributes',
     'BaseWorker',
-    'LocalWorker'
+    'LocalWorker',
+    'SshWorker'
 ]

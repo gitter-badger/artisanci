@@ -75,8 +75,8 @@ class CommandExitStatusException(JobFailureException):
             'Command `%s` exited with a non-zero exit status `%d`' % (command,
                                                                       exit_status))
         self.exit_status = exit_status
-        
-        
+
+
 class OperationNotSupported(JobFailureException):
     """ The current operation is not supported on this worker. """
     def __init__(self, command, entity):
