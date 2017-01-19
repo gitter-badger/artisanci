@@ -105,6 +105,15 @@ class BaseWorker(object):
         """
         raise OperationNotSupported('is_file()', 'worker')
 
+    def is_symlink(self, path):
+        """
+        Checks to see if a path is a symlink.
+
+        :param str path: Path to the symlink.
+        :return: True if the path is a symlink, False otherwise.
+        """
+        raise OperationNotSupported('is_symlink()', 'worker')
+
     def open_file(self, path, mode='r'):
         """
         Opens a file on the worker machine for reading, writing, appending
@@ -140,6 +149,16 @@ class BaseWorker(object):
         :param str path: Path to the directory to remove.
         """
         raise OperationNotSupported('remove_directory()', 'worker')
+
+    def create_symlink(self, source_path, link_path):
+        """
+        Creates a symbolic link to a source file or directory.
+
+        :param str source_path: Path of the file or directory to link to.
+        :param str link_path: Path to the symbolic link.
+        :raises: :class:`artisan.OperationNotSupported` on Windows.
+        """
+        raise OperationNotSupported('create_symlink', 'worker')
 
     @property
     def platform(self):

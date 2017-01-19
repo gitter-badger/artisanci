@@ -17,6 +17,24 @@ class FileAttributes(object):
         self.modify_time = None
         self.create_time = None
 
+    def __repr__(self):
+        return ('<FileAttributes mode=%s inode=%s '
+                'device=%s nlink=%s user_id=%s '
+                'group_id=%s size=%s atime=%s mtime=%s '
+                'ctime=%s>') % (self.mode,
+                                self.inode,
+                                self.device,
+                                self.nlink,
+                                self.user_id,
+                                self.group_id,
+                                self.size,
+                                self.access_time,
+                                self.modify_time,
+                                self.create_time)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 def stat_to_file_attrs(stat_result):
     """ Converts an object that was returned from os.stat

@@ -54,6 +54,9 @@ class LocalWorker(BaseWorker):
     def is_file(self, path):
         return os.path.isfile(self._normalize_path(path))
 
+    def is_symlink(self, path):
+        return os.path.islink(self._normalize_path(path))
+
     def open_file(self, path, mode='r'):
         return open(self._normalize_path(path), mode)
 
@@ -62,6 +65,10 @@ class LocalWorker(BaseWorker):
 
     def remove_directory(self, path):
         shutil.rmtree(self._normalize_path(path), ignore_errors=True)
+
+    def create_symlink(self, source_path, link_path):
+        os.symlink(self._normalize_path(source_path),
+                   self._normalize_path(link_path))
 
     @property
     def platform(self):

@@ -107,12 +107,13 @@ class SshWorker(BaseWorker):
         return stat_to_file_attrs(res)
 
     def is_directory(self, path):
-        res = self.stat_file(path)
-        return stat.S_ISDIR(res.mode)
+        return stat.S_ISDIR(self.stat_file(path).mode)
 
     def is_file(self, path):
-        res = self.stat_file(path)
-        return stat.S_ISREG(res.mode)
+        return stat.S_ISREG(self.stat_file(path).mode)
+
+    def is_symlink(self, path):
+        return stat.S_ISLNK(self.stat_file(path).mode)
 
     @requires_sftp
     def remove_file(self, path):
@@ -121,6 +122,11 @@ class SshWorker(BaseWorker):
     @requires_sftp
     def remove_directory(self, path):
         self._sftp.rmdir(path)
+
+    @requires_sftp
+    def create_symlink(self, source_path, link_path):
+        self._sftp.symlink(self._normalize_path(source_path),
+                           self._normalize_path(link_path))
 
     @property
     def home(self):
@@ -191,9 +197,10 @@ class SshWorker(BaseWorker):
             self._sftp = None
 
     def _normalize_path(self, path):
+        path = self._expanduser(self._expandvars(path))
         if not self._pathlib.isabs(path):
             path = self._pathlib.join(self.cwd, path)
-        return self._pathlib.join(self._expanduser(self._expandvars(path)))
+        return self._pathlib.normpath(path)
 
     def _setup_pathlib(self, platform):
         if platform == 'Windows':
