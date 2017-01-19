@@ -13,6 +13,7 @@ class BaseWorker(object):
 
         self.host = host
         self.environment = environment
+        self.allow_environment_changes = True
 
         self._closed = False
 

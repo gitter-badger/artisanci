@@ -91,5 +91,5 @@ ENV/
 # PyCharm
 .idea/
 
-# testme.py
-testme.py
+# debugme.py
+debugme.py

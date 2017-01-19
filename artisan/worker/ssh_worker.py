@@ -48,10 +48,15 @@ class SshWorker(BaseWorker):
         self._start_dir = None
         try:
             self._sftp = self._ssh.open_sftp()
+
+            # SFTPClient.getcwd() returns None
+            # if chdir() isn't called beforehand.
+            self._sftp.chdir('.')
             self._start_dir = self._sftp.getcwd()
         except paramiko.SSHException:
             self._sftp = None  # type: paramiko.SFTPClient
 
+        # Values that are cached after found out.
         self._hostname = None
         self._platform = None
         self._home = None
@@ -59,12 +64,19 @@ class SshWorker(BaseWorker):
 
         super(SshWorker, self).__init__(host, environment)
 
+        # Some SSH servers allow environment variables to be
+        # changed by a client if AcceptEnv is set correctly.
+        with self.execute('echo $SILENT_DISCARD_CHECK',
+                          environment={'SILENT_DISCARD_CHECK': 'NO'}) as c:
+            c.wait(timeout=5.0)
+            self.allow_environment_changes = b'NO' in c.stdout.read()
+
     def execute(self, command, environment=None):
         return SshCommand(self, command, environment)
 
     @requires_sftp
     def change_directory(self, path):
-        self._sftp.chdir(path)
+        self._sftp.chdir(self._normalize_path(path))
 
     @property
     @requires_sftp
