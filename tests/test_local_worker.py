@@ -1,5 +1,6 @@
 import os
 import sys
+import socket
 import time
 import unittest
 import platform
@@ -193,10 +194,76 @@ class TestLocalWorker(unittest.TestCase):
         worker.change_directory(os.path.join(dirname, '$$ENVIRONMENT$$'))
         self.assertEqual(worker.cwd, old_dir)
 
-    def test_worker_home_directory(self):
+    def test_home_directory(self):
         home = os.path.expanduser('~')
         worker = LocalWorker()
         self.assertEqual(worker.home, home)
+
+    def test_hostname(self):
+        worker = LocalWorker()
+        self.assertEqual(worker.hostname, socket.gethostname())
+
+    def test_stat(self):
+        worker = LocalWorker()
+        path = os.path.abspath(__file__)
+        act = worker.stat_file(path)
+        exp = os.stat(path)
+
+        self.assertEqual(act.mode, exp.st_mode)
+        self.assertEqual(act.inode, exp.st_ino)
+        self.assertEqual(act.nlink, exp.st_nlink)
+
+    @unittest.skipUnless(hasattr(os, 'symlink'), 'Requires symlinks to run.')
+    def test_stat_follow_symlinks(self):
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        source_path = os.path.join(test_dir, 'source')
+        with open(source_path, 'w+') as f:
+            f.write('source')
+        self.addCleanup(os.remove, source_path)
+
+        link_path = os.path.join(test_dir, 'symlink')
+        os.symlink(source_path, link_path)
+        self.addCleanup(os.remove, link_path)
+
+        worker = LocalWorker()
+        act = worker.stat_file(link_path, follow_symlinks=True)
+        exp = os.stat(source_path)
+
+        self.assertEqual(act.mode, exp.st_mode)
+        self.assertEqual(act.inode, exp.st_ino)
+        self.assertEqual(act.nlink, exp.st_nlink)
+
+    @unittest.skipUnless(hasattr(os, 'symlink'), 'Requires symlinks to run.')
+    def test_stat_dont_follow_symlinks(self):
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        source_path = os.path.join(test_dir, 'source')
+        with open(source_path, 'w+') as f:
+            f.write('source')
+        self.addCleanup(os.remove, source_path)
+
+        link_path = os.path.join(test_dir, 'symlink')
+        os.symlink(source_path, link_path)
+        self.addCleanup(os.remove, link_path)
+
+        worker = LocalWorker()
+        act = worker.stat_file(link_path, follow_symlinks=False)
+        not_exp = os.stat(source_path)
+        exp = os.lstat(link_path)
+
+        self.assertEqual(act.mode, exp.st_mode)
+        self.assertEqual(act.inode, exp.st_ino)
+        self.assertEqual(act.nlink, exp.st_nlink)
+        self.assertNotEqual(act.inode, not_exp.st_ino)
+
+    def test_is_file(self):
+        worker = LocalWorker()
+        self.assertTrue(worker.is_file(os.path.abspath(__file__)))
+        self.assertFalse(worker.is_file(os.path.dirname(os.path.abspath(__file__))))
+
+    def test_is_directory(self):
+        worker = LocalWorker()
+        self.assertFalse(worker.is_directory(os.path.abspath(__file__)))
+        self.assertTrue(worker.is_directory(os.path.dirname(os.path.abspath(__file__))))
 
     def test_environ_get(self):
         worker = LocalWorker()

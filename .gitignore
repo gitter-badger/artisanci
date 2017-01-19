@@ -90,3 +90,6 @@ ENV/
 
 # PyCharm
 .idea/
+
+# testme.py
+testme.py

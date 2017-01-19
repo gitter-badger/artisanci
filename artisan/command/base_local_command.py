@@ -20,7 +20,7 @@ class BaseLocalCommand(BaseCommand):
             raise ValueError('Command is already cancelled.')
         try:
             self._proc.kill()
-        except Exception:
+        except Exception:  # Skip coverage.
             pass
         self._proc = None
         self._cancelled = True

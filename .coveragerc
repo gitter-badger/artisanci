@@ -3,6 +3,7 @@ include =
     artisan/*
 omit =
     artisan/compat.py
+    artisan/worker/expandvars.py
 
 [report]
 exclude_lines =

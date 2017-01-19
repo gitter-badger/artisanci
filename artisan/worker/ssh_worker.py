@@ -1,4 +1,5 @@
 import functools
+import os
 import re
 import posixpath
 import ntpath
@@ -69,6 +70,20 @@ class SshWorker(BaseWorker):
     @requires_sftp
     def cwd(self):
         return self._sftp.getcwd()
+
+    @requires_sftp
+    def list_directory(self, path='.'):
+        return self._sftp.listdir(self._normalize_path(path))
+
+    @requires_sftp
+    def put_file(self, local_path, remote_path):
+        self._sftp.put(_normalize_local_path(local_path),
+                       self._normalize_path(remote_path))
+
+    @requires_sftp
+    def get_file(self, remote_path, local_path):
+        self._sftp.get(self._normalize_path(remote_path),
+                       _normalize_local_path(local_path))
 
     @requires_sftp
     def stat_file(self, path, follow_symlinks=True):
@@ -148,6 +163,21 @@ class SshWorker(BaseWorker):
         else:
             raise OperationNotSupported('hostname', 'worker')
 
+    def close(self):
+        super(SshWorker, self).close()
+        if self._ssh is not None:
+            try:
+                self._ssh.close()
+            except Exception:  # Skip coverage.
+                pass
+            self._ssh = None
+        if self._sftp is not None:
+            try:
+                self._sftp.close()
+            except Exception:  # Skip coverage.
+                pass
+            self._sftp = None
+
     def _normalize_path(self, path):
         if not self._pathlib.isabs(path):
             path = self._pathlib.join(self.cwd, path)
@@ -187,21 +217,6 @@ class SshWorker(BaseWorker):
                 command.cancel()
         return {}
 
-    def close(self):
-        super(SshWorker, self).close()
-        if self._ssh is not None:
-            try:
-                self._ssh.close()
-            except Exception:  # Skip coverage.
-                pass
-            self._ssh = None
-        if self._sftp is not None:
-            try:
-                self._sftp.close()
-            except Exception:  # Skip coverage.
-                pass
-            self._sftp = None
-
     def _expanduser(self, path):
         """
         :param str path: Path to expand the home directory with.
@@ -215,3 +230,10 @@ class SshWorker(BaseWorker):
             i = len(path)
         userhome = self.home.rstrip(sep)
         return (userhome + path[i:]) or sep
+
+
+def _normalize_local_path(path):
+    path = os.path.expandvars(os.path.expanduser(path))
+    if not os.path.isabs(path):
+        path = os.path.join(os.getcwd(), path)
+    return os.path.normpath(path)

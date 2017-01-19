@@ -79,6 +79,7 @@ class LocalWorker(BaseWorker):
         return os.environ.copy()
 
     def _normalize_path(self, path):
+        path = self._expandvars(os.path.expanduser(path))
         if not os.path.isabs(path):
             path = os.path.join(self._cwd, path)
-        return os.path.normpath(self._expandvars(os.path.expanduser(path)))
+        return os.path.normpath(path)
