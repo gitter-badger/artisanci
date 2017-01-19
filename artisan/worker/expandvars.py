@@ -11,7 +11,7 @@ import string
 __all__ = [
     'expandvars'
 ]
-_VARS_POSIX_REGEX = re.compile(r'\$(\w+|\{[^}]*\})', re.ASCII)
+_VARS_POSIX_REGEX = re.compile(r'\$(\w+|\{[^}]*\})')
 
 
 def expandvars(worker, path):

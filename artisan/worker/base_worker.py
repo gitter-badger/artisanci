@@ -1,12 +1,9 @@
-import re
 from .expandvars import expandvars
 from ..exceptions import OperationNotSupported
 __all__ = [
     'BaseWorker'
 ]
 
-_VAR_REGEX_POSIX = re.compile(r'\$(\w+|\{[^}]*\})', re.ASCII)
-_VAR_REGEX_WINDOWS = re.compile
 
 class BaseWorker(object):
     def __init__(self, host, environment=None):
@@ -45,6 +42,7 @@ class BaseWorker(object):
     def change_directory(self, path):
         """
         Changes the current working directory for the worker.
+
         :param str path: Path to change workers cwd to.
         """
         raise OperationNotSupported('change_directory()', 'worker')
@@ -52,7 +50,7 @@ class BaseWorker(object):
     def list_directory(self, path='.'):
         """
         Lists all file names in a directory on the worker.
-        
+
         :param str path: Path to the directory to list.
         :return: List of filenames as strings.
         """
@@ -62,7 +60,7 @@ class BaseWorker(object):
         """
         Gets a file from the worker and puts it into a
         local directory.
-        
+
         :param str remote_path: Path to the file on the worker.
         :param str local_path: Local directory to put the file.
         """
@@ -72,7 +70,7 @@ class BaseWorker(object):
         """
         Puts a file from the local machine onto
         the workers file system.
-        
+
         :param str local_path: Path to the file on the local machine.
         :param str remote_path: Directory on the worker to put the file.
         :return:

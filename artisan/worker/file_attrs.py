@@ -1,5 +1,3 @@
-from collections import namedtuple
-
 __all__ = [
     'FileAttributes',
     'stat_to_file_attrs'
