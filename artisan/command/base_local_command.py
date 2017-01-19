@@ -17,7 +17,7 @@ class BaseLocalCommand(BaseCommand):
 
     def cancel(self):
         if self._cancelled:
-            raise ValueError("Command is already cancelled.")
+            raise ValueError('Command is already cancelled.')
         try:
             self._proc.kill()
         except Exception:

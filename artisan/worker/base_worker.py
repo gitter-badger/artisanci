@@ -49,9 +49,10 @@ class BaseWorker(object):
         """
         raise OperationNotSupported('change_directory()', 'worker')
 
-    def list_directory(self, path="."):
+    def list_directory(self, path='.'):
         """
         Lists all file names in a directory on the worker.
+        
         :param str path: Path to the directory to list.
         :return: List of filenames as strings.
         """
@@ -61,6 +62,7 @@ class BaseWorker(object):
         """
         Gets a file from the worker and puts it into a
         local directory.
+        
         :param str remote_path: Path to the file on the worker.
         :param str local_path: Local directory to put the file.
         """
@@ -70,6 +72,7 @@ class BaseWorker(object):
         """
         Puts a file from the local machine onto
         the workers file system.
+        
         :param str local_path: Path to the file on the local machine.
         :param str remote_path: Directory on the worker to put the file.
         :return:
@@ -103,7 +106,7 @@ class BaseWorker(object):
         """
         raise OperationNotSupported('is_file()', 'worker')
 
-    def open_file(self, path, mode="r"):
+    def open_file(self, path, mode='r'):
         """
         Opens a file on the worker machine for reading, writing, appending
         in the same way that :meth:`open` works on a local machine.
@@ -112,7 +115,7 @@ class BaseWorker(object):
          .. code-block:: python
 
             with worker.open_file('test.txt', 'w') as f:
-                f.write("Hello, world!")
+                f.write('Hello, world!')
 
         :param str path: Path to the file to open.
         :param str mode:
@@ -179,7 +182,7 @@ class BaseWorker(object):
         worker may be using internally to operate.
         """
         if self._closed:
-            raise ValueError("Worker is already closed.")
+            raise ValueError('Worker is already closed.')
         self._closed = True
 
     def _get_default_environment(self):

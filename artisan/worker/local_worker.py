@@ -29,7 +29,7 @@ class LocalWorker(BaseWorker):
     def cwd(self):
         return self._cwd
 
-    def list_directory(self, path="."):
+    def list_directory(self, path='.'):
         return os.listdir(self._normalize_path(path))
 
     def get_file(self, remote_path, local_path):
@@ -54,7 +54,7 @@ class LocalWorker(BaseWorker):
     def is_file(self, path):
         return os.path.isfile(self._normalize_path(path))
 
-    def open_file(self, path, mode="r"):
+    def open_file(self, path, mode='r'):
         return open(self._normalize_path(path), mode)
 
     def remove_file(self, path):

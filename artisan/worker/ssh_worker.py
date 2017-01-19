@@ -2,9 +2,10 @@ import functools
 import re
 import posixpath
 import ntpath
-import os
+import stat
 import paramiko
 from .base_worker import BaseWorker
+from .file_attrs import stat_to_file_attrs
 from ..command import SshCommand
 from ..exceptions import (OperationNotSupported,
                           WorkerNotAvailable)
@@ -69,6 +70,31 @@ class SshWorker(BaseWorker):
     def cwd(self):
         return self._sftp.getcwd()
 
+    @requires_sftp
+    def stat_file(self, path, follow_symlinks=True):
+        path = self._normalize_path(path)
+        if follow_symlinks:
+            res = self._sftp.stat(path)
+        else:
+            res = self._sftp.lstat(path)
+        return stat_to_file_attrs(res)
+
+    def is_directory(self, path):
+        res = self.stat_file(path)
+        return stat.S_ISDIR(res.mode)
+
+    def is_file(self, path):
+        res = self.stat_file(path)
+        return stat.S_ISREG(res.mode)
+
+    @requires_sftp
+    def remove_file(self, path):
+        self._sftp.remove(path)
+
+    @requires_sftp
+    def remove_directory(self, path):
+        self._sftp.rmdir(path)
+
     @property
     def home(self):
         if self._home is not None:
@@ -99,14 +125,6 @@ class SshWorker(BaseWorker):
         # Can't find it and no SFTP client means it's unsupported.
         else:
             raise OperationNotSupported('host', 'worker')
-
-    @requires_sftp
-    def remove_file(self, path):
-        self._sftp.remove(path)
-
-    @requires_sftp
-    def remove_directory(self, path):
-        self._sftp.rmdir(path)
 
     @property
     def platform(self):

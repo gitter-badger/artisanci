@@ -5,12 +5,12 @@ import time
 
 __all__ = [
     'sched_yield',
-    "monotonic",
-    "Lock",
-    "Semaphore",
-    "RLock",
-    "Condition",
-    "cmp_to_key"
+    'monotonic',
+    'Lock',
+    'Semaphore',
+    'RLock',
+    'Condition',
+    'cmp_to_key'
 ]
 
 # Getting a monotonic clock.
@@ -28,11 +28,11 @@ if sys.version_info >= (3, 0, 0):
 else:
     import threading
 
-    def _timeout_acquire(acquired, blocking=True, timeout=None, command="acquire"):
+    def _timeout_acquire(acquired, blocking=True, timeout=None, command='acquire'):
         """ Helper function for acquiring a Semaphore or Lock
         object that doesn't have a `timeout` parameter. """
         if timeout is not None and not isinstance(timeout, (int, float)):
-            raise ValueError("`timeout` must either be a float or None.")
+            raise ValueError('`timeout` must either be a float or None.')
         if blocking:
             if timeout is None:
                 return getattr(acquired, command)(blocking=True)
@@ -98,7 +98,7 @@ else:
             return _timeout_acquire(self._condition, blocking, timeout)
 
         def wait(self, timeout=None):
-            return _timeout_acquire(self._condition, timeout != 0.0, timeout, command="wait")
+            return _timeout_acquire(self._condition, timeout != 0.0, timeout, command='wait')
 
         def release(self):
             self._condition.release()

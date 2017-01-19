@@ -1,7 +1,8 @@
 """ Modern, flexible, and platform-agnostic interface for
 automation, continuous integration, and farm management. """
 from .command import (BaseCommand,
-                      LocalCommand)
+                      LocalCommand,
+                      SshCommand)
 from .exceptions import (JobTimeoutException,
                          JobErrorException,
                          JobFailureException,
@@ -22,6 +23,7 @@ __version__ = 'dev'
 __all__ = [
     'BaseCommand',
     'LocalCommand',
+    'SshCommand',
 
     'JobTimeoutException',
     'JobCancelledException',
