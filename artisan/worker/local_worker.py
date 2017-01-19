@@ -1,5 +1,6 @@
 import os
 import shutil
+import socket
 import platform
 
 from .base_worker import BaseWorker
@@ -59,9 +60,16 @@ class LocalWorker(BaseWorker):
     def remove_file(self, path):
         os.remove(self._normalize_path(path))
 
+    def remove_directory(self, path):
+        shutil.rmtree(self._normalize_path(path), ignore_errors=True)
+
     @property
     def platform(self):
         return platform.system()
+
+    @property
+    def hostname(self):
+        return socket.gethostname()
 
     def _normalize_path(self, path):
         if not os.path.isabs(path):

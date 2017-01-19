@@ -127,6 +127,14 @@ class BaseWorker(object):
         """
         raise OperationNotSupported('remove_file()', 'worker')
 
+    def remove_directory(self, path):
+        """
+        Removes a directory that exists at a path.
+
+        :param str path: Path to the directory to remove.
+        """
+        raise OperationNotSupported('remove_directory()', 'worker')
+
     @property
     def platform(self):
         """
@@ -135,6 +143,24 @@ class BaseWorker(object):
         :return: Name of the platform as a :class:`str`.
         """
         raise OperationNotSupported('platform', 'worker')
+
+    @property
+    def hostname(self):
+        """
+        Gets the hostname for the machine the worker is on.
+
+        :return: Hostname of the machine as a :class:`str`.
+        """
+        raise OperationNotSupported('hostname', 'worker')
+
+    @property
+    def home(self):
+        """
+        Gets the home directory for the worker.
+
+        :return: Home directory of the worker as a :class:`str`.
+        """
+        raise OperationNotSupported('home', 'worker')
 
     @property
     def closed(self):

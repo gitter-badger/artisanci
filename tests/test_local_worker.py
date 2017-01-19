@@ -120,6 +120,15 @@ class TestLocalWorker(unittest.TestCase):
         self.assertEqual(command.stdout.read(), b'')
         self.assertEqual(command.stderr.read(), b'')
 
+    def test_execute_as_context_manager(self):
+        worker = LocalWorker()
+        with worker.execute(sys.executable + " -c \"import sys, time; time.sleep(0.3); sys.stdout.write('Hello')\"") as c:
+            c.wait(timeout=1.0)
+            self.assertIs(c.exit_status, 0)
+            self.assertEqual(c.stdout.read(), b'Hello')
+            self.assertEqual(c.stderr.read(), b'')
+        self.assertTrue(c.cancelled)
+
     def test_close_worker(self):
         worker = LocalWorker()
         worker.close()

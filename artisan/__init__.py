@@ -1,3 +1,5 @@
+""" Modern, flexible, and platform-agnostic interface for
+automation, continuous integration, and farm management. """
 from .command import (BaseCommand,
                       LocalCommand)
 from .exceptions import (JobTimeoutException,

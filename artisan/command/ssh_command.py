@@ -9,13 +9,13 @@ __all__ = [
 
 class SshCommand(BaseCommand):
     def __init__(self, worker, command, environment):
-        assert hasattr(worker, '_client'), 'Worker should have the `_client` attribute.'
+        assert hasattr(worker, '_ssh'), 'Worker should have the `_ssh` attribute.'
         if isinstance(command, list):
             command = ' '.join(command)
         super(SshCommand, self).__init__(worker, command, environment)
         self.is_shell = True
 
-        _, stdout, _ = worker._client.exec_command(command, environment=environment)
+        _, stdout, _ = worker._ssh.exec_command(command, environment=environment)
         self._channel = stdout.channel  # type: paramiko.Channel
 
     def cancel(self):

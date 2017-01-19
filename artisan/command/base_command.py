@@ -117,6 +117,16 @@ class BaseCommand(object):
         has been manually cancelled. """
         return self._cancelled
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        if not self._cancelled:
+            try:
+                self.cancel()
+            except ValueError:  # Skip coverage.
+                pass
+
     def _is_not_complete(self):
         return self._exit_status is None
 
