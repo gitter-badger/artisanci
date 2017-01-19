@@ -1,5 +1,8 @@
 import functools
 import re
+import posixpath
+import ntpath
+import os
 import paramiko
 from .base_worker import BaseWorker
 from ..command import SshCommand
@@ -13,6 +16,8 @@ __all__ = [
 _ENV_REGEX = re.compile('^([^=]+)=(.*)$')
 
 
+# Wrapper function that raises a OperationNotSupported error
+# if the worker doesn't have an SFTP client.
 def requires_sftp(f):
     @functools.wraps(f)
     def wrapper(self, *args, **kwargs):
@@ -48,6 +53,7 @@ class SshWorker(BaseWorker):
         self._hostname = None
         self._platform = None
         self._home = None
+        self._pathlib = posixpath
 
         super(SshWorker, self).__init__(host, environment)
 
@@ -124,6 +130,17 @@ class SshWorker(BaseWorker):
         else:
             raise OperationNotSupported('hostname', 'worker')
 
+    def _normalize_path(self, path):
+        if not self._pathlib.isabs(path):
+            path = self._pathlib.join(self.cwd, path)
+        return self._pathlib.join(self._expanduser(self._expandvars(path)))
+
+    def _setup_pathlib(self, platform):
+        if platform == 'Windows':
+            self._pathlib = ntpath
+        else:
+            self._pathlib = posixpath
+
     def _get_default_environment(self):
         try:
             platform = self.platform
@@ -151,3 +168,32 @@ class SshWorker(BaseWorker):
             else:
                 command.cancel()
         return {}
+
+    def close(self):
+        super(SshWorker, self).close()
+        if self._ssh is not None:
+            try:
+                self._ssh.close()
+            except Exception:  # Skip coverage.
+                pass
+            self._ssh = None
+        if self._sftp is not None:
+            try:
+                self._sftp.close()
+            except Exception:  # Skip coverage.
+                pass
+            self._sftp = None
+
+    def _expanduser(self, path):
+        """
+        :param str path: Path to expand the home directory with.
+        :return: Result of calling os.path.expanduser with the separator.
+        """
+        sep = self._pathlib.sep
+        if not path.startswith('~'):
+            return path
+        i = path.find(sep, 1)
+        if i < 0:
+            i = len(path)
+        userhome = self.home.rstrip(sep)
+        return (userhome + path[i:]) or sep

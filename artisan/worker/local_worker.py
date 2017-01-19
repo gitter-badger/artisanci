@@ -71,10 +71,14 @@ class LocalWorker(BaseWorker):
     def hostname(self):
         return socket.gethostname()
 
-    def _normalize_path(self, path):
-        if not os.path.isabs(path):
-            path = os.path.join(self._cwd, path)
-        return os.path.normpath(os.path.expanduser(path))
+    @property
+    def home(self):
+        return os.path.expanduser('~')
 
     def _get_default_environment(self):
         return os.environ.copy()
+
+    def _normalize_path(self, path):
+        if not os.path.isabs(path):
+            path = os.path.join(self._cwd, path)
+        return os.path.normpath(self._expandvars(os.path.expanduser(path)))

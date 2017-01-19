@@ -1,8 +1,12 @@
+import re
+from .expandvars import expandvars
 from ..exceptions import OperationNotSupported
 __all__ = [
     'BaseWorker'
 ]
 
+_VAR_REGEX_POSIX = re.compile(r'\$(\w+|\{[^}]*\})', re.ASCII)
+_VAR_REGEX_WINDOWS = re.compile
 
 class BaseWorker(object):
     def __init__(self, host, environment=None):
@@ -181,11 +185,15 @@ class BaseWorker(object):
     def _get_default_environment(self):
         raise NotImplementedError()
 
+    def _expandvars(self, path):
+        return expandvars(self, path)
+
     def __enter__(self):
         return self
 
     def __exit__(self, *_):
-        try:
-            self.close()
-        except ValueError:  # Skip coverage.
-            pass
+        if not self._closed:
+            try:
+                self.close()
+            except ValueError:  # Skip coverage.
+                pass

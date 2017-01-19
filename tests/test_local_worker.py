@@ -161,6 +161,43 @@ class TestLocalWorker(unittest.TestCase):
         worker.change_directory("..")
         self.assertEqual(parent_dir, worker.cwd)
 
+    def test_expandvars_in_paths(self):
+        old_dir = os.getcwd()
+        basename = os.path.basename(os.getcwd())
+        dirname = os.path.dirname(os.getcwd())
+
+        worker = LocalWorker()
+        worker.environment['ENVIRONMENT'] = basename
+        worker.change_directory('..')
+        worker.change_directory(os.path.join(dirname, '$ENVIRONMENT'))
+        self.assertEqual(worker.cwd, old_dir)
+
+    @unittest.skipUnless(platform.system() == 'Windows', 'This feature is only available on Windows.')
+    def test_expandvars_in_paths_windows_variables(self):
+        old_dir = os.getcwd()
+        basename = os.path.basename(os.getcwd())
+        dirname = os.path.dirname(os.getcwd())
+
+        worker = LocalWorker()
+        worker.environment['ENVIRONMENT'] = basename
+
+        worker.change_directory('..')
+        worker.change_directory(os.path.join(dirname, '%ENVIRONMENT%'))
+        self.assertEqual(worker.cwd, old_dir)
+
+        worker.change_directory('..')
+        worker.change_directory(os.path.join(dirname, '$ENVIRONMENT$'))
+        self.assertEqual(worker.cwd, old_dir)
+
+        worker.change_directory('..')
+        worker.change_directory(os.path.join(dirname, '$$ENVIRONMENT$$'))
+        self.assertEqual(worker.cwd, old_dir)
+
+    def test_worker_home_directory(self):
+        home = os.path.expanduser('~')
+        worker = LocalWorker()
+        self.assertEqual(worker.home, home)
+
     def test_environ_get(self):
         worker = LocalWorker()
         for key, val in os.environ.items():
