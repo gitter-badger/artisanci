@@ -15,9 +15,8 @@ class SshCommand(BaseCommand):
         super(SshCommand, self).__init__(worker, command, environment)
         self.is_shell = True
 
-        _, stdout, _ = worker._client.exec_command(command,
-                                                   environment=environment)
-        self._channel = stdout.channel  # paramiko.Channel
+        _, stdout, _ = worker._client.exec_command(command, environment=environment)
+        self._channel = stdout.channel  # type: paramiko.Channel
 
     def cancel(self):
         if self._cancelled:

@@ -18,13 +18,6 @@ class Local3Command(BaseLocalCommand):
             return None
         return self._proc.pid
 
-    def cancel(self):
-        if self._cancelled:
-            raise ValueError('Command is already cancelled.')
-        self._proc.kill()
-        self._proc = None
-        self._cancelled = True
-
     def _read_all(self, timeout=0.0):
         if self._proc is None:
             return

@@ -6,6 +6,7 @@ __all__ = [
 
 class BaseWorker(object):
     def __init__(self, host, environment=None):
+        self.environment = {}
         if environment is None:
             environment = self._get_default_environment()
 
@@ -92,6 +93,7 @@ class BaseWorker(object):
     def is_file(self, path):
         """
         Checks to see if a path is a file.
+
         :param str path: Path to the file.
         :return: True if the path is a file, False otherwise.
         """
@@ -118,10 +120,27 @@ class BaseWorker(object):
         raise OperationNotSupported('open_file()', 'worker')
 
     def remove_file(self, path):
+        """
+        Removes a file that exists at a path.
+
+        :param str path: Path to the file to remove.
+        """
         raise OperationNotSupported('remove_file()', 'worker')
 
     @property
+    def platform(self):
+        """
+        Gets the name of the platform that the worker is on.
+
+        :return: Name of the platform as a :class:`str`.
+        """
+        raise OperationNotSupported('platform', 'worker')
+
+    @property
     def closed(self):
+        """
+        Boolean property that is ``True`` if the worker is closed.
+        """
         return self._closed
 
     def close(self):
@@ -135,3 +154,12 @@ class BaseWorker(object):
 
     def _get_default_environment(self):
         raise NotImplementedError()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        try:
+            self.close()
+        except ValueError:  # Skip coverage.
+            pass

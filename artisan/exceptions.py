@@ -4,13 +4,13 @@ are defined in this module.
 """
 __all__ = [
     'JobFailureException',
-    'WorkerLostException',
     'JobCancelledException',
     'JobErrorException',
     'JobTimeoutException',
     'CommandTimeoutException',
     'CommandExitStatusException',
-    'OperationNotSupported'
+    'OperationNotSupported',
+    'WorkerNotAvailable'
 ]
 
 
@@ -24,13 +24,6 @@ class JobFailureException(Exception):
 
     def __repr__(self):
         return '<JobFailureException cause=%s>' % self.cause
-
-
-class WorkerLostException(JobFailureException):
-    """ Exception for when during a Job a
-    worker becomes unavailable unexpectedly
-    or disconnects in the case of an SshWorker. """
-    pass
 
 
 class JobCancelledException(JobFailureException):
@@ -78,7 +71,13 @@ class CommandExitStatusException(JobFailureException):
 
 
 class OperationNotSupported(JobFailureException):
-    """ The current operation is not supported on this worker. """
+    """ The current operation is not supported. """
     def __init__(self, command, entity):
         super(OperationNotSupported, self).__init__(
-            'The operation `%s` is not supported by this `%s`.' % (command, entity))
+            'The operation `%s` is not supported by this %s.' % (command, entity))
+
+
+class WorkerNotAvailable(JobFailureException):
+    """ Exception when a worker cannot be used. """
+    def __init__(self):
+        super(WorkerNotAvailable, self).__init__('Worker is not available.')

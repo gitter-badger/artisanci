@@ -1,6 +1,10 @@
+import os
 import sys
 import time
+
+
 __all__ = [
+    'sched_yield',
     "monotonic",
     "Lock",
     "Semaphore",
@@ -140,3 +144,10 @@ except ImportError:
                 raise TypeError('hash not implemented')
 
         return K
+
+# os.sched_yield was added in Python 3.3.
+if hasattr(os, 'sched_yield'):
+    sched_yield = os.sched_yield
+else:
+    def sched_yield():
+        time.sleep(0.0)

@@ -6,7 +6,7 @@ from .exceptions import (JobTimeoutException,
                          JobCancelledException,
                          CommandExitStatusException,
                          CommandTimeoutException,
-                         WorkerLostException)
+                         WorkerNotAvailable)
 from .worker import (FileAttributes,
                      BaseWorker,
                      LocalWorker,
@@ -25,9 +25,9 @@ __all__ = [
     'JobCancelledException',
     'JobFailureException',
     'JobErrorException',
-    'WorkerLostException',
     'CommandTimeoutException',
     'CommandExitStatusException',
+    'WorkerNotAvailable',
 
     'FileAttributes',
     'BaseWorker',

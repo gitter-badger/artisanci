@@ -1,5 +1,6 @@
 import os
 import shutil
+import platform
 
 from .base_worker import BaseWorker
 from .file_attrs import stat_to_file_attrs
@@ -11,9 +12,8 @@ class LocalWorker(BaseWorker):
     that operates on the local machine that Artisan is currently
     running on. """
     def __init__(self):
-        super(LocalWorker, self).__init__('localhost')
         self._cwd = os.getcwd()
-        self.environment = os.environ.copy()
+        super(LocalWorker, self).__init__('localhost')
 
     def execute(self, command, environment=None):
         if environment is None:
@@ -57,7 +57,11 @@ class LocalWorker(BaseWorker):
         return open(self._normalize_path(path), mode)
 
     def remove_file(self, path):
-        os.remove(path)
+        os.remove(self._normalize_path(path))
+
+    @property
+    def platform(self):
+        return platform.system()
 
     def _normalize_path(self, path):
         if not os.path.isabs(path):

@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import unittest
+import platform
 from artisan import (LocalWorker,
                      LocalCommand)
 
@@ -245,3 +246,7 @@ class TestLocalWorker(unittest.TestCase):
 
         with worker.open_file("tmp2", mode="r") as f:
             self.assertEqual(f.read(), "get")
+
+    def test_platform(self):
+        worker = LocalWorker()
+        self.assertEqual(worker.platform, platform.system())

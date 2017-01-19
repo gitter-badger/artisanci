@@ -1,9 +1,8 @@
 """ LocalCommand implementation for Python 2.x """
-import time
 import threading
 from Queue import Queue, Empty
 from .base_local_command import BaseLocalCommand
-from ..compat import monotonic
+from ..compat import monotonic, sched_yield
 
 __all__ = [
     "Local2Command"
@@ -50,17 +49,10 @@ class Local2Command(BaseLocalCommand):
         return self._proc.pid
 
     def cancel(self):
-        if self._cancelled:
-            raise ValueError("Command is already cancelled.")
-        try:
-            self._proc.kill()
-        except Exception:
-            pass
+        super(Local2Command, self).cancel()
         for thread in self._queue_threads:
             thread.stop = True
         self._queue_threads = None
-        self._proc = None
-        self._cancelled = True
 
     def _read_all(self, timeout=0.001):
         if self._proc is None:
@@ -83,7 +75,8 @@ class Local2Command(BaseLocalCommand):
                 pass
             if timeout is not None and monotonic() - start_time <= timeout:
                 break
-            time.sleep(0.0)  # Suggest that the thread to give up its CPU.
+            # Suggest that the thread to give up its CPU.
+            sched_yield()
 
     def _is_not_complete(self):
         return (self._exit_status is None or

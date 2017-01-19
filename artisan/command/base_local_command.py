@@ -1,6 +1,10 @@
 import subprocess
 from .base_command import BaseCommand
 
+__all__ = [
+    'BaseLocalCommand'
+]
+
 
 class BaseLocalCommand(BaseCommand):
     def __init__(self, worker, command, environment=None):
@@ -10,6 +14,16 @@ class BaseLocalCommand(BaseCommand):
     def signal(self, signal):
         if self._proc is not None:
             self._proc.send_signal(signal)
+
+    def cancel(self):
+        if self._cancelled:
+            raise ValueError("Command is already cancelled.")
+        try:
+            self._proc.kill()
+        except Exception:
+            pass
+        self._proc = None
+        self._cancelled = True
 
     def _create_subprocess(self):
         self.is_shell = True if not isinstance(self.command, list) else False
