@@ -66,9 +66,9 @@ Please respect contributors by not using personal contacts for support requests.
 Contributing
 ------------
 
-We happily welcome contributions, please see `our guide for Contributors <http://artisan.readthedocs.io/en/latest/contributing.html>`_ for the best places to start and help.
+We welcome community contributions, please see `our guide for Contributors <http://artisan.readthedocs.io/en/latest/contributing.html>`_ for the best places to start and help.
 
 License
 -------
 
-artisan is made available under the MIT License. For more details, see `LICENSE.txt <https://github.com/SethMichaelLarson/artisan/blob/master/LICENSE.txt>`_.
+Artisan is made available under the MIT License. For more details, see `LICENSE.txt <https://github.com/SethMichaelLarson/artisan/blob/master/LICENSE.txt>`_.

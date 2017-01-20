@@ -5,7 +5,7 @@ from .base_local_command import BaseLocalCommand
 from ..compat import monotonic, sched_yield
 
 __all__ = [
-    "Local2Command"
+    'Local2Command'
 ]
 
 

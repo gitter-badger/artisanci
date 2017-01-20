@@ -5,6 +5,7 @@ from .base_worker_testcase import _BaseWorkerTestCase
 
 class TestLocalWorker(_BaseWorkerTestCase):
     COMMAND_TYPE = LocalCommand
+    WORKER_TYPE = LocalWorker
 
     def make_worker(self):
         return LocalWorker()

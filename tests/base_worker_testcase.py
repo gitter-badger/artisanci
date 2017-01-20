@@ -1,9 +1,14 @@
 import os
-import sys
+import signal
 import socket
+import sys
 import time
 import unittest
 import platform
+
+from artisan import (CommandExitStatusException,
+                     CommandTimeoutException,
+                     SshWorker)
 
 
 def _safe_close(worker):
@@ -22,6 +27,7 @@ def _safe_remove(path):
 
 class _BaseWorkerTestCase(unittest.TestCase):
     COMMAND_TYPE = None
+    WORKER_TYPE = None
     
     def make_worker(self):
         raise NotImplementedError()
@@ -349,3 +355,102 @@ class _BaseWorkerTestCase(unittest.TestCase):
     def test_platform(self):
         worker = self.make_worker()
         self.assertEqual(worker.platform, platform.system())
+
+    def test_worker_as_context_manager(self):
+        with self.make_worker() as worker:
+            self.assertIsInstance(worker, self.WORKER_TYPE)
+            self.assertIs(worker.closed, False)
+        self.assertIs(worker.closed, True)
+    
+    def test_execute_command_supply_environment(self):
+        worker = self.make_worker()
+        command = worker.execute(sys.executable + ' -c "import os, sys; sys.stdout.write(os.environ[\'ENVIRONMENT\'])"',
+                                 environment={'ENVIRONMENT': 'VARIABLE'})
+        command.wait(timeout=1.0)
+        self.assertEqual(command.exit_status, 0)
+    
+        stdout = command.stdout.read()
+        self.assertEqual(stdout, b'VARIABLE')
+    
+    def test_pid(self):
+        worker = self.make_worker()
+        command = worker.execute([sys.executable, '-c', 'import sys, os; sys.stdout.write(str(os.getpid()))'])
+        if command.is_shell:
+            self.skipTest('Command is a shell instance by default.')
+    
+        pid = command.pid
+        command.wait(timeout=1.0)
+        self.assertEqual(command.stdout.read(), str(pid).encode('utf-8'))
+    
+    def test_pid_after_cancel(self):
+        worker = self.make_worker()
+        command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
+        command.cancel()
+        self.assertIs(command.pid, None)
+    
+    @unittest.skipIf(platform.system() == 'Windows', 'Skip signal tests on Windows.')
+    def test_signal_exit_status(self):
+        worker = self.make_worker()
+        command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
+        command.signal(signal.SIGFPE)
+        command.wait(timeout=3.0)
+        self.assertEqual(command.exit_status, -signal.SIGFPE)
+    
+    def test_error_on_timeout(self):
+        worker = self.make_worker()
+        command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
+        self.assertRaises(CommandTimeoutException, command.wait, timeout=1.0, error_on_timeout=True)
+    
+    def test_error_on_exit(self):
+        worker = self.make_worker()
+        for i in range(10):
+            command = worker.execute(sys.executable + ' -c "import time, sys; time.sleep(0.1); sys.exit(%d)"' % i)
+            if i == 0:
+                command.wait(timeout=1.0, error_on_exit=True)
+            else:
+                self.assertRaises(CommandExitStatusException, command.wait, timeout=1.0, error_on_exit=True)
+            self.assertEqual(command.exit_status, i)
+    
+    @unittest.skipIf(sys.version_info[0] == 2, 'Python 2.x subprocess.Popen.poll() blocks.')
+    def test_wait_returns_bool_false(self):
+        worker = self.make_worker()
+        command = worker.execute(sys.executable + ' -c "import time; time.sleep(1.0)"')
+        self.assertIs(command.wait(timeout=0.1), False)
+    
+    def test_wait_returns_bool_true(self):
+        worker = self.make_worker()
+        command = worker.execute(sys.executable + ' -c "import time; time.sleep(0.1)"')
+        self.assertIs(command.wait(timeout=1.0), True)
+    
+    def test_is_shell_true(self):
+        worker = self.make_worker()
+        command = worker.execute(sys.executable + ' -c "import sys, os; sys.exit(0)"')
+        self.assertIs(command.is_shell, True)
+        command.wait(timeout=1.0)
+        self.assertEqual(command.exit_status, 0)
+
+    def test_is_shell_false(self):
+        worker = self.make_worker()
+        if isinstance(worker, SshWorker):
+            self.skipTest('SshCommand.is_shell is always True.')
+
+        command = worker.execute([sys.executable, '-c', 'import sys, os; sys.exit(0)'])
+        self.assertIs(command.is_shell, False)
+        command.wait(timeout=1.0)
+        self.assertEqual(command.exit_status, 0)
+
+    def test_ssh_command_is_shell_always_true(self):
+        worker = self.make_worker()
+        if not isinstance(worker, SshWorker):
+            self.skipTest('This test does not apply to non-SSH workers.')
+
+        command = worker.execute([sys.executable, '-c', 'import sys, os; sys.exit(0)'])
+        self.assertIs(command.is_shell, True)
+        command.wait(timeout=1.0)
+        self.assertEqual(command.exit_status, 0)
+    
+    def test_command_already_complete_wait_exit_immediately(self):
+        worker = self.make_worker()
+        command = worker.execute([sys.executable, '-c', 'import sys, os; sys.exit(0)'])
+        self.assertIs(command.wait(timeout=1.0), True)
+        self.assertIs(command.wait(timeout=1.0), True)

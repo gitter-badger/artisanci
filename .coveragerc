@@ -14,3 +14,5 @@ exclude_lines =
     .* # Platform-specific.*
     .*:.* # Python \d.*
     .* # Skip coverage.*
+    .*def __repr__.*
+    .*def __str__.*
