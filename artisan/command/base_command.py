@@ -109,6 +109,8 @@ class BaseCommand(object):
         start_time = monotonic()
         read_timeout = timeout
         not_complete = self._is_not_complete()
+        if not not_complete:
+            return True
         while self._is_not_complete():
             self._read_all(read_timeout)
             if timeout is not None:
