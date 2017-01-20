@@ -186,11 +186,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
         self.assertEqual(worker.cwd, old_dir)
 
         worker.change_directory('..')
-        worker.change_directory(os.path.join(dirname, '$ENVIRONMENT$'))
-        self.assertEqual(worker.cwd, old_dir)
-
-        worker.change_directory('..')
-        worker.change_directory(os.path.join(dirname, '$$ENVIRONMENT$$'))
+        worker.change_directory(os.path.join(dirname, '$ENVIRONMENT'))
         self.assertEqual(worker.cwd, old_dir)
 
     def test_home_directory(self):
