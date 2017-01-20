@@ -11,7 +11,7 @@ License
 
 Copied from `LICENSE.txt <https://github.com/SethMichaelLarson/artisan/blob/master/LICENSE.txt>`_:
 
-.. include:: ../../LICENSE.txt
+.. literalinclude:: ../../LICENSE.txt
 
 Thanking the Maintainers
 ------------------------

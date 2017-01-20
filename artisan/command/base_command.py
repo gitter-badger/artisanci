@@ -12,8 +12,8 @@ __all__ = [
 
 
 class BaseCommand(object):
-    """ Interface for commands executed by :class:`artisan.worker.BaseWorker`.
-    An instance of this must be returned from :meth:`artisan.worker.BaseWorker.execute`"""
+    """ Interface for commands executed by :class:`artisan.BaseWorker`.
+    An instance of this must be returned from :meth:`artisan.BaseWorker.execute`"""
     def __init__(self, worker, command, environment=None):
         """
         Create an BaseCommand instance.
@@ -23,7 +23,7 @@ class BaseCommand(object):
         self.worker = worker
         self.command = command
         self.environment = self._apply_minimum_environment(environment)
-        self.is_shell = False
+        self._is_shell = False
 
         self._cancelled = False
         self._exit_status = None
@@ -38,9 +38,24 @@ class BaseCommand(object):
          .. note::
             This is different from the sub-commands
             being run if using a shell rather than a
-            list of command argv values.
+            list of command argv values. Check
+            :py:attr:`artisan.BaseCommand.is_shell` before
+            using this value if it needs to be accurate.
         """
         raise OperationNotSupported('pid', 'command')
+
+    @property
+    def is_shell(self):
+        """
+        Boolean value whether the command is being run as
+        a shell or directly as a command.
+
+         .. note::
+
+            If this value is not True then the :py:attr:`artisan.BaseCommand.pid`
+            property will not be accurate, the pid will be that of the shell.
+        """
+        return self._is_shell
 
     @property
     def stderr(self):
@@ -62,6 +77,7 @@ class BaseCommand(object):
     def exit_status(self):
         """
         Current exit status of the command.
+
         :returns: Exit status of the command as an `int` or None if not complete.
         """
         self._check_exit()

@@ -26,7 +26,7 @@ class BaseLocalCommand(BaseCommand):
         self._cancelled = True
 
     def _create_subprocess(self):
-        self.is_shell = True if not isinstance(self.command, list) else False
+        self._is_shell = True if not isinstance(self.command, list) else False
         return subprocess.Popen(self.command,
                                 shell=self.is_shell,
                                 cwd=self.worker.cwd,

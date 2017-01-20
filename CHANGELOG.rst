@@ -1,7 +1,11 @@
 Changelog
 =========
 
-Release 1.0.0 (Development)
+Release 0.0.0 (Development)
 ---------------------------
 
-* (Add summary of changes here, along with author.)
+* Added :class:`artisan.LocalWorker`.
+* Added :class:`artisan.SshWorker`.
+* Added faster path support for :class:`artisan.SshWorker`.
+* Added :py:attr:`artisan.BaseWorker.platform`, :py:attr:`artisan.BaseWorker.hostname`,
+  and :py:attr:`artisan.BaseWorker.home` to :class:`artisan.BaseWorker`.

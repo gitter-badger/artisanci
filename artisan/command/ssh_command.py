@@ -13,7 +13,7 @@ class SshCommand(BaseCommand):
         if isinstance(command, list):
             command = ' '.join(command)
         super(SshCommand, self).__init__(worker, command, environment)
-        self.is_shell = True
+        self._is_shell = True
 
         _, stdout, _ = worker._ssh.exec_command(command, environment=environment)
         self._channel = stdout.channel  # type: paramiko.Channel

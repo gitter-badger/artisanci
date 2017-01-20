@@ -1,10 +1,7 @@
 #### Version / Platform Info
-- Artisan Version:
-- Happens in latest version? (Yes/No): 
-- Known Operating System(s) affected__:
-  - [ ] Windows
-  - [ ] Linux
-  - [ ] Mac OS
+- Artisan Version: [Example: 1.0.0]
+- Happens in latest released version?: [Yes/No]
+- Happens in latest development version?: [Yes/No]
 
 #### Expected Behavior
 

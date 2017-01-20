@@ -1,0 +1,76 @@
+Contributing
+============
+
+Artisan is a community-maintained project and happily accepts contributions.
+Thank you for considering contributing. ❤️
+
+Adding Features / Fixing Bugs
+-----------------------------
+
+1. `Check for open issues <https://github.com/SethMichaelLarson/artisan/issues>`_ or open
+   a new issue to start a discussion around a new feature or a bug.  Issues labeled with
+   *Contributor Friendly* are for issues that are great for new contributors that are
+   new to the project or not as familiar with the codebase.
+
+2. Fork the `Artisan repository on Github <https://github.com/SethMichaelLarson/artisan>`_
+   to start making changes.
+
+3. Write a test which shows that the bug was fixed or that the feature works as expected.
+   Make sure that all regression tests pass by running the tests as described below.
+
+4. Send a Pull Request that describes what your change is and monitor the thread until
+   it gets merged and published. Mention bot will ping the maintainers that are best suited
+   for reviewing the change. Make sure all steps in the Pull Request template are completed including adding
+   documentation if necessary and adding yourself to ``CONTRIBUTORS.rst`` for non-trivial features.
+
+   .. note::
+        You are advised to submit your changes earlier than when the feature is complete in
+        your personal fork. The reason for this is to save you a lot of time and effort in
+        needing to refactor your new feature or change if maintainers have review comments.
+        Submitting earlier also allows maintainers to help you with your branch and allows
+        questions, comments, and design discussion to happen during the development of the
+        new feature.
+
+5. If you need to make updates to your Pull Request, simply push to the same repository and branch
+   that your Pull Request was filed under. There is no need to open a new Pull Request, our
+   continuous integration services will pick up the updates.
+
+Running the Test Suite
+----------------------
+
+Our test suite is based on `tox <https://tox.readthedocs.io/en/latest/>`_ to allow
+running from many different Python versions at once in addition to building docs
+and running a style checker via `flake8 <http://flake8.pycqa.org/en/latest/>`_.
+
+.. warning::
+    Please run these *before* pushing to a branch with an open Pull Request to conserve
+    the number of API requests we make to our Continuous Integration services.
+
+To run our test suite, simply change your current working directory to the root
+of the project and run the following command::
+
+    $ tox
+    [... install dependencies, build docs, run tests]
+    docs: commands succeeded
+    flake8: commands succeeded
+    py27: commands succeeded
+    py33: commands succeeded
+    py34: commands succeeded
+    py35: commands succeeded
+    py36: commands succeeded
+
+Note that unless you have a Python interpreter for 2.7 as well as 3.3-3.7 you may see failures
+for all the interpreters you don't have.  If you don't have a Python 3.5 interpreter you will
+not be able to run the flake8 check or build the docs as both require a Python 3.5 interpreter.
+
+Our test suite is run against Travis CI as well as AppVeyor for each Pull Request.  Our codebase is
+also monitored by Codecov for test suite coverage checks and CodeClimate to get automated code review
+for both maintainers and contributors alike.
+
+Security Issues
+---------------
+
+In the case a security issue is found please email me at ``sethmichaellarson@protonmail.com`` and we will
+discuss the issue privately. Please do not post or disclose security issues on the Github issue tracker
+until the issue is resolved. After the issue is resolved you will be recognized publicly for the security issue
+at your discretion.

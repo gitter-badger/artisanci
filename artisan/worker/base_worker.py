@@ -29,15 +29,13 @@ class BaseWorker(object):
         :param environment:
             Optional dictionary of key-value pairs for environment
             variables to override the default worker environment.
-        :return: :class:`artisan.BaseCommand` instance.
+        :returns: :class:`artisan.BaseCommand` instance.
         """
         raise OperationNotSupported('execute()', 'worker')
 
     @property
     def cwd(self):
-        """
-        The current working directory for the worker.
-        """
+        """ The current working directory for the worker. """
         raise OperationNotSupported('cwd', 'worker')
 
     def change_directory(self, path):
@@ -74,7 +72,6 @@ class BaseWorker(object):
 
         :param str local_path: Path to the file on the local machine.
         :param str remote_path: Directory on the worker to put the file.
-        :return:
         """
         raise OperationNotSupported('put_file()', 'worker')
 
@@ -84,15 +81,16 @@ class BaseWorker(object):
 
         :param str path: Path of the file/directory to get attributes from.
         :param bool follow_symlinks: If True, will follow symlinks. Set to False to stat symlinks.
-        :return: :class:`artisan.FileAttributes` object.
+        :returns: :class:`artisan.FileAttributes` object.
         """
         raise OperationNotSupported('stat_file()', 'worker')
 
     def is_directory(self, path):
         """
         Checks to see if a path is a directory.
+
         :param str path: Path to the directory.
-        :return: True if the path is a directory, False otherwise.
+        :returns: True if the path is a directory, False otherwise.
         """
         raise OperationNotSupported('is_directory()', 'worker')
 
@@ -101,7 +99,7 @@ class BaseWorker(object):
         Checks to see if a path is a file.
 
         :param str path: Path to the file.
-        :return: True if the path is a file, False otherwise.
+        :returns: True if the path is a file, False otherwise.
         """
         raise OperationNotSupported('is_file()', 'worker')
 
@@ -110,7 +108,7 @@ class BaseWorker(object):
         Checks to see if a path is a symlink.
 
         :param str path: Path to the symlink.
-        :return: True if the path is a symlink, False otherwise.
+        :returns: True if the path is a symlink, False otherwise.
         """
         raise OperationNotSupported('is_symlink()', 'worker')
 
@@ -130,7 +128,7 @@ class BaseWorker(object):
             Mode to open the file. This is the same for :meth:`open`.
             See `Python docs <https://docs.python.org/3/library/functions.html#open>`_
             for more information about this parameter. Default is read-only.
-        :return: File-like object.
+        :returns: File-like object.
         """
         raise OperationNotSupported('open_file()', 'worker')
 
@@ -162,43 +160,28 @@ class BaseWorker(object):
 
     @property
     def platform(self):
-        """
-        Gets the name of the platform that the worker is on.
-
-        :return: Name of the platform as a :class:`str`.
-        """
+        """ Gets the name of the platform that the worker is on.
+        Can be either 'Linux', 'Mac OS', 'Windows', or another OS name. """
         raise OperationNotSupported('platform', 'worker')
 
     @property
     def hostname(self):
-        """
-        Gets the hostname for the machine the worker is on.
-
-        :return: Hostname of the machine as a :class:`str`.
-        """
+        """ Gets the hostname for the machine the worker is on. """
         raise OperationNotSupported('hostname', 'worker')
 
     @property
     def home(self):
-        """
-        Gets the home directory for the worker.
-
-        :return: Home directory of the worker as a :class:`str`.
-        """
+        """ Gets the home directory for the worker. """
         raise OperationNotSupported('home', 'worker')
 
     @property
     def closed(self):
-        """
-        Boolean property that is ``True`` if the worker is closed.
-        """
+        """ Boolean property that is ``True`` if the worker is closed. """
         return self._closed
 
     def close(self):
-        """
-        Closes the worker and cleans up all resources that the
-        worker may be using internally to operate.
-        """
+        """ Closes the worker and cleans up all resources that the
+        worker may be using internally to operate. """
         if self._closed:
             raise ValueError('Worker is already closed.')
         self._closed = True
