@@ -16,8 +16,8 @@ Artisan
 .. image:: https://readthedocs.org/projects/artisan/badge/?version=latest
     :target: http://artisan.readthedocs.io
     :alt: Documentation Build Status
-.. image:: https://pyup.io/repos/github/SethMichaelLarson/artisan/shield.svg
-     :target: https://pyup.io/repos/github/SethMichaelLarson/artisan
+.. image:: https://pyup.io/repos/github/sethmichaellarson/artisan/shield.svg
+     :target: https://pyup.io/repos/github/sethmichaellarson/artisan
      :alt: Dependency Versions
 .. image:: https://img.shields.io/pypi/v/artisan.svg
     :target: https://pypi.python.org/pypi/artisan
