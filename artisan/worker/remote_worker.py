@@ -16,8 +16,12 @@ class RemoteWorker(BaseWorker):
         self._pipe = picklepipe.PicklePipe(sock)
         super(RemoteWorker, self).__init__(sock.getpeername(), environment)
 
+        self.environment = _RemoteEnvironment(self, self.environment)
+
     def execute(self, command, environment=None):
-        self._pipe.send_object((0, 'execute', [command], {'environment': environment}))
+        if environment is None:
+            environment = self.environment
+        self._pipe.send_object((0, 'execute', [command], {'environment': environment.copy()}))
         pipe_id = self._pipe.recv_object()
         return RemoteCommand(pipe_id, self, command, environment)
 
@@ -38,6 +42,28 @@ class RemoteWorker(BaseWorker):
 
     def is_symlink(self, path):
         return self._send_and_recv('is_symlink', path)
+
+    def put_file(self, local_path, remote_path):
+        with open(local_path, 'rb') as f:
+            self._send_and_recv('put_file', local_path, remote_path)
+            data = f.read(4096)
+            while data != b'':
+                self._pipe.send_object((False, data))
+                self._pipe.recv_object(timeout=5.0)
+                data = f.read(4096)
+            self._pipe.send_object((True, b''))
+            self._pipe.recv_object(timeout=5.0)
+
+    def get_file(self, remote_path, local_path):
+        with open(local_path, 'wb') as f:
+            f.truncate()
+            self._send_and_recv('get_file', remote_path, local_path)
+            while True:
+                done, data = self._pipe.recv_object(timeout=5.0)
+                f.write(data)
+                self._pipe.send_object(None)
+                if done:
+                    break
 
     @property
     def home(self):
@@ -60,7 +86,7 @@ class RemoteWorker(BaseWorker):
 
     def _send_and_recv(self, func, *args, **kwargs):
         self._pipe.send_object((0, func, args, kwargs))
-        obj = self._pipe.recv_object()
+        obj = self._pipe.recv_object(timeout=5.0)
         if isinstance(obj, BaseException):
             raise obj
         return obj
@@ -71,3 +97,23 @@ class RemoteWorker(BaseWorker):
             self._pipe.close()
         except Exception:  # Skip coverage.
             pass
+
+
+class _RemoteEnvironment(dict):
+    def __init__(self, worker, init):
+        super(_RemoteEnvironment, self).__init__()
+        assert isinstance(worker, RemoteWorker)
+        self._worker = worker
+        self._send_updates = False
+        self.update(init)
+        self._send_updates = True
+
+    def __setitem__(self, key, value):
+        if self._send_updates:
+            self._worker._send_and_recv('_set_environment', key, value)
+        super(_RemoteEnvironment, self).__setitem__(key, value)
+
+    def __delitem__(self, key):
+        if self._send_updates:
+            self._worker._send_and_recv('_del_environment', key)
+        super(_RemoteEnvironment, self).__delitem__(key)

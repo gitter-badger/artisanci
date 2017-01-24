@@ -43,10 +43,30 @@ class RemoteWorkerAgent(threading.Thread):
                             obj = self._worker_pipes[pipe][object_id]
                         except PipeTimeout:
                             continue
+                        func, args, kwargs = command[1:]
                         try:
-                            func, args, kwargs = command[1:]
                             if func == '__getattr__':
                                 pipe.send_object(getattr(obj, args[0]))
+                            elif func == 'put_file':
+                                with open(args[1], 'wb') as f:
+                                    f.truncate()
+                                    while True:
+                                        done, data = pipe.recv_object(timeout=5.0)
+                                        f.write(data)
+                                        pipe.send_object(None)
+                                        if done:
+                                            break
+
+                            elif func == 'get_file':
+                                with open(args[0], 'rb') as f:
+                                    data = f.read(4096)
+                                    while data != b'':
+                                        pipe.send_object((False, data))
+                                        pipe.recv_object(timeout=5.0)
+                                        data = f.read(4096)
+                                    pipe.send_object((True, b''))
+                                    pipe.recv_object(timeout=5.0)
+
                             else:
                                 resp = getattr(obj, func)(*args, **kwargs)
                                 if func == 'execute':

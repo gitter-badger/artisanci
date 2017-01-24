@@ -192,6 +192,12 @@ class BaseWorker(object):
     def _expandvars(self, path):
         return expandvars(self, path)
 
+    def _set_environment(self, name, value):
+        self.environment[name] = value
+
+    def _del_environment(self, name):
+        del self.environment[name]
+
     def __enter__(self):
         return self
 

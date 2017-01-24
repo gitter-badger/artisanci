@@ -1,6 +1,10 @@
 from picklepipe import PicklePipe
 from .base_command import BaseCommand
 
+__all__ = [
+    'RemoteCommand'
+]
+
 
 class RemoteCommand(BaseCommand):
     def __init__(self, pipe_id, worker, command, environment=None):
@@ -29,17 +33,17 @@ class RemoteCommand(BaseCommand):
                                           ['pid'], {}))
 
     @property
+    def is_shell(self):
+        return send_and_recv(self._pipe, (self._pipe_id, '__getattr__',
+                                          ['is_shell'], {}))
+
+    @property
     def stdout(self):
         return self._stdout
 
     @property
     def stderr(self):
         return self._stderr
-
-    @property
-    def is_shell(self):
-        return send_and_recv(self._pipe, (self._pipe_id, '__getattr__',
-                                          ['is_shell'], {}))
 
     def cancel(self):
         self._cancelled = True
