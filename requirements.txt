@@ -1,2 +1,4 @@
 monotonic==1.2
 paramiko==2.1.1
+picklepipe==1.1.0
+selectors2==1.0

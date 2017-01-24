@@ -176,3 +176,9 @@ class BaseCommand(object):
         assert isinstance(stream, io.BytesIO)
         stream.write(data)
         stream.seek(-len(data), 1)
+
+    def _read_stdout(self, n=None):
+        return self.stdout.read(n)
+
+    def _read_stderr(self, n=None):
+        return self.stderr.read(n)

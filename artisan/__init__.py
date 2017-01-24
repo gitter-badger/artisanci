@@ -2,7 +2,8 @@
 automation, continuous integration, and farm management. """
 from .command import (BaseCommand,
                       LocalCommand,
-                      SshCommand)
+                      SshCommand,
+                      RemoteCommand)
 from .exceptions import (JobTimeoutException,
                          JobErrorException,
                          JobFailureException,
@@ -13,7 +14,9 @@ from .exceptions import (JobTimeoutException,
 from .worker import (FileAttributes,
                      BaseWorker,
                      LocalWorker,
-                     SshWorker)
+                     SshWorker,
+                     RemoteWorker)
+from .remote_agent import RemoteWorkerAgent
 
 __author__ = 'Seth Michael Larson'
 __email__ = 'sethmichaellarson@protonmail.com'
@@ -36,5 +39,8 @@ __all__ = [
     'FileAttributes',
     'BaseWorker',
     'LocalWorker',
-    'SshWorker'
+    'SshWorker',
+    'RemoteWorker',
+
+    'RemoteWorkerAgent'
 ]

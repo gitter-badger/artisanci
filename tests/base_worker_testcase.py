@@ -214,7 +214,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
         self.assertEqual(act.inode, exp.st_ino)
         self.assertEqual(act.nlink, exp.st_nlink)
 
-    @unittest.skipUnless(hasattr(os, 'symlink'), 'Requires symlinks to run.')
+    @unittest.skipIf(platform.system() == 'Windows', 'Do not run on Windows.')
     def test_stat_follow_symlinks(self):
         test_dir = os.path.dirname(os.path.abspath(__file__))
         source_path = os.path.join(test_dir, 'source')
@@ -234,7 +234,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
         self.assertEqual(act.inode, exp.st_ino)
         self.assertEqual(act.nlink, exp.st_nlink)
 
-    @unittest.skipUnless(hasattr(os, 'symlink'), 'Requires symlinks to run.')
+    @unittest.skipIf(platform.system() == 'Windows', 'Do not run on Windows.')
     def test_stat_dont_follow_symlinks(self):
         test_dir = os.path.dirname(os.path.abspath(__file__))
         source_path = os.path.join(test_dir, 'source')
