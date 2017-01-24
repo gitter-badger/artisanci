@@ -27,6 +27,7 @@ __all__ = [
     'BaseCommand',
     'LocalCommand',
     'SshCommand',
+    'RemoteCommand',
 
     'JobTimeoutException',
     'JobCancelledException',

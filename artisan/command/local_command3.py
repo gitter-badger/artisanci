@@ -3,13 +3,13 @@ import subprocess
 from .base_local_command import BaseLocalCommand
 
 __all__ = [
-    'Local3Command'
+    'LocalCommand3'
 ]
 
 
-class Local3Command(BaseLocalCommand):
+class LocalCommand3(BaseLocalCommand):
     def __init__(self, worker, command, environment=None):
-        super(Local3Command, self).__init__(worker, command, environment)
+        super(LocalCommand3, self).__init__(worker, command, environment)
         self._proc = self._create_subprocess()
 
     @property

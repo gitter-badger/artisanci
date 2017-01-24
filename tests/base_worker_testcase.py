@@ -99,10 +99,9 @@ class _BaseWorkerTestCase(unittest.TestCase):
         worker = self.make_worker()
         for exit_status in range(10):
             command = worker.execute(sys.executable + " -c \"import sys; sys.exit(%s)\"" % str(exit_status))
-            command.wait(1.0)
+            command.wait(timeout=1.0)
             self.assertEqual(command.exit_status, exit_status)
 
-    @unittest.skipIf(sys.version_info[0] == 2, 'Python 2.x subprocess.Popen.poll() blocks.')
     def test_exit_time(self):
         worker = self.make_worker()
         command = worker.execute(sys.executable + " -c \"import sys, time; time.sleep(0.3); sys.exit(2)\"")
@@ -110,7 +109,6 @@ class _BaseWorkerTestCase(unittest.TestCase):
         time.sleep(1.0)
         self.assertEqual(command.exit_status, 2)
 
-    @unittest.skipIf(sys.version_info[0] == 2, 'Python 2.x subprocess.Popen.poll() blocks.')
     def test_wait_timeout(self):
         worker = self.make_worker()
         command = worker.execute(sys.executable + " -c \"import sys, time; time.sleep(0.5); sys.exit(2)\"")
@@ -191,9 +189,26 @@ class _BaseWorkerTestCase(unittest.TestCase):
         worker.change_directory(os.path.join(dirname, '%ENVIRONMENT%'))
         self.assertEqual(worker.cwd, old_dir)
 
-        worker.change_directory('..')
-        worker.change_directory(os.path.join(dirname, '$ENVIRONMENT'))
-        self.assertEqual(worker.cwd, old_dir)
+    def test_expandvars_not_in_non_shell_commands(self):
+        worker = self.make_worker()
+        worker.environment['ENVIRONMENT'] = 'VARIABLE'
+        command = worker.execute(['echo', '$ENVIRONMENT'])
+        if command.is_shell:
+            self.skipTest('Command was shell by default.')
+        command.wait(timeout=1.0)
+
+        self.assertEqual(command.stdout.read().rstrip(), b'$ENVIRONMENT')
+
+    @unittest.skipUnless(platform.system() == 'Windows', 'This feature is only available on Windows.')
+    def test_expandvars_not_in_non_shell_commands_windows(self):
+        worker = self.make_worker()
+        worker.environment['ENVIRONMENT'] = 'VARIABLE'
+        command = worker.execute(['echo', '%ENVIRONMEN%'])
+        if command.is_shell:
+            self.skipTest('Command was shell by default.')
+        command.wait(timeout=1.0)
+
+        self.assertEqual(command.stdout.read().rstrip(), b'%ENVIRONMENT%')
 
     def test_home_directory(self):
         home = os.path.expanduser('~')
@@ -410,8 +425,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
             else:
                 self.assertRaises(CommandExitStatusException, command.wait, timeout=1.0, error_on_exit=True)
             self.assertEqual(command.exit_status, i)
-    
-    @unittest.skipIf(sys.version_info[0] == 2, 'Python 2.x subprocess.Popen.poll() blocks.')
+
     def test_wait_returns_bool_false(self):
         worker = self.make_worker()
         command = worker.execute(sys.executable + ' -c "import time; time.sleep(1.0)"')

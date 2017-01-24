@@ -1,5 +1,6 @@
-#### Version / Platform Info
+#### Version Information
 - Artisan Version: [Example: 1.0.0]
+- Python Version: [Example: Python 2.7+]
 - Happens in latest released version?: [Yes/No]
 - Happens in latest development version?: [Yes/No]
 
@@ -12,10 +13,6 @@ Explain what is expected to happen when the code runs.
 Explain what actually happens when the code is run.
 
 #### Minimal Example of Issue
-
-Show a minimal example to get this issue to occur.
-This will significantly speed up the amount of time it 
-takes to debug and resolve the issue for our contributors.
 
 ```python
 import artisan

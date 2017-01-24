@@ -69,4 +69,3 @@ def send_and_recv(pipe, data):
     if isinstance(resp, BaseException):
         raise resp
     return resp
-

@@ -5,7 +5,7 @@ from .base_local_command import BaseLocalCommand
 from ..compat import monotonic, sched_yield
 
 __all__ = [
-    'Local2Command'
+    'LocalCommand2'
 ]
 
 
@@ -30,9 +30,9 @@ class _QueueThread(threading.Thread):
         self.stop = True
 
 
-class Local2Command(BaseLocalCommand):
+class LocalCommand2(BaseLocalCommand):
     def __init__(self, worker, command, environment=None):
-        super(Local2Command, self).__init__(worker, command, environment)
+        super(LocalCommand2, self).__init__(worker, command, environment)
 
         # Create the two monitoring threads.
         self._queue_threads = [_QueueThread(self._proc.stdout),
@@ -49,7 +49,7 @@ class Local2Command(BaseLocalCommand):
         return self._proc.pid
 
     def cancel(self):
-        super(Local2Command, self).cancel()
+        super(LocalCommand2, self).cancel()
         for thread in self._queue_threads:
             thread.stop = True
         self._queue_threads = None
@@ -73,7 +73,7 @@ class Local2Command(BaseLocalCommand):
                     self._write_data_to_stream(self._stderr, data)
             except Empty:
                 pass
-            if timeout is not None and monotonic() - start_time <= timeout:
+            if timeout is not None and monotonic() - start_time > timeout:
                 break
             # Suggest that the thread to give up its CPU.
             sched_yield()
