@@ -4,6 +4,7 @@ import re
 import posixpath
 import ntpath
 import stat
+import socket
 import paramiko
 from .base_worker import BaseWorker
 from .file_attrs import stat_to_file_attrs
@@ -41,7 +42,7 @@ class SshWorker(BaseWorker):
         self._ssh.set_missing_host_key_policy(add_policy)
         try:
             self._ssh.connect(host, port, username, **kwargs)
-        except paramiko.SSHException:
+        except (paramiko.SSHException, socket.error):
             raise WorkerNotAvailable()
 
         # This value is a fall-back if the home directory can't be found.

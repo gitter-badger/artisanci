@@ -154,6 +154,12 @@ class BaseCommand(object):
             except ValueError:  # Skip coverage.
                 pass
 
+    def __repr__(self):
+        return '<%s command=`%s`>' % (type(self).__name__, self.command)
+
+    def __str__(self):
+        return self.__repr__()
+
     def _is_not_complete(self):
         return self._exit_status is None
 

@@ -198,6 +198,12 @@ class BaseWorker(object):
     def _del_environment(self, name):
         del self.environment[name]
 
+    def __repr__(self):
+        return '<%s host=`%s`>' % (type(self).__name__, self.host)
+
+    def __str__(self):
+        return self.__repr__()
+
     def __enter__(self):
         return self
 
