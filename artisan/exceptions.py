@@ -51,6 +51,13 @@ class JobTimeoutException(JobFailureException):
             '%s in less than %s seconds' % (action, timeout))
 
 
+class CommandClosedException(JobFailureException):
+    """ Exception for when an action is taken on a closed command. """
+    def __init__(self, command):
+        super(CommandClosedException, self).__init__(
+            'Command `%s` is closed.' % command)
+
+
 class CommandTimeoutException(JobTimeoutException):
     """ Exception for calling :meth:`artisan.BaseCommand.wait` with
     ``error_on_timeout`` parameter equal to True and the command times out. """

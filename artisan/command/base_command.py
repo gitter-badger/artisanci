@@ -1,4 +1,5 @@
 import io
+import signal
 import platform
 from ..compat import monotonic
 from ..exceptions import (CommandTimeoutException,
@@ -29,6 +30,7 @@ class BaseCommand(object):
         self._exit_status = None
         self._stdout = io.BytesIO()
         self._stderr = io.BytesIO()
+        self._stdin = io.BytesIO()
 
     @property
     def pid(self):
@@ -74,6 +76,13 @@ class BaseCommand(object):
         return self._stdout
 
     @property
+    def stdin(self):
+        """
+        File-like object used for streaming a commands stdin.
+        """
+        return self._stdin
+
+    @property
     def exit_status(self):
         """
         Current exit status of the command.
@@ -111,18 +120,19 @@ class BaseCommand(object):
         not_complete = self._is_not_complete()
         if not not_complete:
             return True
+        timed_out = False
         while self._is_not_complete():
             self._read_all(read_timeout)
             if timeout is not None:
                 current_time = monotonic()
                 if current_time - start_time > timeout:
+                    timed_out = True
                     break
                 read_timeout = max(0.0, (start_time + timeout) - current_time)
-        if not_complete:
-            if error_on_timeout:
-                raise CommandTimeoutException(self.command, timeout)
-            if error_on_exit and self._exit_status != 0:
-                raise CommandExitStatusException(self.command, self._exit_status)
+        if self._is_not_complete() and timed_out and error_on_timeout:
+            raise CommandTimeoutException(self.command, timeout)
+        if not_complete and error_on_exit and self._exit_status not in [None, 0]:
+            raise CommandExitStatusException(self.command, self._exit_status)
         return not self._is_not_complete()
 
     def cancel(self):

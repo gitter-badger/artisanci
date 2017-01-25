@@ -95,10 +95,9 @@ class RemoteWorkerAgent(threading.Thread):
         self.close()
 
     def close(self):
-        if self._sock is None:
-            return
-        self._selector.close()
-        self._selector = None
-
-        self._sock.close()
-        self._sock = None
+        if self._sock is not None:
+            self._sock.close()
+            self._sock = None
+        if self._selector is not None:
+            self._selector.close()
+            self._selector = None

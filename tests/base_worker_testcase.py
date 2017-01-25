@@ -82,7 +82,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
     def test_stdout(self):
         worker = self.make_worker()
         command = worker.execute(sys.executable + " -c \"import sys; sys.stdout.write('Hello')\"")
-        command.wait(1.0)
+        command.wait(timeout=3.0, error_on_timeout=True)
         self.assertEqual(command.stdout.read(), b'Hello')
         self.assertEqual(command.stderr.read(), b'')
         self.assertEqual(command.exit_status, 0)
@@ -90,9 +90,18 @@ class _BaseWorkerTestCase(unittest.TestCase):
     def test_stderr(self):
         worker = self.make_worker()
         command = worker.execute(sys.executable + " -c \"import sys; sys.stderr.write('Hello')\"")
-        command.wait(1.0)
+        command.wait(timeout=3.0, error_on_timeout=True)
         self.assertEqual(command.stderr.read(), b'Hello')
         self.assertEqual(command.stdout.read(), b'')
+        self.assertEqual(command.exit_status, 0)
+
+    def test_stdin(self):
+        worker = self.make_worker()
+        command = worker.execute(sys.executable + " -c \"import sys; sys.stdout.write(sys.stdin.read(13))\"")
+        command.stdin.write(b'Hello, world!')
+        command.wait(timeout=3.0, error_on_timeout=True)
+        self.assertEqual(command.stdout.read(), b'Hello, world!')
+        self.assertEqual(command.stderr.read(), b'')
         self.assertEqual(command.exit_status, 0)
 
     def test_exit_status(self):
@@ -408,7 +417,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
         worker = self.make_worker()
         command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
         command.signal(signal.SIGFPE)
-        command.wait(timeout=3.0)
+        command.wait(timeout=1.0, error_on_timeout=True)
         self.assertEqual(command.exit_status, -signal.SIGFPE)
     
     def test_error_on_timeout(self):

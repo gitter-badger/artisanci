@@ -1,6 +1,7 @@
 import paramiko
 from .base_command import BaseCommand
 from ..compat import monotonic
+from ..exceptions import CommandClosedException
 
 __all__ = [
     'SshCommand'
@@ -15,12 +16,13 @@ class SshCommand(BaseCommand):
         super(SshCommand, self).__init__(worker, command, environment)
         self._is_shell = True
 
-        _, stdout, _ = worker._ssh.exec_command(command, environment=environment)
+        stdin, stdout, _ = worker._ssh.exec_command(command, environment=environment)
         self._channel = stdout.channel  # type: paramiko.Channel
+        self._stdin_file = stdin
 
     def cancel(self):
         if self._cancelled:
-            raise ValueError('Command is already cancelled.')
+            raise CommandClosedException(self.command)
         self._cancelled = True
         if self._channel is not None:
             try:
@@ -28,6 +30,12 @@ class SshCommand(BaseCommand):
             except Exception:  # Skip coverage.
                 pass
             self._channel = None
+        if self._stdin_file is not None:
+            try:
+                self._stdin_file.close()
+            except Exception:  # Skip coverage.
+                pass
+            self._stdin_file = None
 
     def _read_pipes(self, stdout, stderr):
         try:
@@ -49,6 +57,8 @@ class SshCommand(BaseCommand):
         start_time = monotonic()
         stdout = []
         stderr = []
+        self._stdin_file.write(self._stdin.read())
+        self._stdin_file.flush()
         try:
             while True:
                 self._read_pipes(stdout, stderr)

@@ -21,9 +21,13 @@ class LocalCommand3(BaseLocalCommand):
     def _read_all(self, timeout=0.0):
         if self._proc is None:
             return
-        self._proc.poll()
+        self._exit_status = self._proc.poll()
+        stdin = b''
+        if self._stdin:
+            stdin = self._stdin.read()
         try:
-            stdout, stderr = self._proc.communicate(timeout=timeout)
+            stdout, stderr = self._proc.communicate(input=stdin,
+                                                    timeout=timeout)
         except subprocess.TimeoutExpired:
             stdout, stderr = b'', b''
         if self._exit_status is None:

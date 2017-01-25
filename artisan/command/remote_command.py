@@ -22,6 +22,9 @@ class RemoteCommand(BaseCommand):
                   'error_on_timeout': error_on_timeout}
         return send_and_recv(self._pipe, (self._pipe_id, 'wait', [], kwargs))
 
+    def signal(self, signal):
+        send_and_recv(self._pipe, (self._pipe_id, 'signal', [signal], {}))
+
     @property
     def exit_status(self):
         return send_and_recv(self._pipe, (self._pipe_id, '__getattr__',

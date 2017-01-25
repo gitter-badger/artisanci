@@ -1,5 +1,7 @@
+from signal import SIGTERM
 import subprocess
 from .base_command import BaseCommand
+from ..exceptions import CommandClosedException
 
 __all__ = [
     'BaseLocalCommand'
@@ -13,11 +15,16 @@ class BaseLocalCommand(BaseCommand):
 
     def signal(self, signal):
         if self._proc is not None:
-            self._proc.send_signal(signal)
+            if signal == SIGTERM:
+                self.terminate()
+            else:
+                self._proc.send_signal(signal)
+        else:
+            raise CommandClosedException(self.command)
 
     def cancel(self):
         if self._cancelled:
-            raise ValueError('Command is already cancelled.')
+            raise CommandClosedException(self.command)
         try:
             self._proc.kill()
         except Exception:  # Skip coverage.
@@ -30,6 +37,7 @@ class BaseLocalCommand(BaseCommand):
         return subprocess.Popen(self.command,
                                 shell=self._is_shell,
                                 cwd=self.worker.cwd,
+                                stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
                                 env=self.environment)
