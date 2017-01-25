@@ -10,7 +10,8 @@ class RemoteWorkerAgent(threading.Thread):
     def __init__(self, host, port):
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._sock.setblocking(False)
-        self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+        if hasattr(socket, 'SO_EXCLUSIVEADDRUSE'):
+            self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
         self._sock.bind((host, port))
         self._sock.listen(512)
 
@@ -22,7 +23,7 @@ class RemoteWorkerAgent(threading.Thread):
         super(RemoteWorkerAgent, self).__init__()
 
     def run(self):
-        while self._sock is not None:
+        while self._sock is not None and self._selector is not None:
             for key, events in self._selector.select(timeout=1.0):
                 sock = key.fileobj
                 if sock is self._sock and selectors.EVENT_READ & events:
