@@ -1,5 +1,4 @@
 import io
-import signal
 import platform
 from ..compat import monotonic
 from ..exceptions import (CommandTimeoutException,
