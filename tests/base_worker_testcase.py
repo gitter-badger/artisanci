@@ -191,24 +191,24 @@ class _BaseWorkerTestCase(unittest.TestCase):
 
     def test_expandvars_not_in_non_shell_commands(self):
         worker = self.make_worker()
-        worker.environment['ENVIRONMENT'] = 'VARIABLE'
-        command = worker.execute(['echo', '$ENVIRONMENT'])
+        worker.environment['ENVIRONMENT'] = 'import sys; sys.exit(2)'
+        command = worker.execute([sys.executable, '-c', '$ENVIRONMENT%'])
         if command.is_shell:
             self.skipTest('Command was shell by default.')
         command.wait(timeout=1.0)
 
-        self.assertEqual(command.stdout.read().rstrip(), b'$ENVIRONMENT')
+        self.assertNotEqual(command.exit_status, 2)
 
     @unittest.skipUnless(platform.system() == 'Windows', 'This feature is only available on Windows.')
     def test_expandvars_not_in_non_shell_commands_windows(self):
         worker = self.make_worker()
-        worker.environment['ENVIRONMENT'] = 'VARIABLE'
-        command = worker.execute(['echo', '%ENVIRONMEN%'])
+        worker.environment['ENVIRONMENT'] = 'import sys; sys.exit(2)'
+        command = worker.execute([sys.executable, '-c', '%ENVIRONMENT%'])
         if command.is_shell:
             self.skipTest('Command was shell by default.')
         command.wait(timeout=1.0)
 
-        self.assertEqual(command.stdout.read().rstrip(), b'%ENVIRONMENT%')
+        self.assertNotEqual(command.exit_status, 2)
 
     def test_home_directory(self):
         home = os.path.expanduser('~')
