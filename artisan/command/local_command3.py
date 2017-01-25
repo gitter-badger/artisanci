@@ -23,8 +23,10 @@ class LocalCommand3(BaseLocalCommand):
             return
         self._exit_status = self._proc.poll()
         stdin = b''
-        if self._stdin:
+        if self._stdin.tell():
+            self._stdin.seek(0, 0)
             stdin = self._stdin.read()
+            self._stdin.truncate()
         try:
             stdout, stderr = self._proc.communicate(input=stdin,
                                                     timeout=timeout)

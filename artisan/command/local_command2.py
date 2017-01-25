@@ -59,7 +59,10 @@ class LocalCommand2(BaseLocalCommand):
             return
         start_time = monotonic()
         while self._is_not_complete():
-            self._proc.stdin.write(self._stdin.read())
+            if self._stdin.tell():
+                self._stdin.seek(0, 0)
+                self._proc.stdin.write(self._stdin.read())
+                self._stdin.truncate()
             if self._exit_status is None:
                 self._exit_status = self._proc.poll()
             try:
