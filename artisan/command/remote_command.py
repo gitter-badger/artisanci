@@ -13,6 +13,7 @@ class RemoteCommand(BaseCommand):
         self._pipe = worker._pipe  # type: PicklePipe
         assert isinstance(self._pipe, PicklePipe)
 
+        self._stdin = _RemoteStream(self, 'stdin')
         self._stdout = _RemoteStream(self, 'stdout')
         self._stderr = _RemoteStream(self, 'stderr')
 
@@ -63,6 +64,11 @@ class _RemoteStream(object):
         return send_and_recv(self._command._pipe, (self._command._pipe_id,
                                                    '_read_%s' % self._stream,
                                                    [n], {}))
+
+    def write(self, data):
+        return send_and_recv(self._command._pipe, (self._command._pipe_id,
+                                                   '_write_%s' % self._stream,
+                                                   [data], {}))
 
 
 def send_and_recv(pipe, data):

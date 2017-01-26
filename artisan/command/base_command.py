@@ -197,3 +197,6 @@ class BaseCommand(object):
 
     def _read_stderr(self, n=None):
         return self.stderr.read(n)
+
+    def _write_stdin(self, data):
+        self.stdin.write(data)
