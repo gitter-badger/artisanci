@@ -22,7 +22,7 @@ class LocalCommand3(BaseLocalCommand):
         if self._proc is None:
             return
         self._exit_status = self._proc.poll()
-        stdin = b''
+        stdin = None
         if self._stdin.tell():
             self._stdin.seek(0, 0)
             stdin = self._stdin.read()
@@ -30,7 +30,10 @@ class LocalCommand3(BaseLocalCommand):
         try:
             stdout, stderr = self._proc.communicate(input=stdin,
                                                     timeout=timeout)
-        except subprocess.TimeoutExpired:
+
+        # Subprocess will raise a ValueError if stdin is
+        # attempted to write to but the file is closed.
+        except (subprocess.TimeoutExpired, ValueError):
             stdout, stderr = b'', b''
         if self._exit_status is None:
             if self._proc and self._proc.returncode is not None:
