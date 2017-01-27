@@ -21,3 +21,13 @@ import artisan
 # the issue occurs. This will drastically decrease
 # the amount of time it will take to solve the issue.
 ```
+
+#### Configuration File (~/.artisan.toml)
+
+If applicable, please run `artisan conf --show --safe` and put
+the resulting configuration file here. This allows developers
+to test your issue using the exact same environment as you.
+
+```toml
+# Put your artisan.toml file here.
+```

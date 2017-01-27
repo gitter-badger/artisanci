@@ -9,3 +9,4 @@ Release 0.0.0 (Development)
 * Added faster path support for :class:`artisan.SshWorker`.
 * Added :py:attr:`artisan.BaseWorker.platform`, :py:attr:`artisan.BaseWorker.hostname`,
   and :py:attr:`artisan.BaseWorker.home` to :class:`artisan.BaseWorker`.
+* Added :py:attr:`artisan.BaseCommand.stdin` to :class:`artisan.BaseCommand`.

@@ -178,7 +178,7 @@ class BaseCommand(object):
             environment['PATH'] = self.worker.environment['PATH']
 
         # Windows requires SYSTEMROOT environment variable to be set before executing.
-        if platform.system() == 'Windows' and 'SYSTEMROOT' in self.worker.environment:
+        if self.worker.platform == 'Windows' and 'SYSTEMROOT' in self.worker.environment:
             environment['SYSTEMROOT'] = self.worker.environment['SYSTEMROOT']
 
         return environment

@@ -10,7 +10,9 @@ from .exceptions import (JobTimeoutException,
                          JobCancelledException,
                          CommandExitStatusException,
                          CommandTimeoutException,
-                         WorkerNotAvailable)
+                         WorkerNotAvailable,
+                         IncorrectPassword,
+                         OperatingSystemError)
 from .worker import (FileAttributes,
                      BaseWorker,
                      LocalWorker,
@@ -36,6 +38,8 @@ __all__ = [
     'CommandTimeoutException',
     'CommandExitStatusException',
     'WorkerNotAvailable',
+    'IncorrectPassword',
+    'OperatingSystemError',
 
     'FileAttributes',
     'BaseWorker',

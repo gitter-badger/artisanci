@@ -26,7 +26,7 @@ class LocalCommand3(BaseLocalCommand):
         if self._stdin.tell():
             self._stdin.seek(0, 0)
             stdin = self._stdin.read()
-            self._stdin.truncate()
+            self._stdin.truncate(0)
         try:
             stdout, stderr = self._proc.communicate(input=stdin,
                                                     timeout=timeout)

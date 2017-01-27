@@ -1,3 +1,4 @@
+import os
 """
 All exceptions that are used within Artisan
 are defined in this module.
@@ -10,7 +11,9 @@ __all__ = [
     'CommandTimeoutException',
     'CommandExitStatusException',
     'OperationNotSupported',
-    'WorkerNotAvailable'
+    'WorkerNotAvailable',
+    'IncorrectPassword',
+    'OperatingSystemError'
 ]
 
 
@@ -23,7 +26,17 @@ class JobFailureException(Exception):
         super(JobFailureException, self).__init__()
 
     def __repr__(self):
-        return '<JobFailureException cause=%s>' % self.cause
+        return '<JobFailureException cause=`%s`>' % self.cause
+
+
+class OperatingSystemError(JobFailureException):
+    """ Exception when the operating system throws
+    an error. Keeps an error code and a message for
+    that error code. """
+    def __init__(self, errno):
+        self.errno = errno
+        super(OperatingSystemError, self).__init__('%s (ERRNO=`%d`)' % (os.strerror(errno),
+                                                                        errno))
 
 
 class JobCancelledException(JobFailureException):
@@ -88,3 +101,7 @@ class WorkerNotAvailable(JobFailureException):
     """ Exception when a worker cannot be used. """
     def __init__(self):
         super(WorkerNotAvailable, self).__init__('Worker is not available.')
+
+
+class IncorrectPassword(Exception):
+    """ Exception for when the incorrect password is used. """

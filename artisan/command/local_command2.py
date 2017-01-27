@@ -61,8 +61,9 @@ class LocalCommand2(BaseLocalCommand):
         while self._is_not_complete():
             if self._stdin.tell():
                 self._stdin.seek(0, 0)
-                self._proc.stdin.write(self._stdin.read())
-                self._stdin.truncate()
+                data = self._stdin.read()
+                self._proc.stdin.write(data)
+                self._stdin.truncate(0)
             if self._exit_status is None:
                 self._exit_status = self._proc.poll()
             try:
