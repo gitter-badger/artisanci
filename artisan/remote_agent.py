@@ -24,65 +24,71 @@ class RemoteWorkerAgent(threading.Thread):
 
     def run(self):
         while self._sock is not None and self._selector is not None:
-            for key, events in self._selector.select(timeout=1.0):
-                sock = key.fileobj
-                if sock is self._sock and selectors.EVENT_READ & events:
-                    try:
-                        client, _ = sock.accept()
-                    except Exception:
-                        continue
-                    pipe = PicklePipe(client)
-                    self._selector.register(pipe, selectors.EVENT_READ)
-                    self._worker_pipes[pipe] = {0: LocalWorker()}
-                else:
-                    try:
-                        pipe = sock
-                        assert isinstance(pipe, PicklePipe)
+            try:
+                for key, events in self._selector.select(timeout=1.0):
+                    sock = key.fileobj
+                    if sock is self._sock and selectors.EVENT_READ & events:
                         try:
-                            command = pipe.recv_object(timeout=1.0)
-                            object_id = command[0]
-                            obj = self._worker_pipes[pipe][object_id]
-                        except PipeTimeout:
+                            client, _ = sock.accept()
+                        except Exception:
                             continue
-                        func, args, kwargs = command[1:]
+                        pipe = PicklePipe(client)
+                        self._selector.register(pipe, selectors.EVENT_READ)
+                        self._worker_pipes[pipe] = {0: LocalWorker()}
+                    else:
                         try:
-                            if func == '__getattr__':
-                                pipe.send_object(getattr(obj, args[0]))
-                            elif func == 'put_file':
-                                with open(args[1], 'wb') as f:
-                                    f.truncate()
-                                    while True:
-                                        done, data = pipe.recv_object(timeout=5.0)
-                                        f.write(data)
-                                        pipe.send_object(None)
-                                        if done:
-                                            break
+                            pipe = sock
+                            assert isinstance(pipe, PicklePipe)
+                            try:
+                                command = pipe.recv_object(timeout=1.0)
+                                object_id = command[0]
+                                obj = self._worker_pipes[pipe][object_id]
+                            except PipeTimeout:
+                                continue
+                            func, args, kwargs = command[1:]
+                            try:
+                                if func == '__getattr__':
+                                    pipe.send_object(getattr(obj, args[0]))
+                                elif func == 'put_file':
+                                    with open(args[1], 'wb') as f:
+                                        f.truncate()
+                                        while True:
+                                            done, data = pipe.recv_object(timeout=5.0)
+                                            f.write(data)
+                                            pipe.send_object(None)
+                                            if done:
+                                                break
 
-                            elif func == 'get_file':
-                                with open(args[0], 'rb') as f:
-                                    data = f.read(4096)
-                                    while data != b'':
-                                        pipe.send_object((False, data))
-                                        pipe.recv_object(timeout=5.0)
+                                elif func == 'get_file':
+                                    with open(args[0], 'rb') as f:
                                         data = f.read(4096)
-                                    pipe.send_object((True, b''))
-                                    pipe.recv_object(timeout=5.0)
+                                        while data != b'':
+                                            pipe.send_object((False, data))
+                                            pipe.recv_object(timeout=5.0)
+                                            data = f.read(4096)
+                                        pipe.send_object((True, b''))
+                                        pipe.recv_object(timeout=5.0)
 
-                            else:
-                                resp = getattr(obj, func)(*args, **kwargs)
-                                if func == 'execute':
-                                    next_id = max(self._worker_pipes[pipe].keys()) + 1
-                                    self._worker_pipes[pipe][next_id] = resp
-                                    pipe.send_object(next_id)
                                 else:
-                                    pipe.send_object(resp)
-                        except Exception as e:
-                            pipe.send_object(e)
-                    except Exception:
-                        self._selector.unregister(sock)
-                        if sock in self._worker_pipes:
-                            del self._worker_pipes[sock]
-                        sock.close()
+                                    resp = getattr(obj, func)(*args, **kwargs)
+                                    if func == 'execute':
+                                        next_id = max(self._worker_pipes[pipe].keys()) + 1
+                                        self._worker_pipes[pipe][next_id] = resp
+                                        pipe.send_object(next_id)
+                                    else:
+                                        pipe.send_object(resp)
+                            except Exception as e:
+                                pipe.send_object(e)
+                        except Exception:
+                            self._selector.unregister(sock)
+                            if sock in self._worker_pipes:
+                                del self._worker_pipes[sock]
+                            sock.close()
+            except selectors.SelectorError:
+                self._selector.close()
+                self._sock.close()
+                self._selector = None
+                self._sock = None
 
     def __del__(self):
         self.close()
