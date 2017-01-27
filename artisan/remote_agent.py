@@ -85,10 +85,12 @@ class RemoteWorkerAgent(threading.Thread):
                                 del self._worker_pipes[sock]
                             sock.close()
             except selectors.SelectorError:
-                self._selector.close()
-                self._sock.close()
-                self._selector = None
-                self._sock = None
+                if self._selector is not None:
+                    self._selector.close()
+                    self._selector = None
+                if self._sock is not None:
+                    self._sock.close()
+                    self._sock = None
 
     def __del__(self):
         self.close()

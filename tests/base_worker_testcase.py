@@ -308,8 +308,21 @@ class _BaseWorkerTestCase(unittest.TestCase):
 
         worker.environment["ENVIRONMENT"] = "VARIABLE"
         command = worker.execute(sys.executable + " -c \"import os, sys; sys.stdout.write(os.environ['ENVIRONMENT'])\"")
-        command.wait(1.0)
+        command.wait(timeout=1.0)
         self.assertEqual(command.stdout.read().strip(), b'VARIABLE')
+
+    def test_worker_del_environment(self):
+        worker = self.make_worker()
+
+        worker.environment['ENVIRONMENT'] = 'VARIABLE'
+        self.assertIn('ENVIRONMENT', worker.environment)
+
+        del worker.environment['ENVIRONMENT']
+        self.assertNotIn('ENVIRONMENT', worker.environment)
+
+        command = worker.execute(sys.executable + " -c \"import os, sys; sys.stdout.write(os.environ['ENVIRONMENT'])\"")
+        command.wait(timeout=1.0)
+        self.assertEqual(command.exit_status, 1)
 
     def test_listdir(self):
         expected = sorted(os.listdir("."))
