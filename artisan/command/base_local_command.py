@@ -1,4 +1,3 @@
-from signal import SIGTERM
 import subprocess
 from .base_command import BaseCommand
 from ..exceptions import CommandClosedException
@@ -15,10 +14,7 @@ class BaseLocalCommand(BaseCommand):
 
     def signal(self, signal):
         if self._proc is not None:
-            if signal == SIGTERM:
-                self.terminate()
-            else:
-                self._proc.send_signal(signal)
+            self._proc.send_signal(signal)
         else:
             raise CommandClosedException(self.command)
 

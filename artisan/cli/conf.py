@@ -77,7 +77,8 @@ def parse_artisan_toml(path=None):
                 try:
                     key = create_key_from_password(password, salt, ver_hash)
                 except IncorrectPassword:
-                    print(colorama.Fore.LIGHTRED_EX + 'Password is not correct, could not open `artisan.toml`.')
+                    print(colorama.Fore.LIGHTRED_EX + 'Password is '
+                          'not correct, could not open `artisan.toml`.')
                     sys.exit(1)
                 data = decrypt_data(key, data[48:])
 
@@ -89,7 +90,8 @@ def parse_artisan_toml(path=None):
                 _ARTISAN_TOML_SALT = salt
 
             conf = toml.loads(data.decode('utf-8'))
-            print(colorama.Fore.LIGHTGREEN_EX + 'Artisan has loaded your `artisan.toml`.' + colorama.Style.RESET_ALL)
+            print(colorama.Fore.LIGHTGREEN_EX + 'Artisan has '
+                  'loaded your `artisan.toml`.' + colorama.Style.RESET_ALL)
             return conf
     except (OSError, IOError):
         create_artisan_toml(path)
@@ -120,7 +122,8 @@ def create_artisan_toml(path=None):
         os.close(fd)
     except (OSError, IOError) as e:
         print(colorama.Fore.LIGHTRED_EX + 'Could not securely create an `.artisan.toml` '
-              'file at `%s`. Error: `%s`' % (path, os.strerror(e.errno)) + colorama.Style.RESET_ALL)
+              'file at `%s`. Error: `%s`' % (path, os.strerror(e.errno)) +
+              colorama.Style.RESET_ALL)
         sys.exit(1)
 
     password = ''

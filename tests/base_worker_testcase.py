@@ -8,7 +8,8 @@ import platform
 
 from artisan import (CommandExitStatusException,
                      CommandTimeoutException,
-                     SshWorker)
+                     SshWorker,
+                     RemoteWorker)
 
 
 def _safe_close(worker):
@@ -320,6 +321,8 @@ class _BaseWorkerTestCase(unittest.TestCase):
 
     def test_open_file(self):
         worker = self.make_worker()
+        if isinstance(worker, RemoteWorker):
+            self.skipTest('RemoteWorkers currently don\'t support open_file()')
         self.addCleanup(_safe_remove, "tmp")
         _safe_remove("tmp")
         with worker.open_file("tmp", mode="w") as f:
@@ -329,6 +332,8 @@ class _BaseWorkerTestCase(unittest.TestCase):
 
     def test_open_file_binary_mode(self):
         worker = self.make_worker()
+        if isinstance(worker, RemoteWorker):
+            self.skipTest('RemoteWorkers currently don\'t support open_file()')
         self.addCleanup(_safe_remove, "tmp")
         _safe_remove("tmp")
         with worker.open_file("tmp", mode="wb") as f:
@@ -338,6 +343,9 @@ class _BaseWorkerTestCase(unittest.TestCase):
 
     def test_put_file(self):
         worker = self.make_worker()
+        if isinstance(worker, RemoteWorker):
+            self.skipTest('RemoteWorkers currently don\'t support put_file()')
+
         self.addCleanup(_safe_remove, "tmp1")
         self.addCleanup(_safe_remove, "tmp2")
         _safe_remove("tmp1")
@@ -358,6 +366,8 @@ class _BaseWorkerTestCase(unittest.TestCase):
 
     def test_get_file(self):
         worker = self.make_worker()
+        if isinstance(worker, RemoteWorker):
+            self.skipTest('RemoteWorkers currently don\'t support get_file()')
         self.addCleanup(_safe_remove, "tmp1")
         self.addCleanup(_safe_remove, "tmp2")
         _safe_remove("tmp1")
@@ -411,14 +421,35 @@ class _BaseWorkerTestCase(unittest.TestCase):
         command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
         command.cancel()
         self.assertIs(command.pid, None)
-    
-    @unittest.skipIf(platform.system() == 'Windows', 'Skip signal tests on Windows.')
-    def test_signal_exit_status(self):
+
+    def test_signal_interrupt_exit_status(self):
+        worker = self.make_worker()
+        command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
+        command.signal(signal.SIGINT)
+        command.wait(timeout=2.0, error_on_timeout=True)
+        self.assertNotEqual(command.exit_status, 0)
+
+    def test_signal_terminate_exit_status(self):
+        worker = self.make_worker()
+        command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
+        command.signal(signal.SIGTERM)
+        command.wait(timeout=2.0, error_on_timeout=True)
+        self.assertEqual(command.exit_status, -signal.SIGTERM)
+
+    @unittest.skipIf(platform.system() == 'Windows', 'signal.SIGFPE is not usable on Windows.')
+    def test_signal_floating_point_exit_status(self):
         worker = self.make_worker()
         command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
         command.signal(signal.SIGFPE)
-        command.wait(timeout=1.0, error_on_timeout=True)
+        command.wait(timeout=2.0, error_on_timeout=True)
         self.assertEqual(command.exit_status, -signal.SIGFPE)
+
+    @unittest.skipIf(platform.system() == 'Windows', 'signal.alarm() is not usable on Windows.')
+    def test_signal_alarm_exit_status(self):
+        worker = self.make_worker()
+        command = worker.execute(sys.executable + ' -c "import signal, time; signal.alarm(1) time.sleep(3.0)"')
+        command.wait(timeout=3.0, error_on_timeout=True)
+        self.assertNotEqual(command.exit_status, 0)
     
     def test_error_on_timeout(self):
         worker = self.make_worker()

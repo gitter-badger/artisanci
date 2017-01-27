@@ -1,7 +1,6 @@
 import argparse
 
 from .conf import show_artisan_toml
-from .prompt import prompt_choice
 
 
 def parse_domain_conf(argv):
@@ -26,6 +25,4 @@ def parse_domain_worker(argv):
 
     :param list argv: Argv minus the `conf` domain.
     """
-    print(prompt_choice('What type of worker would you like to add?', ['Local Worker',
-                                                                 'SSH Worker',
-                                                                 'Remote Worker']))
+    pass
