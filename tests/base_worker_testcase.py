@@ -25,6 +25,9 @@ def _safe_remove(path):
     except OSError:
         pass
 
+# Travis is really slow at signals for some reason. :/
+_SIGNAL_TIMEOUT = 10.0 if 'TRAVIS' in os.environ else 3.0
+
 
 class _BaseWorkerTestCase(unittest.TestCase):
     COMMAND_TYPE = None
@@ -426,14 +429,14 @@ class _BaseWorkerTestCase(unittest.TestCase):
         worker = self.make_worker()
         command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
         command.signal(signal.SIGINT)
-        command.wait(timeout=3.0, error_on_timeout=True)
+        command.wait(timeout=_SIGNAL_TIMEOUT, error_on_timeout=True)
         self.assertNotEqual(command.exit_status, 0)
 
     def test_signal_terminate_exit_status(self):
         worker = self.make_worker()
         command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
         command.signal(signal.SIGTERM)
-        command.wait(timeout=3.0, error_on_timeout=True)
+        command.wait(timeout=_SIGNAL_TIMEOUT, error_on_timeout=True)
         self.assertEqual(command.exit_status, -signal.SIGTERM)
 
     @unittest.skipIf(platform.system() == 'Windows', 'signal.SIGFPE is not usable on Windows.')
@@ -441,14 +444,14 @@ class _BaseWorkerTestCase(unittest.TestCase):
         worker = self.make_worker()
         command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
         command.signal(signal.SIGFPE)
-        command.wait(timeout=3.0, error_on_timeout=True)
+        command.wait(timeout=_SIGNAL_TIMEOUT, error_on_timeout=True)
         self.assertEqual(command.exit_status, -signal.SIGFPE)
 
     @unittest.skipIf(platform.system() == 'Windows', 'signal.alarm() is not usable on Windows.')
     def test_signal_alarm_exit_status(self):
         worker = self.make_worker()
         command = worker.execute(sys.executable + ' -c "import signal, time; signal.alarm(1) time.sleep(3.0)"')
-        command.wait(timeout=3.0, error_on_timeout=True)
+        command.wait(timeout=_SIGNAL_TIMEOUT, error_on_timeout=True)
         self.assertNotEqual(command.exit_status, 0)
     
     def test_error_on_timeout(self):
