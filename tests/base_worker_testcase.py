@@ -426,14 +426,14 @@ class _BaseWorkerTestCase(unittest.TestCase):
         worker = self.make_worker()
         command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
         command.signal(signal.SIGINT)
-        command.wait(timeout=2.0, error_on_timeout=True)
+        command.wait(timeout=3.0, error_on_timeout=True)
         self.assertNotEqual(command.exit_status, 0)
 
     def test_signal_terminate_exit_status(self):
         worker = self.make_worker()
         command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
         command.signal(signal.SIGTERM)
-        command.wait(timeout=2.0, error_on_timeout=True)
+        command.wait(timeout=3.0, error_on_timeout=True)
         self.assertEqual(command.exit_status, -signal.SIGTERM)
 
     @unittest.skipIf(platform.system() == 'Windows', 'signal.SIGFPE is not usable on Windows.')
@@ -441,7 +441,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
         worker = self.make_worker()
         command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
         command.signal(signal.SIGFPE)
-        command.wait(timeout=2.0, error_on_timeout=True)
+        command.wait(timeout=3.0, error_on_timeout=True)
         self.assertEqual(command.exit_status, -signal.SIGFPE)
 
     @unittest.skipIf(platform.system() == 'Windows', 'signal.alarm() is not usable on Windows.')
