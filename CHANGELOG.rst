@@ -10,3 +10,5 @@ Release 0.0.0 (Development)
 * Added :py:attr:`artisan.BaseWorker.platform`, :py:attr:`artisan.BaseWorker.hostname`,
   and :py:attr:`artisan.BaseWorker.home` to :class:`artisan.BaseWorker`.
 * Added :py:attr:`artisan.BaseCommand.stdin` to :class:`artisan.BaseCommand`.
+* Added :meth:`artisan.BaseWorker.change_file_mode`, :meth:`artisan.BaseWorker.change_file_owner`
+  and :meth:`artisan.BaseWorker.change_file_group`. (`PR #55 <https://github.com/SethMichaelLarson/artisan/pull/55>`_)
