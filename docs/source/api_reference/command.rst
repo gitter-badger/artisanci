@@ -11,7 +11,7 @@ Here is an example usage of a :class:`artisan.BaseCommand` object.
 .. code-block:: python
 
     def job(worker):
-        # In this instance, `worker` is a BaseWorker instance.
+        # In this instance, `worker` is a LocalWorker instance.
         with worker.execute_command('sleep 1 && cat ~/.bashrc') as cmd:
             if cmd.wait(timeout=0.1):
                 print('The above command finished very early!')

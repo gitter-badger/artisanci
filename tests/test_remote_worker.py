@@ -21,6 +21,7 @@ class TestRemoteWorker(_BaseWorkerTestCase):
         else:
             self.skipTest('Could not create a RemoteWorkerAgent.')
         self._agent.start()
+        super(TestRemoteWorker, self).setUp()
 
     def tearDown(self):
         self._agent.close()

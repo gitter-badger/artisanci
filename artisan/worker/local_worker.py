@@ -1,11 +1,13 @@
 import os
 import shutil
 import socket
+import stat
 import platform
 
 from .base_worker import BaseWorker
 from .file_attrs import stat_to_file_attrs
 from ..command import LocalCommand
+from ..exceptions import OperationNotSupported
 
 
 class LocalWorker(BaseWorker):
@@ -39,6 +41,26 @@ class LocalWorker(BaseWorker):
     def put_file(self, local_path, remote_path):
         shutil.move(self._normalize_path(local_path),
                     self._normalize_path(remote_path))
+
+    def change_file_mode(self, path, mode):
+        if platform.system() == 'Windows':
+            st = os.stat(path)
+            # The only two bits that aren't ignored on Windows are
+            # stat.S_IREAD and stat.S_IWRITE. Error if anything
+            # is changed besides those two.
+            if (mode ^ st.st_mode) & ~(stat.S_IREAD | stat.S_IWRITE):
+                raise OperationNotSupported('change_file_mode()', 'Windows LocalWorker')
+        os.chmod(self._normalize_path(path), mode)
+
+    def change_file_owner(self, path, user_id):
+        _check_chown_support()
+        st = os.stat(path)
+        os.chown(self._normalize_path(path), user_id, st.st_gid)
+
+    def change_file_group(self, path, group_id):
+        _check_chown_support()
+        st = os.stat(path)
+        os.chown(self._normalize_path(path), st.st_uid, group_id)
 
     def stat_file(self, path, follow_symlinks=True):
         path = self._normalize_path(path)
@@ -90,3 +112,8 @@ class LocalWorker(BaseWorker):
         if not os.path.isabs(path):
             path = os.path.join(self._cwd, path)
         return os.path.normpath(path)
+
+
+def _check_chown_support():
+    if not hasattr(os, 'chown') or platform.system() == 'Windows':
+        raise OperationNotSupported('change_file_owner()', 'Windows LocalWorker')

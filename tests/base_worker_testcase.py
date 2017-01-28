@@ -1,15 +1,26 @@
 import os
 import signal
 import socket
+import stat
 import sys
+import tempfile
 import time
 import unittest
 import platform
+from mock import patch
 
 from artisan import (CommandExitStatusException,
                      CommandTimeoutException,
                      SshWorker,
-                     RemoteWorker)
+                     RemoteWorker,
+                     OperationNotSupported)
+
+try:
+    import pwd
+    import grp
+except ImportError:
+    pwd = None
+    grp = None
 
 
 def _safe_close(worker):
@@ -35,6 +46,12 @@ class _BaseWorkerTestCase(unittest.TestCase):
     
     def make_worker(self):
         raise NotImplementedError()
+
+    def make_tmp_file(self):
+        tmp = tempfile.mktemp()
+        open(tmp, 'w+').close()
+        self.addCleanup(_safe_remove, tmp)
+        return tmp
     
     def test_execute_command_type(self):
         worker = self.make_worker()
@@ -284,6 +301,82 @@ class _BaseWorkerTestCase(unittest.TestCase):
         self.assertEqual(act.nlink, exp.st_nlink)
         self.assertNotEqual(act.inode, not_exp.st_ino)
 
+    def test_change_mode_no_bit_flips(self):
+        tmp = self.make_tmp_file()
+        worker = self.make_worker()
+        mode = os.stat(tmp).st_mode
+        worker.change_file_mode(tmp, mode)
+        self.assertEqual(os.stat(tmp).st_mode, mode)
+
+    @unittest.skipIf(platform.system() == 'Windows', 'os.chmod does not have full function on Windows.')
+    def test_change_mode(self):
+        tmp = self.make_tmp_file()
+        worker = self.make_worker()
+        mode = os.stat(tmp).st_mode
+        worker.change_file_mode(tmp, mode | stat.S_IXUSR)
+        self.assertEqual(os.stat(tmp).st_mode, mode | stat.S_IXUSR)
+
+    @unittest.skipUnless(platform.system() == 'Windows', 'os.chmod is fully supported on non-Windows.')
+    def test_change_mode_not_supported_on_windows(self):
+        tmp = self.make_tmp_file()
+        worker = self.make_worker()
+        mode = os.stat(tmp).st_mode
+        self.assertRaises(OperationNotSupported, worker.change_file_mode, tmp, mode | stat.S_IXUSR)
+
+    @unittest.skipIf(platform.system() == 'Windows', 'os.chown() is not available on Windows.')
+    def test_change_owner(self):
+        tmp = self.make_tmp_file()
+        worker = self.make_worker()
+        gid = os.stat(tmp).st_gid
+
+        with patch.object(os, 'chown') as mock:
+            worker.change_file_owner(tmp, 127)
+
+        mock.assert_called_once_with(tmp, 127, gid)
+
+    def test_change_owner_with_no_chown(self):
+        if hasattr(os, 'chown'):
+            old_chown = os.chown
+            delattr(os, 'chown')
+            self.addCleanup(setattr, os, 'chown', old_chown)
+
+        tmp = self.make_tmp_file()
+        worker = self.make_worker()
+        self.assertRaises(OperationNotSupported, worker.change_file_owner, tmp, 0)
+
+    @unittest.skipUnless(platform.system() == 'Windows', 'os.chown is full supported on non-Windows.')
+    def test_change_owner_not_supported_on_windows(self):
+        tmp = self.make_tmp_file()
+        worker = self.make_worker()
+        self.assertRaises(OperationNotSupported, worker.change_file_owner, tmp, 0)
+
+    @unittest.skipIf(platform.system() == 'Windows', 'os.chown() is not available on Windows.')
+    def test_change_group(self):
+        tmp = self.make_tmp_file()
+        worker = self.make_worker()
+        uid = os.stat(tmp).st_uid
+
+        with patch.object(os, 'chown') as mock:
+            worker.change_file_group(tmp, 127)
+
+        mock.assert_called_once_with(tmp, uid, 127)
+
+    def test_change_group_with_no_chown(self):
+        if hasattr(os, 'chown'):
+            old_chown = os.chown
+            delattr(os, 'chown')
+            self.addCleanup(setattr, os, 'chown', old_chown)
+
+        tmp = self.make_tmp_file()
+        worker = self.make_worker()
+        self.assertRaises(OperationNotSupported, worker.change_file_group, tmp, 0)
+
+    @unittest.skipUnless(platform.system() == 'Windows', 'os.chown is full supported on non-Windows.')
+    def test_change_group_not_supported_on_windows(self):
+        tmp = self.make_tmp_file()
+        worker = self.make_worker()
+        self.assertRaises(OperationNotSupported, worker.change_file_group, tmp, 0)
+
     def test_is_file(self):
         worker = self.make_worker()
         self.assertTrue(worker.is_file(os.path.abspath(__file__)))
@@ -441,7 +534,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
     # This signal actually works on Windows! :)
     def test_signal_terminate_exit_status(self):
         worker = self.make_worker()
-        command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
+        command = worker.execute(sys.executable + ' -c "import time; time.sleep(5.0)"')
         command.signal(signal.SIGTERM)
         command.wait(timeout=_SIGNAL_TIMEOUT, error_on_timeout=True)
         self.assertNotEqual(command.exit_status, 0)
@@ -449,7 +542,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
     @unittest.skipIf(platform.system() == 'Windows', 'signal.SIGINT is not usable on Windows.')
     def test_signal_interrupt_exit_status(self):
         worker = self.make_worker()
-        command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
+        command = worker.execute(sys.executable + ' -c "import time; time.sleep(5.0)"')
         command.signal(signal.SIGINT)
         command.wait(timeout=_SIGNAL_TIMEOUT, error_on_timeout=True)
         self.assertNotEqual(command.exit_status, 0)
@@ -457,7 +550,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
     @unittest.skipIf(platform.system() == 'Windows', 'signal.SIGFPE is not usable on Windows.')
     def test_signal_floating_point_exit_status(self):
         worker = self.make_worker()
-        command = worker.execute(sys.executable + ' -c "import time; time.sleep(3.0)"')
+        command = worker.execute(sys.executable + ' -c "import time; time.sleep(5.0)"')
         command.signal(signal.SIGFPE)
         command.wait(timeout=_SIGNAL_TIMEOUT, error_on_timeout=True)
         self.assertEqual(command.exit_status, -signal.SIGFPE)
@@ -465,7 +558,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
     @unittest.skipIf(platform.system() == 'Windows', 'signal.alarm() is not usable on Windows.')
     def test_signal_alarm_exit_status(self):
         worker = self.make_worker()
-        command = worker.execute(sys.executable + ' -c "import signal, time; signal.alarm(1) time.sleep(3.0)"')
+        command = worker.execute(sys.executable + ' -c "import signal, time; signal.alarm(1) time.sleep(5.0)"')
         command.wait(timeout=_SIGNAL_TIMEOUT, error_on_timeout=True)
         self.assertNotEqual(command.exit_status, 0)
     

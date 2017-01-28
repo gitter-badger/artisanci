@@ -31,6 +31,8 @@ def requires_sftp(f):
 
 
 class SshWorker(BaseWorker):
+    """ Implementation of the :class:`artisan.BaseWorker` interface
+    that operates on another machine via SSH and SFTP. """
     def __init__(self, host, username, port=22, environment=None,
                  add_policy=None, **kwargs):
 
@@ -97,6 +99,20 @@ class SshWorker(BaseWorker):
     def get_file(self, remote_path, local_path):
         self._sftp.get(self._normalize_path(remote_path),
                        _normalize_local_path(local_path))
+
+    @requires_sftp
+    def change_file_mode(self, path, mode):
+        self._sftp.chmod(self._normalize_path(path), mode)
+
+    @requires_sftp
+    def change_file_owner(self, path, user_id):
+        st = self.stat_file(path)
+        self._sftp.chown(self._normalize_path(path), user_id, st.group_id)
+
+    @requires_sftp
+    def change_file_group(self, path, group_id):
+        st = self.stat_file(path)
+        self._sftp.chown(self._normalize_path(path), st.user_id, group_id)
 
     @requires_sftp
     def stat_file(self, path, follow_symlinks=True):

@@ -1,8 +1,7 @@
+""" All exceptions that are used within Artisan
+are defined in this module. """
 import os
-"""
-All exceptions that are used within Artisan
-are defined in this module.
-"""
+
 __all__ = [
     'JobFailureException',
     'JobCancelledException',
@@ -81,7 +80,7 @@ class CommandTimeoutException(JobTimeoutException):
 
 class CommandExitStatusException(JobFailureException):
     """ Exception for calling :meth:`artisan.BaseCommand.wait` with
-    ``error_on_eixt`` equal to True and the command exits with
+    ``error_on_exit`` equal to True and the command exits with
     a non-zero exit status."""
     def __init__(self, command='', exit_status=0):
         super(CommandExitStatusException, self).__init__(
@@ -92,9 +91,9 @@ class CommandExitStatusException(JobFailureException):
 
 class OperationNotSupported(JobFailureException):
     """ The current operation is not supported. """
-    def __init__(self, command, entity):
+    def __init__(self, command='', entity=''):
         super(OperationNotSupported, self).__init__(
-            'The operation `%s` is not supported by this %s.' % (command, entity))
+            'The operation `%s` is not supported %s.' % (command, entity))
 
 
 class WorkerNotAvailable(JobFailureException):

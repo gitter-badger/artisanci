@@ -10,6 +10,8 @@ __all__ = [
 
 
 class RemoteWorker(BaseWorker):
+    """ Implementation of the :class:`artisan.BaseWorker` interface
+    that operates on another machine via ``picklepipe`` protocols. """
     def __init__(self, host, port, environment=None):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((host, port))
@@ -24,6 +26,15 @@ class RemoteWorker(BaseWorker):
         self._pipe.send_object((0, 'execute', [command], {'environment': environment.copy()}))
         pipe_id = self._pipe.recv_object()
         return RemoteCommand(pipe_id, self, command, environment)
+
+    def change_file_mode(self, path, mode):
+        self._send_and_recv('change_file_mode', path, mode)
+
+    def change_file_owner(self, path, user_id):
+        self._send_and_recv('change_file_owner', path, user_id)
+
+    def change_file_group(self, path, group_id):
+        self._send_and_recv('change_file_group', path, group_id)
 
     def stat_file(self, path, follow_symlinks=True):
         return self._send_and_recv('stat_file', path, follow_symlinks=follow_symlinks)

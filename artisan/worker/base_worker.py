@@ -31,12 +31,12 @@ class BaseWorker(object):
             variables to override the default worker environment.
         :returns: :class:`artisan.BaseCommand` instance.
         """
-        raise OperationNotSupported('execute()', 'worker')
+        raise OperationNotSupported('execute()', self._get_implementation_name())
 
     @property
     def cwd(self):
         """ The current working directory for the worker. """
-        raise OperationNotSupported('cwd', 'worker')
+        raise OperationNotSupported('cwd', self._get_implementation_name())
 
     def change_directory(self, path):
         """
@@ -44,7 +44,7 @@ class BaseWorker(object):
 
         :param str path: Path to change workers cwd to.
         """
-        raise OperationNotSupported('change_directory()', 'worker')
+        raise OperationNotSupported('change_directory()', self._get_implementation_name())
 
     def list_directory(self, path='.'):
         """
@@ -53,7 +53,7 @@ class BaseWorker(object):
         :param str path: Path to the directory to list.
         :return: List of filenames as strings.
         """
-        raise OperationNotSupported('list_directory()', 'worker')
+        raise OperationNotSupported('list_directory()', self._get_implementation_name())
 
     def get_file(self, remote_path, local_path):
         """
@@ -63,7 +63,7 @@ class BaseWorker(object):
         :param str remote_path: Path to the file on the worker.
         :param str local_path: Local directory to put the file.
         """
-        raise OperationNotSupported('get_file()', 'worker')
+        raise OperationNotSupported('get_file()', self._get_implementation_name())
 
     def put_file(self, local_path, remote_path):
         """
@@ -73,7 +73,47 @@ class BaseWorker(object):
         :param str local_path: Path to the file on the local machine.
         :param str remote_path: Directory on the worker to put the file.
         """
-        raise OperationNotSupported('put_file()', 'worker')
+        raise OperationNotSupported('put_file()', self._get_implementation_name())
+
+    def change_file_mode(self, path, mode):
+        """
+        Change a file's mode.
+
+         .. warning::
+            This function is not supported on Windows except
+            for :py:attr:`stat.S_IREAD` and :py:attr:`stat.S_IWRITE`.
+
+        :param str path: Path to the file or directory.
+        :param int mode:
+            Combination of stat.S_* entities bitwise ORed together. See
+            `documentation on os.chmod <https://docs.python.org/3.6/library/os.html#os.chmod>`_
+            for more information on these flags.
+        """
+        raise OperationNotSupported('change_file_mode()', self._get_implementation_name())
+
+    def change_file_owner(self, path, user_id):
+        """
+        Changes a file's owner to a different UID.
+
+         .. warning::
+            This function is not supported on Windows.
+
+        :param str path: Path to the file or directory.
+        :param int user_id: UID of the file's new owner.
+        """
+        raise OperationNotSupported('change_file_owner()', self._get_implementation_name())
+
+    def change_file_group(self, path, group_id):
+        """
+        Changes a file's group to a different GID.
+
+         .. warning::
+            This function is not supported on Windows.
+
+        :param str path: Path to the file or directory.
+        :param int group_id: GID of the files new group.
+        """
+        raise OperationNotSupported('change_file_group()', self._get_implementation_name())
 
     def stat_file(self, path, follow_symlinks=True):
         """
@@ -83,7 +123,7 @@ class BaseWorker(object):
         :param bool follow_symlinks: If True, will follow symlinks. Set to False to stat symlinks.
         :returns: :class:`artisan.FileAttributes` object.
         """
-        raise OperationNotSupported('stat_file()', 'worker')
+        raise OperationNotSupported('stat_file()', self._get_implementation_name())
 
     def is_directory(self, path):
         """
@@ -92,7 +132,7 @@ class BaseWorker(object):
         :param str path: Path to the directory.
         :returns: True if the path is a directory, False otherwise.
         """
-        raise OperationNotSupported('is_directory()', 'worker')
+        raise OperationNotSupported('is_directory()', self._get_implementation_name())
 
     def is_file(self, path):
         """
@@ -101,7 +141,7 @@ class BaseWorker(object):
         :param str path: Path to the file.
         :returns: True if the path is a file, False otherwise.
         """
-        raise OperationNotSupported('is_file()', 'worker')
+        raise OperationNotSupported('is_file()', self._get_implementation_name())
 
     def is_symlink(self, path):
         """
@@ -110,7 +150,7 @@ class BaseWorker(object):
         :param str path: Path to the symlink.
         :returns: True if the path is a symlink, False otherwise.
         """
-        raise OperationNotSupported('is_symlink()', 'worker')
+        raise OperationNotSupported('is_symlink()', self._get_implementation_name())
 
     def open_file(self, path, mode='r'):
         """
@@ -130,7 +170,7 @@ class BaseWorker(object):
             for more information about this parameter. Default is read-only.
         :returns: File-like object.
         """
-        raise OperationNotSupported('open_file()', 'worker')
+        raise OperationNotSupported('open_file()', self._get_implementation_name())
 
     def remove_file(self, path):
         """
@@ -138,7 +178,7 @@ class BaseWorker(object):
 
         :param str path: Path to the file to remove.
         """
-        raise OperationNotSupported('remove_file()', 'worker')
+        raise OperationNotSupported('remove_file()', self._get_implementation_name())
 
     def remove_directory(self, path):
         """
@@ -146,7 +186,7 @@ class BaseWorker(object):
 
         :param str path: Path to the directory to remove.
         """
-        raise OperationNotSupported('remove_directory()', 'worker')
+        raise OperationNotSupported('remove_directory()', self._get_implementation_name())
 
     def create_symlink(self, source_path, link_path):
         """
@@ -156,23 +196,23 @@ class BaseWorker(object):
         :param str link_path: Path to the symbolic link.
         :raises: :class:`artisan.OperationNotSupported` on Windows.
         """
-        raise OperationNotSupported('create_symlink', 'worker')
+        raise OperationNotSupported('create_symlink', self._get_implementation_name())
 
     @property
     def platform(self):
         """ Gets the name of the platform that the worker is on.
         Can be either 'Linux', 'Mac OS', 'Windows', or another OS name. """
-        raise OperationNotSupported('platform', 'worker')
+        raise OperationNotSupported('platform', self._get_implementation_name())
 
     @property
     def hostname(self):
         """ Gets the hostname for the machine the worker is on. """
-        raise OperationNotSupported('hostname', 'worker')
+        raise OperationNotSupported('hostname', self._get_implementation_name())
 
     @property
     def home(self):
         """ Gets the home directory for the worker. """
-        raise OperationNotSupported('home', 'worker')
+        raise OperationNotSupported('home', self._get_implementation_name())
 
     @property
     def closed(self):
@@ -197,6 +237,9 @@ class BaseWorker(object):
 
     def _del_environment(self, name):
         del self.environment[name]
+
+    def _get_implementation_name(self):
+        return type(self).__name__
 
     def __repr__(self):
         return '<%s host=`%s`>' % (type(self).__name__, self.host)
