@@ -693,7 +693,6 @@ class _BaseWorkerTestCase(unittest.TestCase):
         self.addCleanup(_safe_remove, link_path)
 
         worker = self.make_worker()
-        self.assertTrue(worker.is_symlink(link_path))
         worker.create_symlink(source_path, link_path)
 
         self.assertTrue(worker.is_symlink(link_path))
