@@ -94,7 +94,10 @@ class LocalWorker(BaseWorker):
         return os.path.isfile(self._normalize_path(path))
 
     def is_symlink(self, path):
-        return os.path.islink(self._normalize_path(path))
+        path = self._expandvars(os.path.expanduser(path))
+        if not os.path.isabs(path):
+            path = os.path.join(self._cwd, path)
+        return stat.S_ISLNK(os.lstat(path).st_mode)
 
     def open_file(self, path, mode='r'):
         return open(self._normalize_path(path), mode)

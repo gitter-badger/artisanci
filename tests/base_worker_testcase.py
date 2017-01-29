@@ -665,3 +665,35 @@ class _BaseWorkerTestCase(unittest.TestCase):
         command = worker.execute([sys.executable, '-c', 'import sys, os; sys.exit(0)'])
         self.assertIs(command.wait(timeout=1.0), True)
         self.assertIs(command.wait(timeout=1.0), True)
+
+    @unittest.skipIf(platform.system() == 'Windows', 'Symlinks are not available on Windows.')
+    def test_is_symlink(self):
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        source_path = os.path.join(test_dir, 'source')
+        with open(source_path, 'w+') as f:
+            f.write('source')
+        self.addCleanup(_safe_remove, source_path)
+
+        link_path = os.path.join(test_dir, 'symlink')
+        os.symlink(source_path, link_path)
+        self.addCleanup(_safe_remove, link_path)
+
+        worker = self.make_worker()
+        self.assertTrue(worker.is_symlink(link_path))
+
+    @unittest.skipIf(platform.system() == 'Windows', 'Symlinks are not available on Windows.')
+    def test_create_symlink(self):
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        source_path = os.path.join(test_dir, 'source')
+        with open(source_path, 'w+') as f:
+            f.write('source')
+        self.addCleanup(_safe_remove, source_path)
+
+        link_path = os.path.join(test_dir, 'symlink')
+        self.addCleanup(_safe_remove, link_path)
+
+        worker = self.make_worker()
+        worker.create_symlink(source_path, link_path)
+
+        self.assertTrue(worker.is_symlink(link_path))
+        self.assertTrue(os.path.islink(link_path))
