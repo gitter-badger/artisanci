@@ -76,6 +76,9 @@ class RemoteWorker(BaseWorker):
                 if done:
                     break
 
+    def create_symlink(self, source_path, link_path):
+        self._send_and_recv('create_symlink', source_path, link_path)
+
     @property
     def home(self):
         return self._send_and_recv('__getattr__', 'home')
