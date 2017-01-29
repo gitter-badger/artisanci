@@ -48,7 +48,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
         raise NotImplementedError()
 
     def make_tmp_file(self):
-        tmp = tempfile.mktemp()
+        tmp = os.path.realpath(tempfile.mktemp())
         open(tmp, 'w+').close()
         self.addCleanup(_safe_remove, tmp)
         return tmp
@@ -316,6 +316,46 @@ class _BaseWorkerTestCase(unittest.TestCase):
         worker.change_file_mode(tmp, mode | stat.S_IXUSR)
         self.assertEqual(os.stat(tmp).st_mode, mode | stat.S_IXUSR)
 
+    @unittest.skipIf(platform.system() == 'Windows', 'Symlinks and os.chmod not supported on Windows.')
+    def test_change_mode_follow_symlinks(self):
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        source_path = os.path.join(test_dir, 'source')
+        with open(source_path, 'w+') as f:
+            f.write('source')
+        self.addCleanup(_safe_remove, source_path)
+
+        link_path = os.path.join(test_dir, 'symlink')
+        os.symlink(source_path, link_path)
+        self.addCleanup(_safe_remove, link_path)
+        st = os.stat(link_path)
+        mode = st.st_mode
+
+        worker = self.make_worker()
+        worker.change_file_mode(link_path, mode | stat.S_IXUSR, follow_symlinks=True)
+        st = os.stat(link_path)
+
+        self.assertEqual(mode | stat.S_IXUSR, st.st_mode)
+
+    @unittest.skipIf(platform.system() == 'Windows', 'Symlinks and os.chmod not supported on Windows.')
+    def test_change_mode_dont_follow_symlinks(self):
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        source_path = os.path.join(test_dir, 'source')
+        with open(source_path, 'w+') as f:
+            f.write('source')
+        self.addCleanup(_safe_remove, source_path)
+
+        link_path = os.path.join(test_dir, 'symlink')
+        os.symlink(source_path, link_path)
+        self.addCleanup(_safe_remove, link_path)
+        st = os.lstat(link_path)
+        mode = st.st_mode
+
+        worker = self.make_worker()
+        worker.change_file_mode(link_path, mode | stat.S_IXUSR, follow_symlinks=False)
+        st = os.lstat(link_path)
+
+        self.assertEqual(mode | stat.S_IXUSR, st.st_mode)
+
     @unittest.skipUnless(platform.system() == 'Windows', 'os.chmod is fully supported on non-Windows.')
     def test_change_mode_not_supported_on_windows(self):
         tmp = self.make_tmp_file()
@@ -332,7 +372,10 @@ class _BaseWorkerTestCase(unittest.TestCase):
         with patch.object(os, 'chown') as mock:
             worker.change_file_owner(tmp, 127)
 
-        mock.assert_called_once_with(tmp, 127, gid)
+        if sys.version_info >= (3, 3) and os.chown in os.supports_follow_symlinks:
+            mock.assert_called_once_with(tmp, 127, gid, follow_symlinks=True)
+        else:
+            mock.assert_called_once_with(tmp, 127, gid)
 
     def test_change_owner_with_no_chown(self):
         if hasattr(os, 'chown'):
@@ -359,7 +402,10 @@ class _BaseWorkerTestCase(unittest.TestCase):
         with patch.object(os, 'chown') as mock:
             worker.change_file_group(tmp, 127)
 
-        mock.assert_called_once_with(tmp, uid, 127)
+        if sys.version_info >= (3, 3) and os.chown in os.supports_follow_symlinks:
+            mock.assert_called_once_with(tmp, uid, 127, follow_symlinks=True)
+        else:
+            mock.assert_called_once_with(tmp, uid, 127)
 
     def test_change_group_with_no_chown(self):
         if hasattr(os, 'chown'):

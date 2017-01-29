@@ -7,6 +7,7 @@ import platform
 from .base_worker import BaseWorker
 from .file_attrs import stat_to_file_attrs
 from ..command import LocalCommand
+from ..compat import PY33, follows_symlinks
 from ..exceptions import OperationNotSupported
 
 
@@ -42,33 +43,49 @@ class LocalWorker(BaseWorker):
         shutil.move(self._normalize_path(local_path),
                     self._normalize_path(remote_path))
 
-    def change_file_mode(self, path, mode):
+    def change_file_mode(self, path, mode, follow_symlinks=True):
         if platform.system() == 'Windows':
-            st = os.stat(path)
+            st = _stat_follow(path, follow_symlinks)
             # The only two bits that aren't ignored on Windows are
             # stat.S_IREAD and stat.S_IWRITE. Error if anything
             # is changed besides those two.
             if (mode ^ st.st_mode) & ~(stat.S_IREAD | stat.S_IWRITE):
                 raise OperationNotSupported('change_file_mode()', 'Windows LocalWorker')
-        os.chmod(self._normalize_path(path), mode)
+        path = self._normalize_path(path)
+        if PY33 and follows_symlinks('os.chmod'):
+            os.chmod(path, mode, follow_symlinks=follow_symlinks)
+        else:
+            if follow_symlinks:
+                path = os.path.realpath(path)
+            os.chmod(path, mode)
 
-    def change_file_owner(self, path, user_id):
+    def change_file_owner(self, path, user_id, follow_symlinks=True):
         _check_chown_support()
-        st = os.stat(path)
-        os.chown(self._normalize_path(path), user_id, st.st_gid)
+        st = _stat_follow(path, follow_symlinks)
+        path = self._normalize_path(path)
+        if PY33 and follows_symlinks('os.chown'):
+            os.chown(path, user_id, st.st_gid,
+                     follow_symlinks=follow_symlinks)
+        else:
+            if follow_symlinks:
+                path = os.path.realpath(path)
+            os.chown(path, user_id, st.st_gid)
 
-    def change_file_group(self, path, group_id):
+    def change_file_group(self, path, group_id, follow_symlinks=True):
         _check_chown_support()
-        st = os.stat(path)
-        os.chown(self._normalize_path(path), st.st_uid, group_id)
+        st = _stat_follow(path, follow_symlinks)
+        path = self._normalize_path(path)
+        if PY33 and follows_symlinks('os.chown'):
+            os.chown(path, st.st_uid, group_id,
+                     follow_symlinks=follow_symlinks)
+        else:
+            if follow_symlinks:
+                path = os.path.realpath(path)
+            os.chown(path, st.st_uid, group_id)
 
     def stat_file(self, path, follow_symlinks=True):
-        path = self._normalize_path(path)
-        if follow_symlinks:
-            stat = os.stat(path)
-        else:
-            stat = os.lstat(path)
-        return stat_to_file_attrs(stat)
+        st = _stat_follow(self._normalize_path(path), follow_symlinks)
+        return stat_to_file_attrs(st)
 
     def is_directory(self, path):
         return os.path.isdir(self._normalize_path(path))
@@ -117,3 +134,10 @@ class LocalWorker(BaseWorker):
 def _check_chown_support():
     if not hasattr(os, 'chown') or platform.system() == 'Windows':
         raise OperationNotSupported('change_file_owner()', 'Windows LocalWorker')
+
+
+def _stat_follow(path, follow_symlinks=True):
+    if follow_symlinks:
+        return os.stat(path)
+    else:
+        return os.lstat(path)

@@ -4,6 +4,12 @@ import time
 
 
 __all__ = [
+    'PY2',
+    'PY3',
+    'PY33',
+    'PY34',
+    'PY35',
+    'follows_symlinks',
     'sched_yield',
     'monotonic',
     'Lock',
@@ -12,6 +18,27 @@ __all__ = [
     'Condition',
     'cmp_to_key'
 ]
+
+PY2 = sys.version_info == 2
+PY3 = sys.version_info == 3
+PY33 = sys.version_info >= (3, 3)
+PY34 = sys.version_info >= (3, 4)
+PY35 = sys.version_info >= (3, 5)
+
+
+if PY33:
+    _FOLLOWS_SYMLINKS = set()
+    if hasattr(os, 'chmod') and os.chmod in os.supports_follow_symlinks:
+        _FOLLOWS_SYMLINKS.add('os.chmod')
+    if hasattr(os, 'chown') and os.chown in os.supports_follow_symlinks:
+        _FOLLOWS_SYMLINKS.add('os.chown')
+
+    def follows_symlinks(name):
+        return name in _FOLLOWS_SYMLINKS
+else:
+    def follows_symlinks(_):
+        return False
+
 
 # Getting a monotonic clock.
 try:
