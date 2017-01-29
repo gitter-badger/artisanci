@@ -27,14 +27,14 @@ class RemoteWorker(BaseWorker):
         pipe_id = self._pipe.recv_object()
         return RemoteCommand(pipe_id, self, command, environment)
 
-    def change_file_mode(self, path, mode):
-        self._send_and_recv('change_file_mode', path, mode)
+    def change_file_mode(self, path, mode, follow_symlinks=True):
+        self._send_and_recv('change_file_mode', path, mode, follow_symlinks=True)
 
-    def change_file_owner(self, path, user_id):
-        self._send_and_recv('change_file_owner', path, user_id)
+    def change_file_owner(self, path, user_id, follow_symlinks=True):
+        self._send_and_recv('change_file_owner', path, user_id, follow_symlinks=True)
 
-    def change_file_group(self, path, group_id):
-        self._send_and_recv('change_file_group', path, group_id)
+    def change_file_group(self, path, group_id, follow_symlinks=True):
+        self._send_and_recv('change_file_group', path, group_id, follow_symlinks=True)
 
     def stat_file(self, path, follow_symlinks=True):
         return self._send_and_recv('stat_file', path, follow_symlinks=follow_symlinks)
