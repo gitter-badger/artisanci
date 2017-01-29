@@ -77,7 +77,7 @@ class LocalWorker(BaseWorker):
         return os.path.isfile(self._normalize_path(path))
 
     def is_symlink(self, path):
-        return os.path.islink(self._normalize_path(path))
+        return stat.S_ISLNK(os.lstat(self._normalize_path(path)).st_mode)
 
     def open_file(self, path, mode='r'):
         return open(self._normalize_path(path), mode)
