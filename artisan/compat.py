@@ -28,9 +28,9 @@ PY35 = sys.version_info >= (3, 5)
 
 if PY33:
     _FOLLOWS_SYMLINKS = set()
-    if os.chmod in os.supports_follow_symlinks:
+    if hasattr(os, 'chmod') and os.chmod in os.supports_follow_symlinks:
         _FOLLOWS_SYMLINKS.add('os.chmod')
-    if os.chown in os.supports_follow_symlinks:
+    if hasattr(os, 'chown') and os.chown in os.supports_follow_symlinks:
         _FOLLOWS_SYMLINKS.add('os.chown')
 
     def follows_symlinks(name):
