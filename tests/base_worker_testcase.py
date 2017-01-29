@@ -372,7 +372,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
         with patch.object(os, 'chown') as mock:
             worker.change_file_owner(tmp, 127)
 
-        if sys.version_info >= (3, 3) and os.chmod in os.supports_follow_symlinks:
+        if sys.version_info >= (3, 3) and os.chown in os.supports_follow_symlinks:
             mock.assert_called_once_with(tmp, 127, gid, follow_symlinks=True)
         else:
             mock.assert_called_once_with(tmp, 127, gid)
@@ -402,7 +402,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
         with patch.object(os, 'chown') as mock:
             worker.change_file_group(tmp, 127)
 
-        if sys.version_info >= (3, 3) and os.chmod in os.supports_follow_symlinks:
+        if sys.version_info >= (3, 3) and os.chown in os.supports_follow_symlinks:
             mock.assert_called_once_with(tmp, uid, 127, follow_symlinks=True)
         else:
             mock.assert_called_once_with(tmp, uid, 127)

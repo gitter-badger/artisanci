@@ -63,7 +63,7 @@ class LocalWorker(BaseWorker):
         _check_chown_support()
         st = _stat_follow(path, follow_symlinks)
         path = self._normalize_path(path)
-        if PY33 and os.chmod in os.supports_follow_symlinks:
+        if PY33 and os.chown in os.supports_follow_symlinks:
             os.chown(path, user_id, st.st_gid,
                      follow_symlinks=follow_symlinks)
         else:
