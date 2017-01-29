@@ -7,7 +7,7 @@ import platform
 from .base_worker import BaseWorker
 from .file_attrs import stat_to_file_attrs
 from ..command import LocalCommand
-from ..compat import PY33
+from ..compat import PY33, follows_symlinks
 from ..exceptions import OperationNotSupported
 
 
@@ -52,7 +52,7 @@ class LocalWorker(BaseWorker):
             if (mode ^ st.st_mode) & ~(stat.S_IREAD | stat.S_IWRITE):
                 raise OperationNotSupported('change_file_mode()', 'Windows LocalWorker')
         path = self._normalize_path(path)
-        if PY33 and os.chmod in os.supports_follow_symlinks:
+        if PY33 and follows_symlinks('os.chmod'):
             os.chmod(path, mode, follow_symlinks=follow_symlinks)
         else:
             if follow_symlinks:
@@ -63,7 +63,7 @@ class LocalWorker(BaseWorker):
         _check_chown_support()
         st = _stat_follow(path, follow_symlinks)
         path = self._normalize_path(path)
-        if PY33 and os.chown in os.supports_follow_symlinks:
+        if PY33 and follows_symlinks('os.chown'):
             os.chown(path, user_id, st.st_gid,
                      follow_symlinks=follow_symlinks)
         else:
@@ -75,7 +75,7 @@ class LocalWorker(BaseWorker):
         _check_chown_support()
         st = _stat_follow(path, follow_symlinks)
         path = self._normalize_path(path)
-        if PY33 and os.chown in os.supports_follow_symlinks:
+        if PY33 and follows_symlinks('os.chown'):
             os.chown(path, st.st_uid, group_id,
                      follow_symlinks=follow_symlinks)
         else:
