@@ -48,7 +48,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
         raise NotImplementedError()
 
     def make_tmp_file(self):
-        tmp = tempfile.mktemp()
+        tmp = os.path.realpath(tempfile.mktemp())
         open(tmp, 'w+').close()
         self.addCleanup(_safe_remove, tmp)
         return tmp
