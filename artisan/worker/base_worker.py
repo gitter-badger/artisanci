@@ -75,7 +75,7 @@ class BaseWorker(object):
         """
         raise OperationNotSupported('put_file()', self._get_implementation_name())
 
-    def change_file_mode(self, path, mode):
+    def change_file_mode(self, path, mode, follow_symlinks=True):
         """
         Change a file's mode.
 
@@ -88,10 +88,11 @@ class BaseWorker(object):
             Combination of stat.S_* entities bitwise ORed together. See
             `documentation on os.chmod <https://docs.python.org/3.6/library/os.html#os.chmod>`_
             for more information on these flags.
+        :param bool follow_symlinks: If True will follow symlinks in the path.
         """
         raise OperationNotSupported('change_file_mode()', self._get_implementation_name())
 
-    def change_file_owner(self, path, user_id):
+    def change_file_owner(self, path, user_id, follow_symlinks=True):
         """
         Changes a file's owner to a different UID.
 
@@ -100,10 +101,11 @@ class BaseWorker(object):
 
         :param str path: Path to the file or directory.
         :param int user_id: UID of the file's new owner.
+        :param bool follow_symlinks: If True will follow symlinks in the path.
         """
         raise OperationNotSupported('change_file_owner()', self._get_implementation_name())
 
-    def change_file_group(self, path, group_id):
+    def change_file_group(self, path, group_id, follow_symlinks=True):
         """
         Changes a file's group to a different GID.
 
@@ -112,6 +114,7 @@ class BaseWorker(object):
 
         :param str path: Path to the file or directory.
         :param int group_id: GID of the files new group.
+        :param bool follow_symlinks: If True will follow symlinks in the path.
         """
         raise OperationNotSupported('change_file_group()', self._get_implementation_name())
 
@@ -120,7 +123,7 @@ class BaseWorker(object):
         Gets the attributes about a file on the worker's machine.
 
         :param str path: Path of the file/directory to get attributes from.
-        :param bool follow_symlinks: If True, will follow symlinks. Set to False to stat symlinks.
+        :param bool follow_symlinks: If True will follow symlinks in the path.
         :returns: :class:`artisan.FileAttributes` object.
         """
         raise OperationNotSupported('stat_file()', self._get_implementation_name())
