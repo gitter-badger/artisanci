@@ -33,7 +33,6 @@ if PY33:
     if os.chown in os.supports_follow_symlinks:
         _FOLLOWS_SYMLINKS.add('os.chown')
 
-
     def follows_symlinks(name):
         return name in _FOLLOWS_SYMLINKS
 else:
