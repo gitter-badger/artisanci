@@ -4,6 +4,11 @@ import time
 
 
 __all__ = [
+    'PY2',
+    'PY3',
+    'PY33',
+    'PY34',
+    'PY35',
     'sched_yield',
     'monotonic',
     'Lock',
@@ -12,6 +17,13 @@ __all__ = [
     'Condition',
     'cmp_to_key'
 ]
+
+PY2 = sys.version_info == 2
+PY3 = sys.version_info == 3
+PY33 = sys.version_info >= (3, 3)
+PY34 = sys.version_info >= (3, 4)
+PY35 = sys.version_info >= (3, 5)
+
 
 # Getting a monotonic clock.
 try:

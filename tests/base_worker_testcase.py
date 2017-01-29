@@ -316,6 +316,46 @@ class _BaseWorkerTestCase(unittest.TestCase):
         worker.change_file_mode(tmp, mode | stat.S_IXUSR)
         self.assertEqual(os.stat(tmp).st_mode, mode | stat.S_IXUSR)
 
+    @unittest.skipIf(platform.system() == 'Windows', 'Symlinks and os.chmod not supported on Windows.')
+    def test_change_mode_follow_symlinks(self):
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        source_path = os.path.join(test_dir, 'source')
+        with open(source_path, 'w+') as f:
+            f.write('source')
+        self.addCleanup(_safe_remove, source_path)
+
+        link_path = os.path.join(test_dir, 'symlink')
+        os.symlink(source_path, link_path)
+        self.addCleanup(_safe_remove, link_path)
+        st = os.stat(link_path, follow_symlinks=True)
+        mode = st.st_mode
+
+        worker = self.make_worker()
+        worker.change_file_mode(mode | stat.S_IXUSR)
+        st = os.stat(link_path, follow_symlinks=True)
+
+        self.assertEqual(mode | stat.S_IXUSR, st.st_mode)
+
+    @unittest.skipIf(platform.system() == 'Windows', 'Symlinks and os.chmod not supported on Windows.')
+    def test_change_mode_dont_follow_symlinks(self):
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        source_path = os.path.join(test_dir, 'source')
+        with open(source_path, 'w+') as f:
+            f.write('source')
+        self.addCleanup(_safe_remove, source_path)
+
+        link_path = os.path.join(test_dir, 'symlink')
+        os.symlink(source_path, link_path)
+        self.addCleanup(_safe_remove, link_path)
+        st = os.stat(link_path, follow_symlinks=False)
+        mode = st.st_mode
+
+        worker = self.make_worker()
+        worker.change_file_mode(mode | stat.S_IXUSR, follow_symlinks=False)
+        st = os.stat(link_path, follow_symlinks=False)
+
+        self.assertEqual(mode | stat.S_IXUSR, st.st_mode)
+
     @unittest.skipUnless(platform.system() == 'Windows', 'os.chmod is fully supported on non-Windows.')
     def test_change_mode_not_supported_on_windows(self):
         tmp = self.make_tmp_file()
