@@ -327,12 +327,12 @@ class _BaseWorkerTestCase(unittest.TestCase):
         link_path = os.path.join(test_dir, 'symlink')
         os.symlink(source_path, link_path)
         self.addCleanup(_safe_remove, link_path)
-        st = os.stat(link_path, follow_symlinks=True)
+        st = os.stat(link_path)
         mode = st.st_mode
 
         worker = self.make_worker()
         worker.change_file_mode(mode | stat.S_IXUSR)
-        st = os.stat(link_path, follow_symlinks=True)
+        st = os.stat(link_path)
 
         self.assertEqual(mode | stat.S_IXUSR, st.st_mode)
 
@@ -347,12 +347,12 @@ class _BaseWorkerTestCase(unittest.TestCase):
         link_path = os.path.join(test_dir, 'symlink')
         os.symlink(source_path, link_path)
         self.addCleanup(_safe_remove, link_path)
-        st = os.stat(link_path, follow_symlinks=False)
+        st = os.lstat(link_path)
         mode = st.st_mode
 
         worker = self.make_worker()
         worker.change_file_mode(mode | stat.S_IXUSR, follow_symlinks=False)
-        st = os.stat(link_path, follow_symlinks=False)
+        st = os.lstat(link_path)
 
         self.assertEqual(mode | stat.S_IXUSR, st.st_mode)
 
@@ -372,7 +372,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
         with patch.object(os, 'chown') as mock:
             worker.change_file_owner(tmp, 127)
 
-        mock.assert_called_once_with(tmp, 127, gid)
+        mock.assert_called_once_with(tmp, 127, gid, follow_symlinks=True)
 
     def test_change_owner_with_no_chown(self):
         if hasattr(os, 'chown'):
@@ -399,7 +399,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
         with patch.object(os, 'chown') as mock:
             worker.change_file_group(tmp, 127)
 
-        mock.assert_called_once_with(tmp, uid, 127)
+        mock.assert_called_once_with(tmp, uid, 127, follow_symlinks=True)
 
     def test_change_group_with_no_chown(self):
         if hasattr(os, 'chown'):
