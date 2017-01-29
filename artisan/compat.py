@@ -25,15 +25,21 @@ PY33 = sys.version_info >= (3, 3)
 PY34 = sys.version_info >= (3, 4)
 PY35 = sys.version_info >= (3, 5)
 
-_FOLLOWS_SYMLINKS = set()
-if os.chmod in os.supports_follow_symlinks:
-    _FOLLOWS_SYMLINKS.add('os.chmod')
-if os.chown in os.supports_follow_symlinks:
-    _FOLLOWS_SYMLINKS.add('os.chown')
+
+if PY33:
+    _FOLLOWS_SYMLINKS = set()
+    if os.chmod in os.supports_follow_symlinks:
+        _FOLLOWS_SYMLINKS.add('os.chmod')
+    if os.chown in os.supports_follow_symlinks:
+        _FOLLOWS_SYMLINKS.add('os.chown')
 
 
-def follows_symlinks(name):
-    return name in _FOLLOWS_SYMLINKS
+    def follows_symlinks(name):
+        return name in _FOLLOWS_SYMLINKS
+else:
+    def follows_symlinks(_):
+        return False
+
 
 # Getting a monotonic clock.
 try:
