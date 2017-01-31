@@ -103,7 +103,8 @@ html_theme_options = {
     'github_banner': True,
     'font_family': "'Roboto', Georgia, sans",
     'head_font_family': "'Roboto', Georgia, serif",
-    'code_font_family': "'Roboto Mono', 'Consolas', monospace"
+    'code_font_family': "'Roboto Mono', 'Consolas', monospace",
+    'page_width': 'auto'
 }
 html_sidebars = {
     '**': [
