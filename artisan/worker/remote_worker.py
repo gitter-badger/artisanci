@@ -1,8 +1,9 @@
 import socket
+
 import picklepipe
 
+from .command import RemoteCommand
 from .base_worker import BaseWorker
-from ..command import RemoteCommand
 
 __all__ = [
     'RemoteWorker'

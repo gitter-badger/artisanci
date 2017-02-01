@@ -1,7 +1,7 @@
 import paramiko
 from .base_command import BaseCommand
-from ..compat import monotonic
-from ..exceptions import CommandClosedException
+from artisan.compat import monotonic
+from artisan.exceptions import CommandClosedException
 
 __all__ = [
     'SshCommand'

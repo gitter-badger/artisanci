@@ -2,7 +2,7 @@
 import threading
 from Queue import Queue, Empty
 from .base_local_command import BaseLocalCommand
-from ..compat import monotonic, sched_yield
+from artisan.compat import monotonic, sched_yield
 
 __all__ = [
     'LocalCommand2'

@@ -1,12 +1,12 @@
 import os
+import platform
 import shutil
 import socket
 import stat
-import platform
 
+from .command import LocalCommand
 from .base_worker import BaseWorker
 from .file_attrs import stat_to_file_attrs
-from ..command import LocalCommand
 from ..compat import PY33, follows_symlinks
 from ..exceptions import OperationNotSupported
 

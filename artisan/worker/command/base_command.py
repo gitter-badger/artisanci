@@ -1,8 +1,8 @@
 import io
-from ..compat import monotonic
-from ..exceptions import (CommandTimeoutException,
-                          CommandExitStatusException,
-                          OperationNotSupported)
+from artisan.compat import monotonic
+from artisan.exceptions import (CommandTimeoutException,
+                                CommandExitStatusException,
+                                OperationNotSupported)
 
 
 __all__ = [

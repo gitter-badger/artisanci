@@ -9,7 +9,7 @@ Seth Michael Larson <sethmichaellarson@protonmail.com>
 License
 -------
 
-Copied from `LICENSE.txt <https://github.com/SethMichaelLarson/artisan/blob/master/LICENSE.txt>`_:
+Copied from `LICENSE.txt <https://github.com/artisanci/artisan/blob/master/LICENSE.txt>`_:
 
 .. literalinclude:: ../../LICENSE.txt
 

@@ -9,6 +9,7 @@ __all__ = [
     'PY33',
     'PY34',
     'PY35',
+
     'follows_symlinks',
     'sched_yield',
     'monotonic',
@@ -19,6 +20,7 @@ __all__ = [
     'cmp_to_key'
 ]
 
+# Python version checking.
 PY2 = sys.version_info == 2
 PY3 = sys.version_info == 3
 PY33 = sys.version_info >= (3, 3)

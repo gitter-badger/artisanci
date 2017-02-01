@@ -34,7 +34,7 @@ class OperatingSystemError(JobFailureException):
     that error code. """
     def __init__(self, errno):
         self.errno = errno
-        super(OperatingSystemError, self).__init__('%s (ERRNO=`%d`)' % (os.strerror(errno),
+        super(OperatingSystemError, self).__init__('%s (errno=`%d`)' % (os.strerror(errno),
                                                                         errno))
 
 

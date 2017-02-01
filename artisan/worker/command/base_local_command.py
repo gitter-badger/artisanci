@@ -1,6 +1,6 @@
 import subprocess
 from .base_command import BaseCommand
-from ..exceptions import CommandClosedException
+from artisan.exceptions import CommandClosedException
 
 __all__ = [
     'BaseLocalCommand'

@@ -1,9 +1,10 @@
 """ Modern, flexible, and platform-agnostic interface for
 automation, continuous integration, and farm management. """
-from .command import (BaseCommand,
-                      LocalCommand,
-                      SshCommand,
-                      RemoteCommand)
+from .worker.command import (BaseCommand,
+                             LocalCommand,
+                             SshCommand,
+                             RemoteCommand)
+
 from .exceptions import (JobTimeoutException,
                          JobErrorException,
                          JobFailureException,
@@ -14,12 +15,12 @@ from .exceptions import (JobTimeoutException,
                          IncorrectPassword,
                          OperatingSystemError,
                          OperationNotSupported)
+from .remote_agent import RemoteWorkerAgent
 from .worker import (FileAttributes,
                      BaseWorker,
                      LocalWorker,
                      SshWorker,
                      RemoteWorker)
-from .remote_agent import RemoteWorkerAgent
 
 __author__ = 'Seth Michael Larson'
 __email__ = 'sethmichaellarson@protonmail.com'

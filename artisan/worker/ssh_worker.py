@@ -1,14 +1,16 @@
 import functools
-import os
-import re
-import posixpath
 import ntpath
-import stat
+import os
+import posixpath
+import re
 import socket
+import stat
+
 import paramiko
+
+from .command import SshCommand
 from .base_worker import BaseWorker
 from .file_attrs import stat_to_file_attrs
-from ..command import SshCommand
 from ..exceptions import (OperationNotSupported,
                           WorkerNotAvailable)
 

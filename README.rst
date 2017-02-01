@@ -1,24 +1,27 @@
 Artisan
 =======
 
-.. image:: https://img.shields.io/travis/SethMichaelLarson/artisan/master.svg
-    :target: https://travis-ci.org/SethMichaelLarson/artisan
+.. image:: https://img.shields.io/travis/artisanci/artisan/master.svg
+    :target: https://travis-ci.org/artisanci/artisan
     :alt: Linux and MacOS Build Status
-.. image:: https://img.shields.io/appveyor/ci/SethMichaelLarson/artisan/master.svg
-    :target: https://ci.appveyor.com/project/SethMichaelLarson/artisan
+.. image:: https://img.shields.io/appveyor/ci/artisanci/artisan/master.svg
+    :target: https://ci.appveyor.com/project/artisanci/artisan
     :alt: Windows Build Status
-.. image:: https://img.shields.io/codecov/c/github/SethMichaelLarson/artisan/master.svg
-    :target: https://codecov.io/gh/SethMichaelLarson/artisan
+.. image:: https://img.shields.io/codecov/c/github/artisanci/artisan/master.svg
+    :target: https://codecov.io/gh/artisanci/artisan
     :alt: Test Suite Coverage
-.. image:: https://img.shields.io/codeclimate/github/SethMichaelLarson/artisan.svg
-    :target: https://codeclimate.com/github/SethMichaelLarson/artisan
+.. image:: https://img.shields.io/codeclimate/github/artisanci/artisan.svg
+    :target: https://codeclimate.com/github/artisanci/artisan
     :alt: Code Health
 .. image:: https://readthedocs.org/projects/artisan/badge/?version=latest
     :target: http://artisan.readthedocs.io
     :alt: Documentation Build Status
-.. image:: https://pyup.io/repos/github/sethmichaellarson/artisan/shield.svg
-     :target: https://pyup.io/repos/github/sethmichaellarson/artisan
+.. image:: https://pyup.io/repos/github/artisanci/artisan/shield.svg
+     :target: https://pyup.io/repos/github/artisanci/artisan
      :alt: Dependency Versions
+.. image:: https://pyup.io/repos/github/artisanci/artisan/shield.svg
+     :target: https://pyup.io/repos/github/artisanci/artisan
+     :alt: Python 3 Ready!
 .. image:: https://img.shields.io/pypi/v/artisan.svg
     :target: https://pypi.python.org/pypi/artisan
     :alt: PyPI Version
@@ -35,7 +38,7 @@ Artisan is available on PyPI can be installed with `pip <https://pip.pypa.io>`_.
 
     $ python -m pip install artisan
 
-To install the latest development version from `Github <https://github.com/SethMichaelLarson/artisan>`_::
+To install the latest development version from `Github <https://github.com/artisanci/artisan>`_::
 
     $ python -m pip install git+git://github.com/SethMichaelLarson/artisan.git
 
@@ -71,4 +74,4 @@ We welcome community contributions, please see `our guide for Contributors <http
 License
 -------
 
-Artisan is made available under the MIT License. For more details, see `LICENSE.txt <https://github.com/SethMichaelLarson/artisan/blob/master/LICENSE.txt>`_.
+Artisan is made available under the MIT License. For more details, see `LICENSE.txt <https://github.com/artisanci/artisan/blob/master/LICENSE.txt>`_.

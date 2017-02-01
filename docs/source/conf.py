@@ -51,8 +51,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # Releases changelog extension
-releases_release_uri = "https://github.com/SethMichaelLarson/artisan/tree/%s"
-releases_issue_uri = "https://github.com/SethMichaelLarson/artisan/issues/%s"
+releases_release_uri = "https://github.com/artisanci/artisan/tree/%s"
+releases_issue_uri = "https://github.com/artisanci/artisan/issues/%s"
 
 # General information about the project.
 project = 'Artisan'
@@ -96,8 +96,8 @@ todo_include_todos = True
 html_theme = 'alabaster'
 html_theme_path = [alabaster.get_path()]
 html_theme_options = {
-    'description': 'Modern, flexible, and platform-agnostic interface for automation, continuous integration, and farm management.',
-    'github_user': 'SethMichaelLarson',
+    'description': 'Open-Source Continuous Integration Services that work for you!',
+    'github_user': 'artisanci',
     'github_repo': 'artisan',
     'github_button': False,
     'github_banner': True,

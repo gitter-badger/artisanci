@@ -27,8 +27,7 @@ if base_package not in packages:
 if __name__ == '__main__':
     setup(
         name='artisan',
-        description=('Modern, flexible, and platform-agnostic interface for '
-                     'automation, continuous integration, and farm management.'),
+        description='Open-Source Continuous Integration Services that work for you!',
         long_description='\n\n'.join([readme, changes]),
         license=LICENSE,
         url='http://artisan.readthedocs.io',
@@ -37,14 +36,12 @@ if __name__ == '__main__':
         author_email='sethmichaellarson@protonmail.com',
         maintainer='Seth Michael Larson',
         maintainer_email='sethmichaellarson@protonmail.com',
-        entry_points={'console_scripts': ['artisan = artisan.cli:cli']},
-        install_requires=['click',
-                          'colorama',
+        install_requires=['colorama',
                           'monotonic',
                           'paramiko',
                           'picklepipe',
-                          'selectors2',
-                          'toml'],
+                          'PyYAML',
+                          'selectors2'],
         keywords=['artisan'],
         packages=packages,
         zip_safe=False,

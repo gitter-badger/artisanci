@@ -6,7 +6,6 @@ Artisan
     :maxdepth: 2
 
     api_reference/index
-    cli_reference/index
     changelog
     contributing
     about
@@ -44,7 +43,7 @@ Support / Report Issues
 -----------------------
 
 All support requests and issue reports should be
-`filed on Github as an issue <https://github.com/SethMichaelLarson/artisan/issues>`_.
+`filed on Github as an issue <https://github.com/artisanci/artisan/issues>`_.
 Make sure to follow the template so your request may be as handled as quickly as possible.
 Please respect contributors by not using personal contacts for support requests.
 
