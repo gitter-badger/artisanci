@@ -19,7 +19,7 @@ Artisan
 .. image:: https://pyup.io/repos/github/artisanci/artisan/shield.svg
      :target: https://pyup.io/repos/github/artisanci/artisan
      :alt: Dependency Versions
-.. image:: https://pyup.io/repos/github/artisanci/artisan/shield.svg
+.. image:: https://pyup.io/repos/github/artisanci/artisan/python-3-shield.svg
      :target: https://pyup.io/repos/github/artisanci/artisan
      :alt: Python 3 Ready!
 .. image:: https://img.shields.io/pypi/v/artisan.svg
