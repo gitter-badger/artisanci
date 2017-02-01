@@ -1,16 +1,18 @@
 import re
 from .classifier import Classifier
+from .plat_linux import detect_linux_platform
 
 _WINDOWS_VERSION_REGEX = re.compile(r'^\(\'[^\']+\', \'([^\']+)\'')
 
 
 def detect_platform(worker):
     if worker.platform == 'Windows':
-        yield from detect_windows(worker)
+        return detect_windows(worker)
     elif worker.platform == 'Mac OS':
-        yield from detect_mac(worker)
+        return
     else:
-        yield from detect_linux_platform(worker)
+        for x in detect_linux_platform(worker):
+            yield x
 
 
 def detect_windows(worker):
@@ -22,12 +24,8 @@ def detect_windows(worker):
         if match:
             name = 'windows'
             version, = match.groups()
-            yield Classifier(name, version)
+            return [Classifier(name, version)]
 
 
 def detect_mac(worker):
-    pass
-
-
-def detect_linux_platform(worker):
-    pass
+    yield Classifier('osx', '?.?')
