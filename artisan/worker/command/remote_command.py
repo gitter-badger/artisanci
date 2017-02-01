@@ -1,3 +1,4 @@
+""" Implementation of BaseCommand using Picklepipe. """
 from picklepipe import PicklePipe
 from .base_command import BaseCommand
 

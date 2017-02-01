@@ -1,3 +1,4 @@
+""" Defines the interface for a command resulting from BaseWorker.execute() """
 import io
 from artisan.compat import monotonic
 from artisan.exceptions import (CommandTimeoutException,

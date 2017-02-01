@@ -1,3 +1,4 @@
+""" Basic implementation of a local BaseCommand. """
 import subprocess
 from .base_command import BaseCommand
 from artisan.exceptions import CommandClosedException

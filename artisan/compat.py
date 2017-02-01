@@ -1,3 +1,4 @@
+""" Compatibility functions for Python 2.x and 3.x """
 import os
 import sys
 import time

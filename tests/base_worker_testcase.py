@@ -11,9 +11,8 @@ from mock import patch
 
 from artisan import (CommandExitStatusException,
                      CommandTimeoutException,
-                     SshWorker,
-                     RemoteWorker,
                      OperationNotSupported)
+from artisan.worker import RemoteWorker, SshWorker
 
 try:
     import pwd

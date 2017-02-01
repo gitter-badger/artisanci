@@ -1,6 +1,8 @@
 import errno
 import socket
-from artisan import RemoteWorker, RemoteWorkerAgent, RemoteCommand
+from artisan import RemoteWorkerAgent
+from artisan.worker import RemoteWorker
+from artisan.worker.command import RemoteCommand
 from .base_worker_testcase import _BaseWorkerTestCase
 
 

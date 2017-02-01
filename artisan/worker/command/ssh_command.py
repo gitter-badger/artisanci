@@ -1,3 +1,4 @@
+""" Implementation of BaseCommand using SSH. """
 import paramiko
 from .base_command import BaseCommand
 from artisan.compat import monotonic

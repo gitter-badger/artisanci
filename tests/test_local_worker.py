@@ -1,5 +1,6 @@
 import os
-from artisan import LocalCommand, LocalWorker
+from artisan.worker import LocalWorker
+from artisan.worker.command import LocalCommand
 from .base_worker_testcase import _BaseWorkerTestCase
 
 

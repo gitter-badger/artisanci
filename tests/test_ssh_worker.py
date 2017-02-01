@@ -1,5 +1,6 @@
 import os
-from artisan import SshCommand, SshWorker
+from artisan.worker import SshWorker
+from artisan.worker.command import SshCommand
 from .base_worker_testcase import _BaseWorkerTestCase
 
 
