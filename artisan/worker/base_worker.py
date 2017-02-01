@@ -29,6 +29,7 @@ class BaseWorker(object):
         :param environment:
             Optional dictionary of key-value pairs for environment
             variables to override the default worker environment.
+        :rtype: artisan.worker.command.BaseCommand
         :returns: :class:`artisan.BaseCommand` instance.
         """
         raise OperationNotSupported('execute()', self._get_implementation_name())
