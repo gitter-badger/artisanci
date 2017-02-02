@@ -1,22 +1,25 @@
+from collections import namedtuple
+
 __all__ = [
-    'Classifier'
+    'Classifier',
+    'classifier_to_string'
 ]
 
 
-class Classifier(object):
-    def __init__(self, name, version=None, family=None):
-        self.name = name
-        self.version = version
-        self.family = family
-        self.info = {}
+Classifier = namedtuple('Classifier', ['family', 'name', 'version'])
 
-    def __str__(self):
-        string = self.name
-        if self.family is not None:
-            string = '%s-%s' % (self.family, string)
-        if self.version is not None:
-            string = '%s-%s' % (string, self.version)
-        return string
 
-    def __repr__(self):
-        return '<%s `%s`>' % (type(self).__name__, str(self))
+def classifier_to_string(classifier):
+    """
+    Convert a ``Classifier`` instance into a string.
+
+    :param Classifier classifier: Classifier instance.
+    :return: String of the classifier.
+    """
+    assert isinstance(classifier, Classifier)
+    string = classifier.name
+    if classifier.family:
+        string = classifier.family + '-' + string
+    if classifier.version:
+        string = string + '-' + classifier.version
+    return string

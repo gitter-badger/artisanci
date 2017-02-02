@@ -24,7 +24,8 @@ def detect_windows(worker):
         if match:
             name = 'windows'
             version, = match.groups()
-            return [Classifier(name, version)]
+            return [Classifier(name, version, family='platform')]
+    return []
 
 
 def detect_mac(worker):
