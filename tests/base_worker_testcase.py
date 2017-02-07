@@ -751,3 +751,61 @@ class _BaseWorkerTestCase(unittest.TestCase):
         physical_cpus = worker.get_cpu_count(physical=True)
         self.assertIsInstance(physical_cpus, int)
         self.assertLessEqual(physical_cpus, virtual_cpus)
+
+    def test_get_memory_usage(self):
+        worker = self.make_worker()
+
+        used, free, total = worker.get_memory_usage()
+        self.assertIsInstance(used, int)
+        self.assertIsInstance(free, int)
+        self.assertIsInstance(total, int)
+        self.assertEqual(used + free, total)
+
+    def test_get_memory_usage_reacts(self):
+        worker = self.make_worker()
+
+        used1, _, _ = worker.get_memory_usage()
+        big_memory = 'x' * (1024 * 1024)
+        used2, _, _ = worker.get_memory_usage()
+
+        self.assertGreater(used2, used1)
+
+    def test_get_swap_usage(self):
+        worker = self.make_worker()
+
+        used, free, total = worker.get_swap_usage()
+        self.assertIsInstance(used, int)
+        self.assertIsInstance(free, int)
+        self.assertIsInstance(total, int)
+        self.assertEqual(used + free, total)
+
+    def test_get_disk_usage(self):
+        worker = self.make_worker()
+
+        used, free, total = worker.get_disk_usage()
+        self.assertIsInstance(used, int)
+        self.assertIsInstance(free, int)
+        self.assertIsInstance(total, int)
+        self.assertLessEqual(used + free, total)
+
+    def test_get_disk_partitions(self):
+        worker = self.make_worker()
+
+        parts = worker.get_disk_partitions()
+        self.assertIsInstance(parts, list)
+
+        for device, mount, fstype, opts in parts:
+            self.assertIsInstance(device, str)
+            self.assertIsInstance(device, str)
+            self.assertIsInstance(fstype, str)
+            self.assertIsInstance(opts, list)
+            for opt in opts:
+                self.assertIsInstance(opt, str)
+
+    def test_get_physical_disk_partitions(self):
+        worker = self.make_worker()
+
+        virt = worker.get_disk_partitions()
+        phys = worker.get_disk_partitions(physical=True)
+
+        self.assertLessEqual(len(phys), len(virt))
