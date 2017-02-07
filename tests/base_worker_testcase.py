@@ -126,7 +126,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
 
     def test_exit_status(self):
         worker = self.make_worker()
-        for exit_status in range(10):
+        for exit_status in range(5):
             command = worker.execute(sys.executable + " -c \"import sys; sys.exit(%s)\"" % str(exit_status))
             command.wait(timeout=1.0)
             self.assertEqual(command.exit_status, exit_status)
@@ -614,7 +614,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
     
     def test_error_on_exit(self):
         worker = self.make_worker()
-        for i in range(10):
+        for i in range(5):
             command = worker.execute(sys.executable + ' -c "import time, sys; time.sleep(0.1); sys.exit(%d)"' % i)
             if i == 0:
                 command.wait(timeout=1.0, error_on_exit=True)
