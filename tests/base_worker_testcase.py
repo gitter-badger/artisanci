@@ -492,8 +492,44 @@ class _BaseWorkerTestCase(unittest.TestCase):
         _safe_remove("tmp")
         with worker.open_file("tmp", mode="wb") as f:
             f.write(b'Hello, world!')
+        self.assertTrue(os.path.isfile('tmp'))
         with worker.open_file("tmp", mode="rb") as f:
             self.assertEqual(f.read(), b'Hello, world!')
+
+    def test_open_file_exclusive_mode(self):
+        worker = self.make_worker()
+        if isinstance(worker, RemoteWorker):
+            self.skipTest('RemoteWorkers currently don\'t support open_file()')
+        self.addCleanup(_safe_remove, "tmp")
+        open('tmp', 'w+').close()
+        self.assertTrue(os.path.isfile('tmp'))
+        try:
+            worker.open_file('tmp', 'x')
+            self.fail('Did not raise an error.')
+        except Exception:
+            pass
+
+    def test_open_file_exclusive_mode_is_writable(self):
+        worker = self.make_worker()
+        if isinstance(worker, RemoteWorker):
+            self.skipTest('RemoteWorkers currently don\'t support open_file()')
+        self.addCleanup(_safe_remove, "tmp")
+        _safe_remove("tmp")
+        with worker.open_file("tmp", mode="x") as f:
+            f.write("Hello, world!")
+        with worker.open_file("tmp", mode="r") as f:
+            self.assertEqual(f.read(), "Hello, world!")
+
+    def test_open_file_context_manager(self):
+        worker = self.make_worker()
+        if isinstance(worker, RemoteWorker):
+            self.skipTest('RemoteWorkers currently don\'t support open_file()')
+        self.addCleanup(_safe_remove, "tmp")
+        _safe_remove("tmp")
+        with worker.open_file('tmp', mode='w') as f:
+            f.write('Hello, world!')
+        with open('tmp', mode='r') as f:
+            self.assertEqual(f.read(), 'Hello, world!')
 
     def test_put_file(self):
         worker = self.make_worker()
