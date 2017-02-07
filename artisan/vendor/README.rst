@@ -6,9 +6,5 @@ If you are planning to submit a Pull Request against any of the libraries in the
 which are vendored into Artisan. Any changes to these libraries should be made in
 their respective upstream repository and then will be propagated here.
 
-Pull requests for ``distro`` should go here: https://github.com/nir0s/distro/pulls
-
-Module Versions
----------------
-
-distro - 1.0.2
+List of Vendored Modules
+------------------------

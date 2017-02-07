@@ -1,7 +1,6 @@
 colorama==0.3.7
-distro==1.0.2
 monotonic==1.2
 paramiko==2.1.1
 picklepipe==1.1.0
 PyYAML==3.12
-selectors2==1.1.0
+selectors2==1.1.1
