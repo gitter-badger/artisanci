@@ -761,15 +761,6 @@ class _BaseWorkerTestCase(unittest.TestCase):
         self.assertIsInstance(total, int)
         self.assertEqual(used + free, total)
 
-    def test_get_memory_usage_reacts(self):
-        worker = self.make_worker()
-
-        used1, _, _ = worker.get_memory_usage()
-        big_memory = 'x' * (1024 * 1024)
-        used2, _, _ = worker.get_memory_usage()
-
-        self.assertGreater(used2, used1)
-
     def test_get_swap_usage(self):
         worker = self.make_worker()
 
