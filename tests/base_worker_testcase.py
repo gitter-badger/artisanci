@@ -732,3 +732,22 @@ class _BaseWorkerTestCase(unittest.TestCase):
 
         self.assertTrue(worker.is_symlink(link_path))
         self.assertTrue(os.path.islink(link_path))
+
+    def test_get_cpu_usage(self):
+        worker = self.make_worker()
+
+        user, system, idle = worker.get_cpu_usage()
+        self.assertIsInstance(user, float)
+        self.assertIsInstance(system, float)
+        self.assertIsInstance(idle, float)
+
+    def test_get_cpu_count(self):
+        worker = self.make_worker()
+
+        virtual_cpus = worker.get_cpu_count(physical=False)
+        self.assertIsInstance(virtual_cpus, int)
+        self.assertGreater(virtual_cpus, 1)
+
+        physical_cpus = worker.get_cpu_count(physical=True)
+        self.assertIsInstance(physical_cpus, int)
+        self.assertLessEqual(physical_cpus, virtual_cpus)

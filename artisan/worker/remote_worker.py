@@ -96,6 +96,24 @@ class RemoteWorker(BaseWorker):
     def cwd(self):
         return self._send_and_recv('__getattr__', 'cwd')
 
+    def get_cpu_count(self, physical=False):
+        return self._send_and_recv('get_cpu_count', physical)
+
+    def get_cpu_usage(self):
+        return self._send_and_recv('get_cpu_usage')
+
+    def get_memory_usage(self):
+        return self._send_and_recv('get_memory_usage')
+
+    def get_swap_usage(self):
+        return self._send_and_recv('get_swap_usage')
+
+    def get_disk_usage(self, path=None):
+        return self._send_and_recv('get_disk_usage', path)
+
+    def get_disk_partitions(self, physical=False):
+        return self._send_and_recv('get_disk_partitions', physical)
+
     def _get_default_environment(self):
         return self._send_and_recv('_get_default_environment')
 
