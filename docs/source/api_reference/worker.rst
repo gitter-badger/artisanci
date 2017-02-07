@@ -1,16 +1,16 @@
 Workers
 =======
 
-.. autoclass:: artisan.BaseWorker
+.. autoclass:: artisan.worker.BaseWorker
 
 Implementations
 ---------------
 
-These are the :class:`artisan.BaseWorker` implementations that
+These are the :class:`artisan.worker.BaseWorker` implementations that
 are provided by default by the Artisan module.
 
-.. autoclass:: artisan.LocalWorker
+.. autoclass:: artisan.worker.LocalWorker
 
-.. autoclass:: artisan.SshWorker
+.. autoclass:: artisan.worker.SshWorker
 
-.. autoclass:: artisan.RemoteWorker
+.. autoclass:: artisan.worker.RemoteWorker

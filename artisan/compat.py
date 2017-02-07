@@ -22,8 +22,8 @@ __all__ = [
 ]
 
 # Python version checking.
-PY2 = sys.version_info == 2
-PY3 = sys.version_info == 3
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
 PY33 = sys.version_info >= (3, 3)
 PY34 = sys.version_info >= (3, 4)
 PY35 = sys.version_info >= (3, 5)

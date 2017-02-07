@@ -7,7 +7,7 @@ import stat
 from .command import LocalCommand
 from .base_worker import BaseWorker
 from .file_attrs import stat_to_file_attrs
-from ..compat import PY33, follows_symlinks
+from ..compat import PY2, PY33, follows_symlinks
 from ..exceptions import OperationNotSupported
 
 
@@ -100,7 +100,12 @@ class LocalWorker(BaseWorker):
         return stat.S_ISLNK(os.lstat(path).st_mode)
 
     def open_file(self, path, mode='r'):
-        return open(self._normalize_path(path), mode)
+        # Python 2.x doesn't support the mode='x' flag.
+        path = self._normalize_path(path)
+        if PY2 and mode == 'x':
+            os.open(path, os.O_CREAT | os.O_EXCL)
+            mode = 'w'
+        return open(path, mode)
 
     def remove_file(self, path):
         os.remove(self._normalize_path(path))

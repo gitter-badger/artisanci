@@ -1,12 +1,12 @@
 Commands
 ========
 
-.. autoclass:: artisan.BaseCommand
+.. autoclass:: artisan.worker.BaseCommand
 
 Example Usage
 -------------
 
-Here is an example usage of a :class:`artisan.BaseCommand` object.
+Here is an example usage of a :class:`artisan.worker.BaseCommand` object.
 
 .. code-block:: python
 
