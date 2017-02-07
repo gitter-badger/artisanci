@@ -7,6 +7,7 @@ import tempfile
 import time
 import unittest
 import platform
+import six
 from mock import patch
 
 from artisan import (CommandExitStatusException,
@@ -745,38 +746,38 @@ class _BaseWorkerTestCase(unittest.TestCase):
         worker = self.make_worker()
 
         virtual_cpus = worker.get_cpu_count(physical=False)
-        self.assertIsInstance(virtual_cpus, int)
+        self.assertIsInstance(virtual_cpus, six.integer_types)
         self.assertGreater(virtual_cpus, 1)
 
         physical_cpus = worker.get_cpu_count(physical=True)
-        self.assertIsInstance(physical_cpus, int)
+        self.assertIsInstance(physical_cpus, six.integer_types)
         self.assertLessEqual(physical_cpus, virtual_cpus)
 
     def test_get_memory_usage(self):
         worker = self.make_worker()
 
         used, free, total = worker.get_memory_usage()
-        self.assertIsInstance(used, int)
-        self.assertIsInstance(free, int)
-        self.assertIsInstance(total, int)
+        self.assertIsInstance(used, six.integer_types)
+        self.assertIsInstance(free, six.integer_types)
+        self.assertIsInstance(total, six.integer_types)
         self.assertEqual(used + free, total)
 
     def test_get_swap_usage(self):
         worker = self.make_worker()
 
         used, free, total = worker.get_swap_usage()
-        self.assertIsInstance(used, int)
-        self.assertIsInstance(free, int)
-        self.assertIsInstance(total, int)
+        self.assertIsInstance(used, six.integer_types)
+        self.assertIsInstance(free, six.integer_types)
+        self.assertIsInstance(total, six.integer_types)
         self.assertEqual(used + free, total)
 
     def test_get_disk_usage(self):
         worker = self.make_worker()
 
         used, free, total = worker.get_disk_usage()
-        self.assertIsInstance(used, int)
-        self.assertIsInstance(free, int)
-        self.assertIsInstance(total, int)
+        self.assertIsInstance(used, six.integer_types)
+        self.assertIsInstance(free, six.integer_types)
+        self.assertIsInstance(total, six.integer_types)
         self.assertLessEqual(used + free, total)
 
     def test_get_disk_partitions(self):
