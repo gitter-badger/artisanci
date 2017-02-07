@@ -15,3 +15,4 @@ Release 0.0.0 (Development)
 * Fixed support for ``follow_symlinks`` in :meth:`artisan.BaseWorker.change_file_owner`,
   :meth:`artisan.BaseWorker.change_file_group, and :meth:`artisan.BaseWorker.change_file_mode`.
   (`PR #58 <https://github.com/SethMichaelLarson/artisan/pull/58>`_)
+* Added support for exclusive file opening via ``open_file(path, mode='x')`` for BaseWorker. (`PR #71 <https://github.com/SethMichaelLarson/artisan/pull/71>`_)
