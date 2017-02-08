@@ -46,7 +46,7 @@ if __name__ == '__main__':
         packages=packages,
         zip_safe=False,
         classifiers=['Intended Audience :: Developers',
-                     'License :: OSI Approved :: MIT License',
+                     'License :: OSI Approved :: Apache Software License',
                      'Natural Language :: English',
                      'Operating System :: OS Independent',
                      'Programming Language :: Python :: 2',
