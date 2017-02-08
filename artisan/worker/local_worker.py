@@ -17,6 +17,7 @@ import platform
 import shutil
 import socket
 import stat
+import psutil
 
 from .command import LocalCommand
 from .base_worker import BaseWorker
@@ -142,6 +143,29 @@ class LocalWorker(BaseWorker):
     @property
     def home(self):
         return os.path.expanduser('~')
+
+    def get_cpu_usage(self):
+        times = psutil.cpu_times(percpu=False)
+        return times.user, times.system, times.idle
+
+    def get_cpu_count(self, physical=False):
+        return psutil.cpu_count(logical=not physical)
+
+    def get_memory_usage(self):
+        mem = psutil.virtual_memory()
+        return mem.total - mem.available, mem.available, mem.total
+
+    def get_swap_usage(self):
+        swap = psutil.swap_memory()
+        return swap.used, swap.free, swap.total
+
+    def get_disk_usage(self, path=None):
+        disk = psutil.disk_usage(path if path is not None else '/')
+        return disk.used, disk.free, disk.total
+
+    def get_disk_partitions(self, physical=False):
+        part = psutil.disk_partitions(all=not physical)
+        return [(p.device, p.mountpoint, p.fstype, p.opts.split(',')) for p in part]
 
     def _get_default_environment(self):
         return os.environ.copy()

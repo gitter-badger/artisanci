@@ -7,6 +7,7 @@ import tempfile
 import time
 import unittest
 import platform
+import six
 from mock import patch
 
 from artisan import (CommandExitStatusException,
@@ -732,3 +733,71 @@ class _BaseWorkerTestCase(unittest.TestCase):
 
         self.assertTrue(worker.is_symlink(link_path))
         self.assertTrue(os.path.islink(link_path))
+
+    def test_get_cpu_usage(self):
+        worker = self.make_worker()
+
+        user, system, idle = worker.get_cpu_usage()
+        self.assertIsInstance(user, float)
+        self.assertIsInstance(system, float)
+        self.assertIsInstance(idle, float)
+
+    def test_get_cpu_count(self):
+        worker = self.make_worker()
+
+        virtual_cpus = worker.get_cpu_count(physical=False)
+        self.assertIsInstance(virtual_cpus, six.integer_types)
+        self.assertGreater(virtual_cpus, 1)
+
+        physical_cpus = worker.get_cpu_count(physical=True)
+        self.assertIsInstance(physical_cpus, six.integer_types)
+        self.assertLessEqual(physical_cpus, virtual_cpus)
+
+    def test_get_memory_usage(self):
+        worker = self.make_worker()
+
+        used, free, total = worker.get_memory_usage()
+        self.assertIsInstance(used, six.integer_types)
+        self.assertIsInstance(free, six.integer_types)
+        self.assertIsInstance(total, six.integer_types)
+        self.assertEqual(used + free, total)
+
+    def test_get_swap_usage(self):
+        worker = self.make_worker()
+
+        used, free, total = worker.get_swap_usage()
+        self.assertIsInstance(used, six.integer_types)
+        self.assertIsInstance(free, six.integer_types)
+        self.assertIsInstance(total, six.integer_types)
+        self.assertEqual(used + free, total)
+
+    def test_get_disk_usage(self):
+        worker = self.make_worker()
+
+        used, free, total = worker.get_disk_usage()
+        self.assertIsInstance(used, six.integer_types)
+        self.assertIsInstance(free, six.integer_types)
+        self.assertIsInstance(total, six.integer_types)
+        self.assertLessEqual(used + free, total)
+
+    def test_get_disk_partitions(self):
+        worker = self.make_worker()
+
+        parts = worker.get_disk_partitions()
+        self.assertIsInstance(parts, list)
+
+        for device, mount, fstype, opts in parts:
+            self.assertIsInstance(device, str)
+            self.assertIsInstance(device, str)
+            self.assertIsInstance(fstype, str)
+            self.assertIsInstance(opts, list)
+            for opt in opts:
+                self.assertIsInstance(opt, str)
+
+    def test_get_physical_disk_partitions(self):
+        worker = self.make_worker()
+
+        virt = worker.get_disk_partitions()
+        phys = worker.get_disk_partitions(physical=True)
+
+        self.assertLessEqual(len(phys), len(virt))

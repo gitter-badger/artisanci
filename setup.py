@@ -40,6 +40,7 @@ if __name__ == '__main__':
                           'monotonic',
                           'paramiko',
                           'picklepipe',
+                          'psutil',
                           'PyYAML',
                           'selectors2'],
         keywords=['artisan'],
