@@ -218,6 +218,67 @@ class BaseWorker(object):
         """ Gets the home directory for the worker. """
         raise OperationNotSupported('home', self._get_implementation_name())
 
+    def get_cpu_usage(self):
+        """
+        Gets the amount of CPU seconds that have been spent in each mode.
+        The three modes are ``user``, ``system``, and ``idle``. The results
+        are returned as a tuple of (user, system, idle).
+
+        :returns: :class:`tuple` containing (user, system, and idle) as :class:`float`.
+        """
+        raise OperationNotSupported('get_cpu_usage()', self._get_implementation_name())
+
+    def get_cpu_count(self, physical=False):
+        """
+        Gets the number of CPUs that the worker's machine has.
+
+        :param bool physical:
+            If True will only return physical CPU cores only.
+            Hyper-threaded cores will be excluded.
+        :returns: Number of cores as an :class:`int`.
+        """
+        raise OperationNotSupported('get_cpu_count()', self._get_implementation_name())
+
+    def get_memory_usage(self):
+        """
+        Gets the values for virtual memory usage by the worker.
+        Values are expressed in bytes as :class:`int`.
+
+        :returns: :class:`tuple` containing the (used, available, and total) virtual memory.
+        """
+        raise OperationNotSupported('get_memory_usage()', self._get_implementation_name())
+
+    def get_swap_usage(self):
+        """
+        Gets the values for swap memory usage by the worker.
+        Values are expressed in bytes as :class:`int`.
+
+        :returns: :class:`tuple` containing the (used, available, and total) swap memory.
+        """
+        raise OperationNotSupported('get_swap_usage()', self._get_implementation_name())
+
+    def get_disk_usage(self, path=None):
+        """
+        Gets the usage information for the disk.
+        All values are expressed in bytes as :class:`int`.
+
+        :param str path: Optional value for the path to use to find disk space from.
+        :returns: :class:`tuple` containing the (used, available, and total) disk space.
+        """
+        raise OperationNotSupported('get_disk_usage()', self._get_implementation_name())
+
+    def get_disk_partitions(self, physical=False):
+        """
+        Gets a list of all mounted disk partitions including device, mount,
+        filesystem type, and options.
+
+        :param bool physical:
+            If True will try to exclude all non-physical mount
+            points from the results.
+        :returns: List of :class:`tuple` that contain (device, mount, fstype, and options)
+        """
+        raise OperationNotSupported('get_disk_partitions()', self._get_implementation_name())
+
     @property
     def closed(self):
         """ Boolean property that is ``True`` if the worker is closed. """
