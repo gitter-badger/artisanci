@@ -55,4 +55,4 @@ We happily welcome contributions, please see :doc:`contributing` for details.
 License
 -------
 
-artisan is made available under the MIT License. For more details, see :doc:`about`.
+artisan is made available under the Apache 2.0 License. For more details, see :doc:`about`.

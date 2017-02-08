@@ -534,14 +534,13 @@ class _BaseWorkerTestCase(unittest.TestCase):
 
     def test_put_file(self):
         worker = self.make_worker()
-        if isinstance(worker, RemoteWorker):
-            self.skipTest('RemoteWorkers currently don\'t support put_file()')
 
         self.addCleanup(_safe_remove, "tmp1")
         self.addCleanup(_safe_remove, "tmp2")
         _safe_remove("tmp1")
         _safe_remove("tmp2")
-        with worker.open_file("tmp1", mode="w") as f:
+
+        with open('tmp1', 'w+') as f:
             f.write("put")
 
         self.assertTrue(os.path.isfile("tmp1"))
@@ -552,18 +551,17 @@ class _BaseWorkerTestCase(unittest.TestCase):
         self.assertFalse(os.path.isfile("tmp1"))
         self.assertTrue(os.path.isfile("tmp2"))
 
-        with worker.open_file("tmp2", mode="r") as f:
+        with open('tmp2', 'r') as f:
             self.assertEqual(f.read(), "put")
 
     def test_get_file(self):
         worker = self.make_worker()
-        if isinstance(worker, RemoteWorker):
-            self.skipTest('RemoteWorkers currently don\'t support get_file()')
         self.addCleanup(_safe_remove, "tmp1")
         self.addCleanup(_safe_remove, "tmp2")
         _safe_remove("tmp1")
         _safe_remove("tmp2")
-        with worker.open_file("tmp1", mode="w") as f:
+
+        with open('tmp1', 'w+') as f:
             f.write("get")
 
         self.assertTrue(os.path.isfile("tmp1"))
@@ -574,7 +572,7 @@ class _BaseWorkerTestCase(unittest.TestCase):
         self.assertFalse(os.path.isfile("tmp1"))
         self.assertTrue(os.path.isfile("tmp2"))
 
-        with worker.open_file("tmp2", mode="r") as f:
+        with open('tmp2', 'r') as f:
             self.assertEqual(f.read(), "get")
 
     def test_platform(self):
@@ -717,6 +715,9 @@ class _BaseWorkerTestCase(unittest.TestCase):
         worker = self.make_worker()
         self.assertTrue(worker.is_symlink(link_path))
 
+        worker.change_directory(test_dir)
+        self.assertTrue(worker.is_symlink('symlink'))
+
     @unittest.skipIf(platform.system() == 'Windows', 'Symlinks are not available on Windows.')
     def test_create_symlink(self):
         test_dir = os.path.dirname(os.path.abspath(__file__))
@@ -733,6 +734,29 @@ class _BaseWorkerTestCase(unittest.TestCase):
 
         self.assertTrue(worker.is_symlink(link_path))
         self.assertTrue(os.path.islink(link_path))
+
+    def test_remove_file(self):
+        tmp = self.make_tmp_file()
+        worker = self.make_worker()
+
+        self.assertTrue(os.path.isfile(tmp))
+        worker.remove_file(tmp)
+        self.assertFalse(os.path.exists(tmp))
+
+    def test_remove_directory(self):
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        tmp_dir = os.path.join(test_dir, 'tmp')
+        worker = self.make_worker()
+
+        try:
+            os.makedirs(tmp_dir)
+        except OSError:
+            pass
+        self.addCleanup(_safe_remove, tmp_dir)
+
+        self.assertTrue(os.path.isdir(tmp_dir))
+        worker.remove_directory(tmp_dir)
+        self.assertFalse(os.path.exists(tmp_dir))
 
     def test_get_cpu_usage(self):
         worker = self.make_worker()

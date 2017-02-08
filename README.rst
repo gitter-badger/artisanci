@@ -74,4 +74,4 @@ We welcome community contributions, please see `our guide for Contributors <http
 License
 -------
 
-Artisan is made available under the MIT License. For more details, see `LICENSE.txt <https://github.com/artisanci/artisan/blob/master/LICENSE.txt>`_.
+Artisan is made available under the Apache 2.0 License. For more details, see `LICENSE.txt <https://github.com/artisanci/artisan/blob/master/LICENSE.txt>`_.

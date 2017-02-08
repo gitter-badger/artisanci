@@ -94,6 +94,12 @@ class RemoteWorker(BaseWorker):
     def create_symlink(self, source_path, link_path):
         self._send_and_recv('create_symlink', source_path, link_path)
 
+    def remove_file(self, path):
+        self._send_and_recv('remove_file', path)
+
+    def remove_directory(self, path):
+        self._send_and_recv('remove_directory', path)
+
     @property
     def home(self):
         return self._send_and_recv('__getattr__', 'home')
