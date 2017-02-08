@@ -142,7 +142,7 @@ class BaseWorker(object):
 
         :param str path: Path of the file/directory to get attributes from.
         :param bool follow_symlinks: If True will follow symlinks in the path.
-        :returns: :class:`artisan.FileAttributes` object.
+        :returns: :class:`artisan.worker.FileAttributes` object.
         """
         raise OperationNotSupported('stat_file()', self._get_implementation_name())
 

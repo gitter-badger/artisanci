@@ -6,13 +6,6 @@ Author
 
 Seth Michael Larson <sethmichaellarson@protonmail.com>
 
-License
--------
-
-Copied from `LICENSE.txt <https://github.com/artisanci/artisan/blob/master/LICENSE.txt>`_:
-
-.. literalinclude:: ../../LICENSE.txt
-
 Thanking the Maintainers
 ------------------------
 
@@ -27,3 +20,10 @@ message to the maintainers of this project. It will really make our day! ❤️
 .. image:: https://img.shields.io/badge/say-thanks-ff69b4.svg
     :target: https://saythanks.io/to/SethMichaelLarson
     :alt: Say Thanks to the Maintainers
+
+License
+-------
+
+Copied from `LICENSE.txt <https://github.com/artisanci/artisan/blob/master/LICENSE.txt>`_:
+
+.. literalinclude:: ../../LICENSE.txt

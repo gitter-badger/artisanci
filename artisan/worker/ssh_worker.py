@@ -47,7 +47,7 @@ def requires_sftp(f):
 
 
 class SshWorker(BaseWorker):
-    """ Implementation of the :class:`artisan.BaseWorker` interface
+    """ Implementation of the :class:`artisan.worker.BaseWorker` interface
     that operates on another machine via SSH and SFTP. """
     def __init__(self, host, username, port=22, environment=None,
                  add_policy=None, **kwargs):

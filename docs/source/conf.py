@@ -39,7 +39,7 @@ extensions = ['alabaster',
               'sphinx.ext.autodoc']
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = []
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -101,10 +101,10 @@ html_theme_options = {
     'github_repo': 'artisan',
     'github_button': False,
     'github_banner': True,
-    'font_family': "'Roboto', Georgia, sans",
-    'head_font_family': "'Roboto', Georgia, serif",
-    'code_font_family': "'Roboto Mono', 'Consolas', monospace",
-    'page_width': 'auto'
+    'font_family': "'Cabin', Georgia, sans",
+    'head_font_family': "'Cabin', Georgia, serif",
+    'code_font_family': "'Anonymous Pro', 'Consolas', monospace",
+    'page_width': '960px'
 }
 html_sidebars = {
     '**': [

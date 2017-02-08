@@ -27,7 +27,7 @@ from ..exceptions import OperationNotSupported
 
 
 class LocalWorker(BaseWorker):
-    """ Implementation of the :class:`artisan.BaseWorker` interface
+    """ Implementation of the :class:`artisan.worker.BaseWorker` interface
     that operates on the local machine that Artisan is currently
     running on. """
     def __init__(self):

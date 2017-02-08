@@ -75,3 +75,9 @@ License
 -------
 
 Artisan is made available under the Apache 2.0 License. For more details, see `LICENSE.txt <https://github.com/artisanci/artisan/blob/master/LICENSE.txt>`_.
+
+Sponsorship
+-----------
+
+If your company benefits from this library please consider sponsoring its development.
+Money earned from sponsoring goes primarily towards maintaining hosts and infrastructure.

@@ -25,7 +25,7 @@ __all__ = [
 
 
 class RemoteWorker(BaseWorker):
-    """ Implementation of the :class:`artisan.BaseWorker` interface
+    """ Implementation of the :class:`artisan.worker.BaseWorker` interface
     that operates on another machine via ``picklepipe`` protocols. """
     def __init__(self, host, port, environment=None):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
