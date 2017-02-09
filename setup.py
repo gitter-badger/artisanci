@@ -46,14 +46,19 @@ if __name__ == '__main__':
         keywords=['artisan'],
         packages=packages,
         zip_safe=False,
-        classifiers=['Intended Audience :: Developers',
+        classifiers=['Development Status :: 2 - Pre-Alpha',
+                     'Intended Audience :: Developers',
                      'License :: OSI Approved :: Apache Software License',
                      'Natural Language :: English',
                      'Operating System :: OS Independent',
+                     'Topic :: Software Development :: Build Tools',
+                     'Topic :: Software Development :: Quality Assurance',
+                     'Topic :: Software Development :: Testing',
                      'Programming Language :: Python :: 2',
                      'Programming Language :: Python :: 2.7',
                      'Programming Language :: Python :: 3',
                      'Programming Language :: Python :: 3.4',
                      'Programming Language :: Python :: 3.5',
-                     'Programming Language :: Python :: 3.6']
+                     'Programming Language :: Python :: 3.6',
+                     'Programming Language :: Python :: Implementation :: PyPy']
     )

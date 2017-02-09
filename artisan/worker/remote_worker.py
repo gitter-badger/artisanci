@@ -13,9 +13,8 @@
 # language governing permissions and limitations under the License.
 
 import socket
-
+import os
 import picklepipe
-
 from .command import RemoteCommand
 from .base_worker import BaseWorker
 
@@ -71,19 +70,23 @@ class RemoteWorker(BaseWorker):
 
     def put_file(self, local_path, remote_path):
         with open(local_path, 'rb') as f:
-            self._send_and_recv('put_file', local_path, remote_path)
-            data = f.read(4096)
+            self._pipe.send_object((0, 'put_file', (remote_path,), {}))
+            data = f.read(8192)
             while data != b'':
                 self._pipe.send_object((False, data))
                 self._pipe.recv_object(timeout=5.0)
-                data = f.read(4096)
+                data = f.read(8192)
             self._pipe.send_object((True, b''))
             self._pipe.recv_object(timeout=5.0)
+        try:
+            os.remove(local_path)
+        except OSError:
+            pass
 
     def get_file(self, remote_path, local_path):
         with open(local_path, 'wb') as f:
             f.truncate()
-            self._send_and_recv('get_file', remote_path, local_path)
+            self._pipe.send_object((0, 'get_file', (remote_path,), {}))
             while True:
                 done, data = self._pipe.recv_object(timeout=5.0)
                 f.write(data)

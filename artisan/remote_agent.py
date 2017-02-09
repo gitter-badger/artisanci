@@ -12,6 +12,7 @@
 # either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
+import os
 import socket
 import threading
 import selectors2 as selectors
@@ -63,8 +64,9 @@ class RemoteWorkerAgent(threading.Thread):
                             try:
                                 if func == '__getattr__':
                                     pipe.send_object(getattr(obj, args[0]))
+
                                 elif func == 'put_file':
-                                    with open(args[1], 'wb') as f:
+                                    with open(args[0], 'wb') as f:
                                         f.truncate()
                                         while True:
                                             done, data = pipe.recv_object(timeout=5.0)
@@ -75,14 +77,16 @@ class RemoteWorkerAgent(threading.Thread):
 
                                 elif func == 'get_file':
                                     with open(args[0], 'rb') as f:
-                                        data = f.read(4096)
+                                        data = f.read(8192)
                                         while data != b'':
                                             pipe.send_object((False, data))
                                             pipe.recv_object(timeout=5.0)
-                                            data = f.read(4096)
+                                            data = f.read(8192)
                                         pipe.send_object((True, b''))
-                                        pipe.recv_object(timeout=5.0)
-
+                                    try:
+                                        os.remove(args[0])
+                                    except OSError:
+                                        pass
                                 else:
                                     resp = getattr(obj, func)(*args, **kwargs)
                                     if func == 'execute':
@@ -94,7 +98,9 @@ class RemoteWorkerAgent(threading.Thread):
                             except Exception as e:
                                 pipe.send_object(e)
                         except Exception:
-                            self._selector.unregister(sock)
+                            if self._selector is not None:
+                                self._selector.unregister(sock)
+                                self._selector = None
                             if sock in self._worker_pipes:
                                 del self._worker_pipes[sock]
                             sock.close()
