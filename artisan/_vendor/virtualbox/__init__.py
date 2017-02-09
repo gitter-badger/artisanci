@@ -203,6 +203,6 @@ class WebServiceManager(Manager):
 
 
 # Lazy include...
-from virtualbox import pool
-from virtualbox import events
-from virtualbox import version
+from . import pool
+from . import events
+from . import version

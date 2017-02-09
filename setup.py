@@ -37,6 +37,7 @@ if __name__ == '__main__':
         maintainer='Seth Michael Larson',
         maintainer_email='sethmichaellarson@protonmail.com',
         install_requires=['colorama',
+                          'enum34',
                           'monotonic',
                           'paramiko',
                           'picklepipe',

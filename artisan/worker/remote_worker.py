@@ -116,8 +116,16 @@ class RemoteWorker(BaseWorker):
         return self._send_and_recv('__getattr__', 'platform')
 
     @property
+    def tmp(self):
+        return self._send_and_recv('__getattr__', 'tmp')
+
+    @property
     def cwd(self):
         return self._send_and_recv('__getattr__', 'cwd')
+
+    @property
+    def pathlib(self):
+        return self._send_and_recv('__getattr__', 'pathlib')
 
     def get_cpu_count(self, physical=False):
         return self._send_and_recv('get_cpu_count', physical)

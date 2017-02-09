@@ -28,6 +28,13 @@ Artisan
 
 Modern, flexible, and platform-agnostic interface for automation, continuous integration, and farm management.
 
+Features and Support
+--------------------
+
+- Artisan is a full-featured self-hosted Continuous Integration service that integrates
+  with popular source code management services.
+- Supports GitHub, BitBucket, and GitLab
+
 Getting Started with Artisan
 ----------------------------
 

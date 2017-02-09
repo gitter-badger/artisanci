@@ -1,6 +1,10 @@
 from .base_executor import BaseExecutor
 from ..worker import LocalWorker
 
+__all__ = [
+    'LocalExecutor'
+]
+
 
 class LocalExecutor(BaseExecutor):
     """ :class:`artisan.executor.BaseExecutor` implementation

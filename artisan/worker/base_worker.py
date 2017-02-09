@@ -33,6 +33,7 @@ class BaseWorker(object):
         self.allow_environment_changes = True
 
         self._closed = False
+        self._module = None
 
     def execute(self, command, environment=None):
         """
@@ -55,6 +56,11 @@ class BaseWorker(object):
     def cwd(self):
         """ The current working directory for the worker. """
         raise OperationNotSupported('cwd', self._get_implementation_name())
+
+    @property
+    def pathlib(self):
+        """ The pathlib to use for path manipulations of the worker. """
+        raise NotImplementedError()
 
     def change_directory(self, path):
         """
@@ -235,6 +241,11 @@ class BaseWorker(object):
         """ Gets the home directory for the worker. """
         raise OperationNotSupported('home', self._get_implementation_name())
 
+    @property
+    def tmp(self):
+        """ Gets the temporary directory for the worker. """
+        raise OperationNotSupported('tmp', self._get_implementation_name())
+
     def get_cpu_usage(self):
         """
         Gets the amount of CPU seconds that have been spent in each mode.
@@ -295,6 +306,17 @@ class BaseWorker(object):
         :returns: List of :class:`tuple` that contain (device, mount, fstype, and options)
         """
         raise OperationNotSupported('get_disk_partitions()', self._get_implementation_name())
+
+    def download_file(self, url, path):
+        """
+        Attempts to download a file from a website given a URL.
+        Returns the return code of the HTTP request.
+
+        :param str url: URL to download the file from.
+        :param str path: Path to save the file to.
+        :returns: HTTP code of the request as an :class:`int`.
+        """
+        raise OperationNotSupported('download_file()', self._get_implementation_name())
 
     @property
     def closed(self):

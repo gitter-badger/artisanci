@@ -1,6 +1,11 @@
+import time
 from ..compat import Semaphore
 from ..exceptions import WorkerNotAvailable
-from ..job import JOB_STATUS_SUCCESS, JOB_STATUS_FAILURE, JOB_STATUS_RUNNING
+from ..job import Job, JobStatus
+
+__all__ = [
+    'BaseExecutor'
+]
 
 
 class BaseExecutor(object):
@@ -17,6 +22,7 @@ class BaseExecutor(object):
         self.is_secure = False
 
     def execute(self, job):
+        assert isinstance(job, Job)
         self._semaphore.acquire()
         self.workers += 1
         worker = None
@@ -24,21 +30,16 @@ class BaseExecutor(object):
             worker = self.setup()
             if worker is None:
                 raise WorkerNotAvailable()
-            job.run_install(worker)
-            try:
-                job.status = JOB_STATUS_RUNNING
-                job.run_script(worker)
-                job.status = JOB_STATUS_SUCCESS
-            except Exception:
-                job.status = JOB_STATUS_FAILURE
-            try:
-                job.run_after_complete(worker)
-                if job.status == JOB_STATUS_FAILURE:
-                    job.run_after_failure(worker)
-                else:
-                    job.run_after_success(worker)
-            except Exception:
-                pass
+            job.status = JobStatus.INSTALLING
+            job.run_process(worker)
+
+            # This is where the timer starts.
+            start_time = time.time()
+
+            # TODO: Hand off the job to the worker and execute!
+
+            end_time = time.time()
+            # This is where the timer ends.
         finally:
             self._semaphore.release()
             self.workers -= 1

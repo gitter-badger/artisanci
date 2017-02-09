@@ -36,13 +36,8 @@ from .exceptions import (JobTimeoutException,
                          OperationNotSupported)
 from .remote_agent import RemoteWorkerAgent
 from .job import (Job,
-                  JOB_STATUS_FAILURE,
-                  JOB_STATUS_SUCCESS,
-                  JOB_STATUS_ERROR,
-                  JOB_STATUS_UNSTABLE,
-                  JOB_STATUS_PENDING,
-                  JOB_STATUS_RUNNING)
-from .job_queue import JobQueue
+                  JobProcess,
+                  JobStatus)
 
 __author__ = 'Seth Michael Larson'
 __email__ = 'sethmichaellarson@protonmail.com'
@@ -64,11 +59,6 @@ __all__ = [
     'RemoteWorkerAgent',
 
     'Job',
-    'JOB_STATUS_RUNNING',
-    'JOB_STATUS_PENDING',
-    'JOB_STATUS_UNSTABLE',
-    'JOB_STATUS_ERROR',
-    'JOB_STATUS_FAILURE',
-    'JOB_STATUS_SUCCESS',
-    'JobQueue'
+    'JobStatus',
+    'JobProcess'
 ]

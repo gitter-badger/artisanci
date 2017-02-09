@@ -14,75 +14,135 @@
 # either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-import threading
-from .exceptions import JobFailureException, JobErrorException
-
-JOB_STATUS_PENDING = 'pending'
-JOB_STATUS_RUNNING = 'running'
-JOB_STATUS_SUCCESS = 'success'
-JOB_STATUS_FAILURE = 'failure'
-JOB_STATUS_ERROR = 'error'
-JOB_STATUS_UNSTABLE = 'unstable'
-
-_JOB_STATUSES_COMPLETED = set([JOB_STATUS_SUCCESS,
-                               JOB_STATUS_FAILURE,
-                               JOB_STATUS_UNSTABLE,
-                               JOB_STATUS_ERROR])
+import enum
+import tarfile
+import zipfile
+from .worker import BaseWorker
 
 __all__ = [
     'Job',
-
-    'JOB_STATUS_FAILURE',
-    'JOB_STATUS_ERROR',
-    'JOB_STATUS_PENDING',
-    'JOB_STATUS_SUCCESS',
-    'JOB_STATUS_RUNNING',
-    'JOB_STATUS_UNSTABLE'
+    'JobStatus',
+    'JobProcess'
 ]
 
 
-class Job(threading.Thread):
-    def __init__(self):
-        self.worker = None
-        self.status = JOB_STATUS_PENDING
-        self.exception = None
-        self.artifacts = {}
+class JobStatus(enum.Enum):
+    """ Enum for descripting the status of a job. """
+    PENDING = 'pending'
+    INSTALLING = 'install'
+    RUNNING = 'running'
+    CLEANUP = 'cleanup'
+    SUCCESS = 'success'
+    FAILURE = 'failure'
+    ERROR = 'error'
 
-        self._callbacks = []
 
-        super(Job, self).__init__()
+class JobProcess(enum.Enum):
+    # Clones the exact branch into the worker
+    # and runs the script that is given.
+    GITHUB = 'github'
+    BITBUCKET = 'bitbucket'
+    GITLAB = 'gitlab'
 
-    def run(self):
-        """ Helper method that is used by scheduling
-        jobs for a worker."""
-        self.status = JOB_STATUS_RUNNING
-        try:
-            result = self.execute(self.worker)
-            if result in _JOB_STATUSES_COMPLETED:
-                self.status = result
-            else:
-                self.status = JOB_STATUS_SUCCESS
-        except JobFailureException as e:
-            self.exception = e
-        except Exception as e:
-            self.exception = JobErrorException(e)
-        if self.exception is not None:
-            self.status = JOB_STATUS_ERROR
+    # Makes an HTTP request to download a tar or zip file
+    # and extracts the contents and runs the script.
+    ARCHIVE = 'archive'
 
-        for func, args, kwargs in self._callbacks:
-            func(self, *args, **kwargs)
 
-    def add_callback(self, func, *args, **kwargs):
-        """
-        Add a function to call after the job is completed.
-        Will be called immediately if the job is already completed.
+class Job(object):
+    def __init__(self, process, path, params):
+        self.status = JobStatus.PENDING
+        self.process = process
+        self.params = params
+        self.path = path
 
-        :param func: Function to call with the job as the only parameter.
-        """
-        if self.status in _JOB_STATUSES_COMPLETED:
-            func(self, *args, **kwargs)
+    def run_process(self, worker):
+        assert isinstance(worker, BaseWorker)
+        path = worker.pathlib
+
+        # Clear out a workspace for the worker.
+        workspace = path.join(worker.home, 'workspace')
+        if worker.is_directory(workspace):
+            worker.remove_directory(workspace)
+        worker.create_directory(workspace)
+
+        if self.process == JobProcess.ARCHIVE:
+            self.setup_archive_workspace(worker, workspace)
+        elif self.process == JobProcess.GITHUB:
+            self.setup_github_workspace(worker, workspace)
+        elif self.process == JobProcess.BITBUCKET:
+            self.setup_bitbucket_workspace(worker, workspace)
+        elif self.process == JobProcess.GITLAB:
+            self.setup_gitlab_workspace(worker, workspace)
         else:
-            self._callbacks.append((func, args, kwargs))
+            pass  # TODO: Have to raise an error here.
 
-    def execute(self, worker):
-        raise NotImplementedError()
+        # The workspace should be all configured correctly now.
+        worker.change_directory(workspace)
+
+        # Have the worker load the module.
+        self.setup_module(worker)
+
+    def run_install(self, worker):
+        pass
+
+    def run_script(self, worker):
+        pass
+
+    def run_after_complete(self, worker):
+        pass
+
+    def run_after_success(self, worker):
+        pass
+
+    def run_after_failure(self, worker):
+        pass
+
+    def setup_module(self, worker):
+        pass
+
+    def setup_archive_workspace(self, worker, workspace):
+        path = worker.pathlib
+
+        # Make space for the archive to be created.
+        archive = path.join(worker.tmp, 'archive')
+        if worker.is_file(archive):
+            worker.remove_file(archive)
+
+        status = worker.download_file(self.params['url'], archive)
+        # TODO: Check status here and error if not correct.
+
+        # Try to extract the archive first as a .tar file.
+        success = False
+        try:
+            with tarfile.TarFile(archive, mode='r') as f:
+                f.extractall(workspace)
+            success = True
+        except Exception:
+            pass
+
+        # If .tar is not successful, try as a .zip file.
+        if not success:
+            try:
+                with zipfile.ZipFile(archive) as f:
+                    f.extractall(workspace)
+                success = True
+            except Exception:
+                pass
+
+        # We couldn't extract the archive, time to error out.
+        if not success:
+            raise Exception()  # TODO: Need a more descriptive exception.
+
+        # Delete the archive file to free up disk space.
+        if worker.is_file(archive):
+            worker.remove_file(archive)
+
+    def setup_github_workspace(self, worker, workspace):
+        pass  # TODO: Implement this.
+
+    def setup_bitbucket_workspace(self, worker, workspace):
+        pass  # TODO: Implement this.
+
+    def setup_gitlab_workspace(self, worker, workspace):
+        pass  # TODO: Implement this.

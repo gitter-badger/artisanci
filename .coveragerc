@@ -6,7 +6,7 @@ omit =
     artisan/command/ssh_command.py
     artisan/worker/expandvars.py
     artisan/worker/ssh_worker.py
-    artisan/vendor/*
+    artisan/_vendor/*
 
 [report]
 exclude_lines =

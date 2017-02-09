@@ -17,6 +17,7 @@ import platform
 import shutil
 import socket
 import stat
+import tempfile
 import psutil
 
 from .command import LocalCommand
@@ -143,6 +144,14 @@ class LocalWorker(BaseWorker):
     @property
     def home(self):
         return os.path.expanduser('~')
+
+    @property
+    def tmp(self):
+        return tempfile.gettempdir()
+
+    @property
+    def pathlib(self):
+        return os.path
 
     def get_cpu_usage(self):
         times = psutil.cpu_times(percpu=False)
