@@ -22,6 +22,8 @@ matrix:
       env: TOXENV=py36
     - python: nightly
       env: TOXENV=py37
+    - python: pypy-5.4
+      env: TOXENV=pypy
 
     # OSX Builds
     - language: generic
