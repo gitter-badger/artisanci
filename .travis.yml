@@ -14,8 +14,6 @@ matrix:
     # Linux CPython Builds
     - python: 2.7
       env: TOXENV=py27
-    - python: 3.4
-      env: TOXENV=py34
     - python: 3.5
       env: TOXENV=py35
     - python: 3.6-dev
@@ -31,9 +29,6 @@ matrix:
     - language: generic
       os: osx
       env: TOXENV=py27
-    - language: generic
-      os: osx
-      env: TOXENV=py34
     - language: generic
       os: osx
       env: TOXENV=py35
