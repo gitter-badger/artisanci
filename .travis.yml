@@ -11,7 +11,7 @@ matrix:
     - python: 3.5
       env: TOXENV=docs
 
-    # Linux Builds
+    # Linux CPython Builds
     - python: 2.7
       env: TOXENV=py27
     - python: 3.4
@@ -22,10 +22,12 @@ matrix:
       env: TOXENV=py36
     - python: nightly
       env: TOXENV=py37
+
+    # Linux PyPy Build
     - python: pypy-5.4
       env: TOXENV=pypy
 
-    # OSX Builds
+    # OSX CPython Builds
     - language: generic
       os: osx
       env: TOXENV=py27

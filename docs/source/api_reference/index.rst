@@ -8,4 +8,5 @@ This API reference covers Artisan's usage & API documentation.
 
     worker
     command
+    executor
     exceptions
