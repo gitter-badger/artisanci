@@ -21,3 +21,6 @@ Under Development
   :meth:`artisan.worker.BaseWorker.get_swap_usage()`, :meth:`artisan.worker.BaseWorker.get_disk_usage()`,
   and :meth:`artisan.worker.BaseWorker.get_disk_partitions()` to :class:`artisan.worker.BaseWorker`.
   (`PR #74 <https://github.com/SethMichaelLarson/artisan/pull/74>`_)
+* Add beginning of executors with :class:`artisan.executor.BaseExecutor`.
+* Added :class:`artisan.executor.LocalExecutor`.
+* Add start of the :class:`artisan.executor.VirtualBoxExecutor` for using virtualized hosts to run builds.

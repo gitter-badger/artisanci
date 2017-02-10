@@ -1,0 +1,76 @@
+# This is both an example `.artisan.yml` file
+# and the actual configuration for building the
+# Artisan project against itself. :)
+
+# When running locally, everything that can be built
+# given the labels will be built. Other jobs will be
+# skipped. If the jobs are run globally then jobs that
+# can be run locally will be run locally and non-local
+# jobs will be sent to the global farm.
+
+jobs:
+  # Documentation Builds
+  - name: 'docs'
+    script: '.artisan/docs.py'
+    labels:
+      python: 'cpython>=3.5'
+
+  # Flake8 Style Checking
+  - name: 'flake8'
+    script: '.artisan/flake8.py'
+    labels:
+      python: 'cpython>=3.5'
+
+  # Test Builds on Many Platforms
+  - name: 'tests'
+    script: '.artisan/tests.py'
+    labels:
+
+      # Hardware requirements.
+      disk:   '>=1024'  # 1GB Disk Space
+      memory: '>=1024'  # 1GB RAM
+      cpu:    '>=512'   # 512MHz CPU
+
+      # Matrixes allow easy expansion of repeated values.
+      # NOTE: You must use `include` in order to have multiple
+      # matrix entries.
+      include:
+
+        # Matrix for CPython builds.
+        - matrix:
+            platform:
+              - 'ubuntu>=12.04'  # Ubuntu
+              - 'osx>=10'        # Mac OSX
+              - 'windows>=8'     # Windows
+              - 'centos|rhel'    # CentOS or RedHat
+              - 'solaris'        # Solaris
+            python:
+              - 'cpython==2.7'   # CPython 2.7
+              - 'cpython==3.3'   # CPython 3.3
+              - 'cpython==3.4'   # CPython 3.4
+              - 'cpython==3.5'   # CPython 3.5
+              - 'cpython==3.6'   # CPython 3.6
+
+            # `include` within a `matrix` add entries.
+            include:
+              - python: 'cpython==3.7'
+                platform: 'ubuntu>=12.04'
+
+            # `omit` within a matrix remove entries.
+            omit:
+              - python: 'cpython==3.3'
+                platform: 'solaris'
+              - python: 'cpython==3.4'
+                platform: 'solaris'
+              - python: 'cpython==3.3'
+                platform: 'centos|rhel'
+              - python: 'cpython==3.4'
+                platform: 'centos|rhel'
+
+        # Matrix for PyPy builds.
+        - matrix:
+            platform:
+              - 'ubuntu>=12.04'
+            python:
+              - 'pypy2>=5.6.0'   # PyPy2 (~2.7)
+              - 'pypy3>=5.5'     # PyPy3 (~3.3)
