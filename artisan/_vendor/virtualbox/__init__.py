@@ -31,7 +31,7 @@ def import_vboxapi():
     :rtype: vboxapi module
     """
     try:
-        import vboxapi
+        from .. import vboxapi
     except ImportError:
         system = platform.system()
         py_mm_ver = sys.version_info[:2]

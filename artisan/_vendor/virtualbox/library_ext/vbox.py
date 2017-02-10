@@ -1,4 +1,5 @@
 from .. import library
+from ... import virtualbox
 
 """
 Add helper code to the default ISession class.

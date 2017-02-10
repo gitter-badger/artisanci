@@ -8,13 +8,22 @@ their respective upstream repository and then will be propagated here.
 
 The exception to the above rule is ``pyvbox``, see below for explanation.
 
-List of Vendored Modules
-------------------------
+pyvbox 1.0.0
+------------
+License: MIT
 
- - pyvbox (1.0.0) (`GitHub <https://github.com/mjdorma/pyvbox>`_)
-
-Notes on `pyvbox` Module
-------------------------
 It appears that ``pyvbox`` is not currently maintained. Last release was a year ago.
 All changes *should* be submitted against their `GitHub repository <https://github.com/mjdorma/pyvbox>`_
-but it seems that there is slim chance of getting a new release.
+but it seems that there is slim chance of getting a new release. Feel free to submit
+any changes to Artisan, the original repository, or both.
+
+vboxapi Revision 109501
+-----------------------
+Licenses: CDDL-1.0 and GPLv2
+
+From the VirtualBox SDK kit which can be found on the
+`VirtualBox Downloads page <https://www.virtualbox.org/wiki/Downloads>`_
+available for any host. All changes should be submitted upstream.
+The module ``vboxapi`` is dual licensed under CDDL-1.0 and GPLv2.
+For the purposes of Artisan the CDDL-1.0 License is used.
+All source code within ``vboxapi`` is not changed from it's distributed form.
