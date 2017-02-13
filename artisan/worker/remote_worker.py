@@ -34,12 +34,19 @@ class RemoteWorker(BaseWorker):
 
         self.environment = _RemoteEnvironment(self, self.environment)
 
-    def execute(self, command, environment=None):
+    def execute(self, command, environment=None, wait=False):
         if environment is None:
             environment = self.environment
         self._pipe.send_object((0, 'execute', [command], {'environment': environment.copy()}))
         pipe_id = self._pipe.recv_object()
-        return RemoteCommand(pipe_id, self, command, environment)
+        command = RemoteCommand(pipe_id, self, command, environment)
+        if wait is not False:
+            if wait is True:
+                wait = None
+            command.wait(timeout=wait,
+                         error_on_timeout=True,
+                         error_on_exit=True)
+        return command
 
     def change_file_mode(self, path, mode, follow_symlinks=True):
         self._send_and_recv('change_file_mode', path, mode, follow_symlinks=True)

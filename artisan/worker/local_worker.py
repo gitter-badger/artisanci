@@ -35,10 +35,16 @@ class LocalWorker(BaseWorker):
         self._cwd = os.getcwd()
         super(LocalWorker, self).__init__('localhost')
 
-    def execute(self, command, environment=None):
+    def execute(self, command, environment=None, wait=False):
         if environment is None:
             environment = self.environment
         command = LocalCommand(self, command, environment)
+        if wait is not False:
+            if wait is True:
+                wait = None
+            command.wait(timeout=wait,
+                         error_on_timeout=True,
+                         error_on_exit=True)
         return command
 
     def change_directory(self, path):

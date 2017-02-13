@@ -90,8 +90,15 @@ class SshWorker(BaseWorker):
             c.wait(timeout=5.0)
             self.allow_environment_changes = b'NO' in c.stdout.read()
 
-    def execute(self, command, environment=None):
-        return SshCommand(self, command, environment)
+    def execute(self, command, environment=None, wait=False):
+        command = SshCommand(self, command, environment)
+        if wait is not False:
+            if wait is True:
+                wait = None
+            command.wait(timeout=wait,
+                         error_on_timeout=True,
+                         error_on_exit=True)
+        return command
 
     @requires_sftp
     def change_directory(self, path):

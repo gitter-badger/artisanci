@@ -8,27 +8,55 @@
 # can be run locally will be run locally and non-local
 # jobs will be sent to the global farm.
 
+# Give a list of farms that this project can execute on.
+farms:
+
+  # allow: all means that any farm can be used to run this build.
+  # Otherwise this entry is simply a list of API keys.
+  allow: 'all'
+
 jobs:
   # Documentation Builds
   - name: 'docs'
     script: '.artisan/docs.py'
     labels:
-      python: 'cpython>=3.5'
+      python: 'cpython>=2.7'
+
+      # Python package versions
+      python-virtualenv: '>=15.1.0'
+      python-setuptools: '>=0.9.8'
+
+      # Make sure that documentation
+      # can build on all platforms.
+      matrix:
+        platform:
+          - 'linux'
+          - 'osx>=10'
+          - 'windows>=8'
 
   # Flake8 Style Checking
   - name: 'flake8'
     script: '.artisan/flake8.py'
     labels:
-      python: 'cpython>=3.5'
+
+      # Python package versions
+      python-virtualenv: '>=15.1.0'
+      python-setuptools: '>=0.9.8'
+
+      python: 'cpython>=2.7'
 
   # Test Builds on Many Platforms
   - name: 'tests'
     script: '.artisan/tests.py'
     labels:
 
+      # Python package versions
+      python-virtualenv: '>=15.1.0'
+      python-setuptools: '>=0.9.8'
+
       # Hardware requirements.
-      disk:   '>=1024'  # 1GB Disk Space
-      memory: '>=1024'  # 1GB RAM
+      disk:   '>=1024'  # 1GB Free Disk Space
+      memory: '>=256'   # 256MB RAM
       cpu:    '>=512'   # 512MHz CPU
 
       # Matrixes allow easy expansion of repeated values.

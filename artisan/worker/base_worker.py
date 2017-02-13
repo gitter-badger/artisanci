@@ -35,7 +35,7 @@ class BaseWorker(object):
         self._closed = False
         self._module = None
 
-    def execute(self, command, environment=None):
+    def execute(self, command, environment=None, wait=False):
         """
         Executes a command on the worker and returns an instance
         of :class:`artisan.BaseCommand` in order to track the command
@@ -47,6 +47,11 @@ class BaseWorker(object):
         :param environment:
             Optional dictionary of key-value pairs for environment
             variables to override the default worker environment.
+        :param bool wait:
+            If this option is ``False``, will return a
+            :class:`artisan.worker.command.BaseCommand` instance
+            right away, otherwise will wait for the command for the
+            timeout given in this parameter.
         :rtype: artisan.worker.command.BaseCommand
         :returns: :class:`artisan.BaseCommand` instance.
         """
