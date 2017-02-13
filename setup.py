@@ -27,7 +27,7 @@ if base_package not in packages:
 if __name__ == '__main__':
     setup(
         name='artisan',
-        description='Open-Source Continuous Integration Services that work for you!',
+        description='Open-Source Continuous Integration services that work for everyone.',
         long_description='\n\n'.join([readme, changes]),
         license=LICENSE,
         url='http://artisan.readthedocs.io',
@@ -44,7 +44,7 @@ if __name__ == '__main__':
                           'psutil',
                           'PyYAML',
                           'selectors2'],
-        keywords=['artisan'],
+        keywords=['artisan', 'ci', 'build', 'continuous', 'integration', 'testing'],
         packages=packages,
         zip_safe=False,
         classifiers=['Development Status :: 2 - Pre-Alpha',

@@ -11,7 +11,7 @@ import artisan.worker
 import artisan.executors
 import artisan.auth
 
-# Put your own artisan-ci.io secret token here.
+# Put your own artisan.io secret token here.
 SECRET_ARTISAN_TOKEN = 'fill-in-this-value'
 
 
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     win_exec.auto_detect_labels()  # If there's any problems with the executor we'll find them here.
 
     # Creating the schedule to use the US/Central timezone that I live in.
-    schedule = artisan.auth.Schedule(timezone='US/Central')
+    schedule = artisan.auth.Schedule(timezone=' US/Central')
 
     # This is the policy that allows others to use this executor while I'm at work or asleep.
     schedule.add_policy(start=datetime.time(hour=23),

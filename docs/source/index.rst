@@ -1,10 +1,11 @@
-Artisan
-=====================
+Artisan CI
+==========
 
 .. toctree::
     :hidden:
     :maxdepth: 2
 
+    setup_guides/index
     api_reference/index
     changelog
     contributing

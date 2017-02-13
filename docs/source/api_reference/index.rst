@@ -1,7 +1,7 @@
 API Reference
 =============
 
-This API reference covers Artisan's usage & API documentation.
+This reference covers Artisan API usage documentation.
 
 .. toctree::
     :maxdepth: 1
