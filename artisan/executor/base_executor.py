@@ -1,7 +1,5 @@
 import time
-from ..compat import Semaphore
 from ..exceptions import WorkerNotAvailable
-from ..job import Job, JobStatus
 
 __all__ = [
     'BaseExecutor'
@@ -11,9 +9,8 @@ __all__ = [
 class BaseExecutor(object):
     """ Interface for Executors which maintain the environment for a worker
     to execute a job. Also handles the reporting of """
-    def __init__(self, workers=1):
-        self.workers = workers
-        self._semaphore = Semaphore(workers)
+    def __init__(self, python):
+        self.python = python
 
         # This flag, if `True`, will allow the
         # executor to have a public schedule.
@@ -22,15 +19,11 @@ class BaseExecutor(object):
         self.is_secure = False
 
     def execute(self, job):
-        assert isinstance(job, Job)
-        self._semaphore.acquire()
-        self.workers += 1
         worker = None
         try:
             worker = self.setup()
             if worker is None:
                 raise WorkerNotAvailable()
-            job.status = JobStatus.INSTALLING
             job.run_process(worker)
 
             # This is where the timer starts.
@@ -41,9 +34,10 @@ class BaseExecutor(object):
             end_time = time.time()
             # This is where the timer ends.
         finally:
-            self._semaphore.release()
-            self.workers -= 1
             self.teardown(worker)
+
+    def run_artisan(self, job):
+        raise NotImplementedError()
 
     def setup(self):
         raise NotImplementedError()

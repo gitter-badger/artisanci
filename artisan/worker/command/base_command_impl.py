@@ -1,4 +1,4 @@
-""" Basic implementation of a local BaseCommand. """
+""" Partial shared implementation of a BaseCommand. """
 
 #           Copyright (c) 2017 Seth Michael Larson
 # _________________________________________________________________
@@ -19,14 +19,20 @@ from .base_command import BaseCommand
 from artisan.exceptions import CommandClosedException
 
 __all__ = [
-    'BaseLocalCommand'
+    'BaseCommandImpl'
 ]
 
 
-class BaseLocalCommand(BaseCommand):
+class BaseCommandImpl(BaseCommand):
     def __init__(self, worker, command, environment=None):
-        super(BaseLocalCommand, self).__init__(worker, command, environment)
+        super(BaseCommandImpl, self).__init__(worker, command, environment)
         self._proc = self._create_subprocess()
+
+    @property
+    def pid(self):
+        if self._proc is None:
+            return None
+        return self._proc.pid
 
     def signal(self, signal):
         if self._proc is not None:

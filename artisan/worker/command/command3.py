@@ -1,4 +1,4 @@
-""" LocalCommand implementation for Python 3.x+ """
+""" Command implementation for Python 3.x+ """
 
 #           Copyright (c) 2017 Seth Michael Larson
 # _________________________________________________________________
@@ -15,23 +15,16 @@
 # language governing permissions and limitations under the License.
 
 import subprocess
-from .base_local_command import BaseLocalCommand
+from .base_command_impl import BaseCommandImpl
 
 __all__ = [
-    'LocalCommand3'
+    'Command3'
 ]
 
 
-class LocalCommand3(BaseLocalCommand):
+class Command3(BaseCommandImpl):
     def __init__(self, worker, command, environment=None):
-        super(LocalCommand3, self).__init__(worker, command, environment)
-        self._proc = self._create_subprocess()
-
-    @property
-    def pid(self):
-        if self._proc is None:
-            return None
-        return self._proc.pid
+        super(Command3, self).__init__(worker, command, environment)
 
     def _read_all(self, timeout=0.0):
         if self._proc is None:
@@ -55,5 +48,9 @@ class LocalCommand3(BaseLocalCommand):
                 self._exit_status = self._proc.returncode
         if stdout:
             self._write_data_to_stream(self._stdout, stdout)
+            stdout = stdout.decode('utf-8')
+            self.worker.report.output_command(stdout)
         if stderr:
             self._write_data_to_stream(self._stderr, stderr)
+            stderr = stderr.decode('utf-8')
+            self.worker.report.output_command(stderr, True)

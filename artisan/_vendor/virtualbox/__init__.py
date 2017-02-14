@@ -190,8 +190,8 @@ class WebServiceManager(Manager):
         
         Options:
             url - url to connect with the VirtualBox server 
-            user - username used to auth to the VirtualBox server service
-            password - password used to auth to the VirtualBox server service
+            user - username used to policy to the VirtualBox server service
+            password - password used to policy to the VirtualBox server service
 
         Example:
             manager = WebServiceManager(user="mick", password="password")

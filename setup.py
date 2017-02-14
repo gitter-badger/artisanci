@@ -46,6 +46,11 @@ if __name__ == '__main__':
           keywords=['artisan', 'ci', 'build', 'continuous', 'integration', 'testing'],
           packages=packages,
           zip_safe=False,
+          entry_points={
+              'console_scripts': [
+                  'artisan = artisan.cli:main'
+              ]
+          },
           classifiers=['Development Status :: 2 - Pre-Alpha',
                        'Intended Audience :: Developers',
                        'License :: OSI Approved :: Apache Software License',

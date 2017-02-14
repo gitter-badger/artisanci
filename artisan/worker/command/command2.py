@@ -1,4 +1,4 @@
-""" LocalCommand implementation for Python 2.x """
+""" Command implementation for Python 2.x """
 
 #           Copyright (c) 2017 Seth Michael Larson
 # _________________________________________________________________
@@ -16,11 +16,11 @@
 
 import threading
 from Queue import Queue, Empty
-from .base_local_command import BaseLocalCommand
+from .base_command_impl import BaseCommandImpl
 from artisan.compat import monotonic, sched_yield
 
 __all__ = [
-    'LocalCommand2'
+    'Command2'
 ]
 
 
@@ -45,9 +45,9 @@ class _QueueThread(threading.Thread):
         self.stop = True
 
 
-class LocalCommand2(BaseLocalCommand):
+class Command2(BaseCommandImpl):
     def __init__(self, worker, command, environment=None):
-        super(LocalCommand2, self).__init__(worker, command, environment)
+        super(Command2, self).__init__(worker, command, environment)
 
         # Create the two monitoring threads.
         self._queue_threads = [_QueueThread(self._proc.stdout),
@@ -57,14 +57,8 @@ class LocalCommand2(BaseLocalCommand):
         for thread in self._queue_threads:
             thread.start()
 
-    @property
-    def pid(self):
-        if self._proc is None:
-            return None
-        return self._proc.pid
-
     def cancel(self):
-        super(LocalCommand2, self).cancel()
+        super(Command2, self).cancel()
         for thread in self._queue_threads:
             thread.stop = True
         self._queue_threads = None
@@ -84,12 +78,14 @@ class LocalCommand2(BaseLocalCommand):
             try:
                 while True:
                     data = self._queue_stdout.get_nowait()
+                    self.worker.report.output_command(data)
                     self._write_data_to_stream(self._stdout, data)
             except Empty:
                 pass
             try:
                 while True:
                     data = self._queue_stderr.get_nowait()
+                    self.worker.report.output_command(data, True)
                     self._write_data_to_stream(self._stderr, data)
             except Empty:
                 pass

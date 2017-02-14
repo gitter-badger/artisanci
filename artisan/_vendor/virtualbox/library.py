@@ -8819,10 +8819,10 @@ class IInternalMachineControl(Interface):
                      in_p=[valid_stats, cpu_user, cpu_kernel, cpu_idle, mem_total, mem_free, mem_balloon, mem_shared, mem_cache, paged_total, mem_alloc_total, mem_free_total, mem_balloon_total, mem_shared_total, vm_net_rx, vm_net_tx])
 
     def authenticate_external(self, auth_params):
-        """Verify credentials using the external auth library.
+        """Verify credentials using the external policy library.
 
         in auth_params of type str
-            The auth parameters, credentials, etc.
+            The policy parameters, credentials, etc.
 
         out result of type str
             The authentification result.

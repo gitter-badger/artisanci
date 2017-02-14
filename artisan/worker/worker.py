@@ -20,34 +20,38 @@ import stat
 import tempfile
 import psutil
 
-from .command import LocalCommand
+from .command import Command
 from .base_worker import BaseWorker
 from .file_attrs import stat_to_file_attrs
 from ..compat import PY2, PY33, follows_symlinks
 from ..exceptions import OperationNotSupported
 
 
-class LocalWorker(BaseWorker):
+class Worker(BaseWorker):
     """ Implementation of the :class:`artisan.worker.BaseWorker` interface
     that operates on the local machine that Artisan is currently
     running on. """
-    def __init__(self):
+    def __init__(self, report):
+        super(Worker, self).__init__('localhost', report)
         self._cwd = os.getcwd()
-        super(LocalWorker, self).__init__('localhost')
 
-    def execute(self, command, environment=None, wait=False):
+    def execute(self, command, environment=None, timeout=None):
+        if not isinstance(command, (list, str)):
+            raise TypeError('Command must be of type list or string.')
         if environment is None:
             environment = self.environment
-        command = LocalCommand(self, command, environment)
-        if wait is not False:
-            if wait is True:
-                wait = None
-            command.wait(timeout=wait,
-                         error_on_timeout=True,
-                         error_on_exit=True)
+        if isinstance(command, list):
+            self.report.next_command(' '.join(command))
+        else:
+            self.report.next_command(command)
+        command = Command(self, command, environment)
+        command.wait(timeout=timeout,
+                     error_on_timeout=True,
+                     error_on_exit=True)
         return command
 
     def change_directory(self, path):
+        self.report.next_command('cd %s' % path)
         self._cwd = self._normalize_path(path)
 
     @property
@@ -55,15 +59,8 @@ class LocalWorker(BaseWorker):
         return self._cwd
 
     def list_directory(self, path='.'):
+        self.report.next_command('ls %s' % path)
         return os.listdir(self._normalize_path(path))
-
-    def get_file(self, remote_path, local_path):
-        shutil.move(self._normalize_path(remote_path),
-                    self._normalize_path(local_path))
-
-    def put_file(self, local_path, remote_path):
-        shutil.move(self._normalize_path(local_path),
-                    self._normalize_path(remote_path))
 
     def change_file_mode(self, path, mode, follow_symlinks=True):
         if platform.system() == 'Windows':
@@ -84,6 +81,7 @@ class LocalWorker(BaseWorker):
     def change_file_owner(self, path, user_id, follow_symlinks=True):
         _check_chown_support()
         st = _stat_follow(path, follow_symlinks)
+        self.report.next_command('chown %s %d %d' % (path, user_id, st.st_gid))
         path = self._normalize_path(path)
         if PY33 and follows_symlinks('os.chown'):
             os.chown(path, user_id, st.st_gid,
@@ -96,6 +94,7 @@ class LocalWorker(BaseWorker):
     def change_file_group(self, path, group_id, follow_symlinks=True):
         _check_chown_support()
         st = _stat_follow(path, follow_symlinks)
+        self.report.next_command('chown %s %d %d' % (path, st.st_uid, group_id))
         path = self._normalize_path(path)
         if PY33 and follows_symlinks('os.chown'):
             os.chown(path, st.st_uid, group_id,
@@ -107,15 +106,19 @@ class LocalWorker(BaseWorker):
 
     def stat_file(self, path, follow_symlinks=True):
         st = _stat_follow(self._normalize_path(path), follow_symlinks)
+        self.report.next_command('stat %s' % path)
         return stat_to_file_attrs(st)
 
     def is_directory(self, path):
+        self.report.next_command('test -d %s' % path)
         return os.path.isdir(self._normalize_path(path))
 
     def is_file(self, path):
+        self.report.next_command('test -f %s' % path)
         return os.path.isfile(self._normalize_path(path))
 
     def is_symlink(self, path):
+        self.report.next_command('test -L %s' % path)
         path = self._expandvars(os.path.expanduser(path))
         if not os.path.isabs(path):
             path = os.path.join(self._cwd, path)
@@ -130,12 +133,16 @@ class LocalWorker(BaseWorker):
         return open(path, mode)
 
     def remove_file(self, path):
+        self.report.next_command('rm %s' % path)
         os.remove(self._normalize_path(path))
 
     def remove_directory(self, path):
-        shutil.rmtree(self._normalize_path(path), ignore_errors=True)
+        self.report.next_command('rm -rf %s' % path)
+        path = self._normalize_path(path)
+        shutil.rmtree(path, ignore_errors=True)
 
     def create_symlink(self, source_path, link_path):
+        self.report.next_command('symlink %s %s' % (source_path, link_path))
         os.symlink(self._normalize_path(source_path),
                    self._normalize_path(link_path))
 

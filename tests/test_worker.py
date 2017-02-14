@@ -13,7 +13,7 @@ from mock import patch
 from artisan import (CommandExitStatusException,
                      CommandTimeoutException,
                      OperationNotSupported)
-from artisan.worker import RemoteWorker, SshWorker
+from artisan import Worker, Command
 
 try:
     import pwd
@@ -40,12 +40,12 @@ def _safe_remove(path):
 _SIGNAL_TIMEOUT = 10.0 if 'TRAVIS' in os.environ else 3.0
 
 
-class _BaseWorkerTestCase(unittest.TestCase):
-    COMMAND_TYPE = None
-    WORKER_TYPE = None
-    
+class TestWorker(unittest.TestCase):
+    COMMAND_TYPE = Command
+    WORKER_TYPE = Worker
+
     def make_worker(self):
-        raise NotImplementedError()
+        return Worker()
 
     def make_tmp_file(self):
         tmp = os.path.realpath(tempfile.mktemp())
@@ -438,6 +438,12 @@ class _BaseWorkerTestCase(unittest.TestCase):
         worker.environment["ENVIRONMENT"] = "VARIABLE"
         self.assertIn("ENVIRONMENT", worker.environment)
         self.assertEqual(worker.environment["ENVIRONMENT"], "VARIABLE")
+
+    def test_environ_get(self):
+        worker = self.make_worker()
+        for key, val in os.environ.items():
+            self.assertIn(key, worker.environment)
+            self.assertEqual(worker.environment[key], val)
 
     def test_environment_in_commands(self):
         worker = self.make_worker()

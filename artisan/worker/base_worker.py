@@ -23,19 +23,15 @@ __all__ = [
 
 
 class BaseWorker(object):
-    def __init__(self, host, environment=None):
-        self.environment = {}
-        if environment is None:
-            environment = self._get_default_environment()
+    def __init__(self, host, report):
+        self.environment = self._get_default_environment()
 
         self.host = host
-        self.environment = environment
-        self.allow_environment_changes = True
 
         self._closed = False
-        self._module = None
+        self._report = report
 
-    def execute(self, command, environment=None, wait=False):
+    def execute(self, command, environment=None):
         """
         Executes a command on the worker and returns an instance
         of :class:`artisan.BaseCommand` in order to track the command
@@ -47,11 +43,6 @@ class BaseWorker(object):
         :param environment:
             Optional dictionary of key-value pairs for environment
             variables to override the default worker environment.
-        :param bool wait:
-            If this option is ``False``, will return a
-            :class:`artisan.worker.command.BaseCommand` instance
-            right away, otherwise will wait for the command for the
-            timeout given in this parameter.
         :rtype: artisan.worker.command.BaseCommand
         :returns: :class:`artisan.BaseCommand` instance.
         """
@@ -66,6 +57,10 @@ class BaseWorker(object):
     def pathlib(self):
         """ The pathlib to use for path manipulations of the worker. """
         raise NotImplementedError()
+
+    @property
+    def report(self):
+        return self._report
 
     def change_directory(self, path):
         """

@@ -49,13 +49,18 @@ To install the latest development version from `Github <https://github.com/artis
 
 If your current Python installation doesn't have pip available, try `get-pip.py <bootstrap.pypa.io>`_
 
-After installing Artisan you can use it like any other Python module.
-Here's a very simple example:
+After installing Artisan, head to artisan.io and register and create an API key
+for free with a GitHub account.
+
+If you're planning on using Artisan for only personal use then setup is easy.
 
 .. code-block:: python
 
     import artisan
-    # Fill this section in with the common use-case.
+
+    farm = artisan.Farm()
+    farm
+
 
 API Reference
 -------------

@@ -34,10 +34,12 @@ from .exceptions import (JobTimeoutException,
                          IncorrectPassword,
                          OperatingSystemError,
                          OperationNotSupported)
-from .remote_agent import RemoteWorkerAgent
-from .job import (Job,
-                  JobProcess,
-                  JobStatus)
+from .worker import (BaseWorker,
+                     BaseCommand,
+                     Worker,
+                     Command)
+from .executor import (LocalExecutor,
+                       VirtualBoxExecutor)
 
 __author__ = 'Seth Michael Larson'
 __email__ = 'sethmichaellarson@protonmail.com'
@@ -54,11 +56,5 @@ __all__ = [
     'WorkerNotAvailable',
     'IncorrectPassword',
     'OperatingSystemError',
-    'OperationNotSupported',
-
-    'RemoteWorkerAgent',
-
-    'Job',
-    'JobStatus',
-    'JobProcess'
+    'OperationNotSupported'
 ]

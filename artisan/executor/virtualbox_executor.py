@@ -41,8 +41,8 @@ class VirtualBoxExecutor(BaseExecutor):
         These steps are taken from the `Virtual Box Manual Chapter 13
         <https://www.virtualbox.org/manual/ch13.html>`_.
     """
-    def __init__(self, machine, workers=1):
-        super(VirtualBoxExecutor, self).__init__(workers)
+    def __init__(self, machine, python):
+        super(VirtualBoxExecutor, self).__init__(python)
         self.machine = machine
         self._virtualbox = virtualbox.VirtualBox()
 

@@ -130,19 +130,18 @@ class BaseCommand(object):
         :returns: True if the command exits, False otherwise.
         """
         start_time = monotonic()
-        read_timeout = timeout
+        current_time = start_time
         not_complete = self._is_not_complete()
         if not not_complete:
             return True
         timed_out = False
         while self._is_not_complete():
-            self._read_all(read_timeout)
+            self._read_all(0.5 if timeout is None else min(0.5, current_time - start_time))
             if timeout is not None:
                 current_time = monotonic()
                 if current_time - start_time > timeout:
                     timed_out = True
                     break
-                read_timeout = max(0.0, (start_time + timeout) - current_time)
         if self._is_not_complete() and timed_out and error_on_timeout:
             raise CommandTimeoutException(self.command, timeout)
         if not_complete and error_on_exit and self._exit_status not in [None, 0]:
