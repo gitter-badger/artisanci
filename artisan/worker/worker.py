@@ -32,7 +32,7 @@ class Worker(BaseWorker):
     that operates on the local machine that Artisan is currently
     running on. """
     def __init__(self, report):
-        super(Worker, self).__init__('localhost', report)
+        super(Worker, self).__init__(report)
         self._cwd = os.getcwd()
 
     def execute(self, command, environment=None, timeout=None):
@@ -57,6 +57,13 @@ class Worker(BaseWorker):
     @property
     def cwd(self):
         return self._cwd
+
+    def create_directory(self, path):
+        self.report.next_command('mkdir %s' % path)
+        try:
+            os.makedirs(self._normalize_path(path))
+        except OSError:
+            pass
 
     def list_directory(self, path='.'):
         self.report.next_command('ls %s' % path)

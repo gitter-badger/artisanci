@@ -23,10 +23,8 @@ __all__ = [
 
 
 class BaseWorker(object):
-    def __init__(self, host, report):
+    def __init__(self, report):
         self.environment = self._get_default_environment()
-
-        self.host = host
 
         self._closed = False
         self._report = report
@@ -43,7 +41,7 @@ class BaseWorker(object):
         :param environment:
             Optional dictionary of key-value pairs for environment
             variables to override the default worker environment.
-        :rtype: artisan.worker.command.BaseCommand
+        :rtype: artisan.BaseCommand
         :returns: :class:`artisan.BaseCommand` instance.
         """
         raise OperationNotSupported('execute()', self._get_implementation_name())
@@ -61,6 +59,14 @@ class BaseWorker(object):
     @property
     def report(self):
         return self._report
+
+    def create_directory(self, path):
+        """
+        Creates a directory if it does not exist.
+
+        :param str path: Path to create directories.
+        """
+        raise OperationNotSupported('create_directory()', self._get_implementation_name())
 
     def change_directory(self, path):
         """

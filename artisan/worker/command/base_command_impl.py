@@ -16,7 +16,6 @@
 
 import subprocess
 from .base_command import BaseCommand
-from artisan.exceptions import CommandClosedException
 
 __all__ = [
     'BaseCommandImpl'
@@ -38,11 +37,11 @@ class BaseCommandImpl(BaseCommand):
         if self._proc is not None:
             self._proc.send_signal(signal)
         else:
-            raise CommandClosedException(self.command)
+            raise ValueError('Command is already cancelled.')
 
     def cancel(self):
         if self._cancelled:
-            raise CommandClosedException(self.command)
+            raise ValueError('Command is already cancelled.')
         try:
             self._proc.kill()
         except Exception:  # Skip coverage.

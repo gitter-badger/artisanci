@@ -16,9 +16,9 @@ import sys
 from .base_command import BaseCommand
 
 if sys.version_info >= (3, 0, 0):
-    from .command3 import Command3 as Command
+    from .command import Command2 as Command
 else:
-    from .command2 import Command2 as Command
+    from .command import Command2 as Command
 
 __all__ = [
     'BaseCommand',

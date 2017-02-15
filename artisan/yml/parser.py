@@ -3,12 +3,6 @@ import six
 
 import yaml
 
-# If PyYAML is compiled with libyaml we can get a speed-up for free!
-try:
-    from yaml import CLoader as loader
-except ImportError:
-    from yaml import Loader as loader
-
 __all__ = [
     'expand_labels',
     'expand_include',

@@ -15,9 +15,13 @@
 # language governing permissions and limitations under the License.
 
 import threading
-from Queue import Queue, Empty
 from .base_command_impl import BaseCommandImpl
 from artisan.compat import monotonic, sched_yield
+
+try:
+    from Queue import Queue, Empty
+except ImportError:
+    from queue import Queue, Empty
 
 __all__ = [
     'Command2'
@@ -78,14 +82,14 @@ class Command2(BaseCommandImpl):
             try:
                 while True:
                     data = self._queue_stdout.get_nowait()
-                    self.worker.report.output_command(data)
+                    self.worker.report.output_command(data.decode('utf-8'))
                     self._write_data_to_stream(self._stdout, data)
             except Empty:
                 pass
             try:
                 while True:
                     data = self._queue_stderr.get_nowait()
-                    self.worker.report.output_command(data, True)
+                    self.worker.report.output_command(data.decode('utf-8'), True)
                     self._write_data_to_stream(self._stderr, data)
             except Empty:
                 pass

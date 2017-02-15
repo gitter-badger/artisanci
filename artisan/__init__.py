@@ -24,16 +24,9 @@
           language governing permissions and limitations under the License.
           ______________________________________________________________
 """
-from .exceptions import (JobTimeoutException,
-                         JobErrorException,
-                         JobFailureException,
-                         JobCancelledException,
-                         CommandExitStatusException,
+from .exceptions import (ArtisanException,
                          CommandTimeoutException,
-                         WorkerNotAvailable,
-                         IncorrectPassword,
-                         OperatingSystemError,
-                         OperationNotSupported)
+                         CommandExitStatusException)
 from .worker import (BaseWorker,
                      BaseCommand,
                      Worker,
@@ -47,14 +40,4 @@ __license__ = 'Apache 2.0'
 __version__ = 'dev'
 
 __all__ = [
-    'JobTimeoutException',
-    'JobCancelledException',
-    'JobFailureException',
-    'JobErrorException',
-    'CommandTimeoutException',
-    'CommandExitStatusException',
-    'WorkerNotAvailable',
-    'IncorrectPassword',
-    'OperatingSystemError',
-    'OperationNotSupported'
 ]
