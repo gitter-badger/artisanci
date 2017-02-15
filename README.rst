@@ -29,6 +29,8 @@ Artisan
 Open-Source Continuous Integration services that work for everyone. :beers: Run your own CI service out of
 the box and donate cycles to your favorite projects and developers.
 
+**WARNING: This project is very young and not nearly complete. Many many things can change. Do NOT use yet.**
+
 Features and Support
 --------------------
 
