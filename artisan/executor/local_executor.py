@@ -27,12 +27,7 @@ class LocalExecutor(BaseExecutor):
         self.report.set_state('setup')
 
         worker = Worker(self.report)
-        script_module = os.path.basename(job.script)
-        if script_module.endswith('.py'):
-            script_module = script_module[:-3]
-        sys.path.insert(0, os.path.dirname(job.script))
-        script = __import__(script_module)
-        sys.path = sys.path[1:]
+
 
         error = None
         try:

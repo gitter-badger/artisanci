@@ -1,21 +1,18 @@
 import os
-from artisan.worker import BaseWorker
+from artisan import Worker
 
 
 def install(worker):
-    assert isinstance(worker, BaseWorker)
-    worker.run('python -m pip install -r dev-requirements.txt')
-    worker.run('python -m pip install .')
+    assert isinstance(worker, Worker)
+    worker.execute('python -m pip install -r dev-requirements.txt')
+    worker.execute('python -m pip install .')
     worker.remove_directory(os.path.join('docs', '_build'))
 
 
 def script(worker):
-    assert isinstance(worker, BaseWorker)
+    assert isinstance(worker, Worker)
 
     # make.bat must be in cwd on Windows.
     if worker.platform == 'Windows':
         worker.change_directory('docs')
-    try:
-        worker.run('make html')
-    finally:
-        worker.change_directory('..')
+    worker.execute('make html')

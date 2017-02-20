@@ -17,7 +17,6 @@ are defined in this module. """
 
 __all__ = [
     'ArtisanException',
-    'OperationNotSupported',
     'CommandExitStatusException',
     'CommandTimeoutException'
 ]
@@ -44,10 +43,3 @@ class CommandExitStatusException(ArtisanException):
             'Command `%s` exited with a non-zero exit status `%d`' % (command,
                                                                       exit_status))
         self.exit_status = exit_status
-
-
-class OperationNotSupported(ArtisanException):
-    """ The current operation is not supported. """
-    def __init__(self, command='', entity=''):
-        super(OperationNotSupported, self).__init__(
-            'The operation `%s` is not supported %s.' % (command, entity))

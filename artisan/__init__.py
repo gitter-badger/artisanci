@@ -27,17 +27,22 @@
 from .exceptions import (ArtisanException,
                          CommandTimeoutException,
                          CommandExitStatusException)
-from .worker import (BaseWorker,
-                     BaseCommand,
-                     Worker,
+from .worker import (Worker,
                      Command)
 from .executor import (LocalExecutor,
                        VirtualBoxExecutor)
 
 __author__ = 'Seth Michael Larson'
 __email__ = 'sethmichaellarson@protonmail.com'
-__license__ = 'Apache 2.0'
+__license__ = 'Apache-2.0'
 __version__ = 'dev'
 
 __all__ = [
+    'ArtisanException',
+    'CommandTimeoutException',
+    'CommandExitStatusException',
+    'Worker',
+    'Command',
+    'LocalExecutor',
+    'VirtualBoxExecutor'
 ]

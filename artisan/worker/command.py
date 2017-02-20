@@ -15,18 +15,46 @@
 # language governing permissions and limitations under the License.
 
 import io
+import subprocess
+import threading
+import time
 from artisan.compat import monotonic
 from artisan.exceptions import (CommandTimeoutException,
-                                CommandExitStatusException,
-                                OperationNotSupported)
+                                CommandExitStatusException)
 
 
 __all__ = [
-    'BaseCommand'
+    'Command'
 ]
 
+try:
+    from Queue import Queue, Empty
+except ImportError:
+    from queue import Queue, Empty
 
-class BaseCommand(object):
+
+class _QueueThread(threading.Thread):
+    """ Helper thread that turns a stream
+    into chunks for a waitable queue. """
+    def __init__(self, stream):
+        super(_QueueThread, self).__init__()
+        self._stream = stream
+        self.queue = Queue()
+        self.stop = False
+
+    def run(self):
+        try:
+            for line in iter(self._stream.readline, b''):
+                if self.stop:  # Skip coverage
+                    break
+                self.queue.put(line)
+            self._stream.close()
+        except Exception:  # Skip coverage
+            pass
+        self.stop = True
+
+
+class Command(object):
     """ Interface for commands executed by :class:`artisan.BaseWorker`.
     An instance of this must be returned from :meth:`artisan.BaseWorker.execute`"""
     def __init__(self, worker, command, environment=None):
@@ -38,27 +66,22 @@ class BaseCommand(object):
         self.worker = worker
         self.command = command
         self.environment = self._apply_minimum_environment(environment)
-        self._is_shell = False
 
-        self._cancelled = False
+        self._is_shell = False
+        self._proc = self._create_subprocess()
+
         self._exit_status = None
         self._stdout = io.BytesIO()
         self._stderr = io.BytesIO()
         self._stdin = io.BytesIO()
 
-    @property
-    def pid(self):
-        """
-        Process ID of the command.
-
-         .. note::
-            This is different from the sub-commands
-            being run if using a shell rather than a
-            list of command argv values. Check
-            :py:attr:`artisan.BaseCommand.is_shell` before
-            using this value if it needs to be accurate.
-        """
-        raise OperationNotSupported('pid', 'command')
+        # Create the two monitoring threads.
+        self._queue_threads = [_QueueThread(self._proc.stdout),
+                               _QueueThread(self._proc.stderr)]
+        self._queue_stdout = self._queue_threads[0].queue
+        self._queue_stderr = self._queue_threads[1].queue
+        for thread in self._queue_threads:
+            thread.start()
 
     @property
     def is_shell(self):
@@ -106,14 +129,6 @@ class BaseCommand(object):
         self._check_exit()
         return self._exit_status
 
-    def signal(self, signal):
-        """
-        Sends a signal to the process.
-
-        :param int signal: Signal number to send to the child.
-        """
-        raise OperationNotSupported('signal()', 'command')
-
     def wait(self, timeout=None, error_on_exit=False, error_on_timeout=False):
         """
         Wait for the command to complete.
@@ -148,38 +163,6 @@ class BaseCommand(object):
             raise CommandExitStatusException(self.command, self._exit_status)
         return not self._is_not_complete()
 
-    def cancel(self):
-        """ Cancel the command."""
-        raise NotImplementedError()
-
-    @property
-    def cancelled(self):
-        """ Boolean value whether the command
-        has been manually cancelled. """
-        return self._cancelled
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *_):
-        if not self._cancelled:
-            try:
-                self.cancel()
-            except ValueError:  # Skip coverage.
-                pass
-
-    def __repr__(self):
-        return '<%s command=`%s`>' % (type(self).__name__, self.command)
-
-    def __str__(self):
-        return self.__repr__()
-
-    def _is_not_complete(self):
-        return self._exit_status is None
-
-    def _read_all(self, timeout=0.0):
-        raise NotImplementedError()
-
     def _apply_minimum_environment(self, environment):
         """ Modifies the environment that will be passed
         to the command to have the minimum that is required
@@ -192,10 +175,49 @@ class BaseCommand(object):
             environment['PATH'] = self.worker.environment['PATH']
 
         # Windows requires SYSTEMROOT environment variable to be set before executing.
-        if 'SYSTEMROOT' in self.worker.environment:
+        if ('SYSTEMROOT' in self.worker.environment and
+            'SYSTEMROOM' not in self.worker.environment):
             environment['SYSTEMROOT'] = self.worker.environment['SYSTEMROOT']
 
         return environment
+
+    def _read_all(self, timeout=0.001):
+        if self._proc is None:
+            return
+        start_time = monotonic()
+        while self._is_not_complete():
+            if self._stdin.tell():
+                self._stdin.seek(0, 0)
+                data = self._stdin.read()
+                self._proc.stdin.write(data)
+                self._stdin.truncate(0)
+            if self._exit_status is None:
+                self._exit_status = self._proc.poll()
+            try:
+                while True:
+                    data = self._queue_stdout.get_nowait()
+                    self.worker.report.output_command(data.decode('utf-8'))
+                    self._write_data_to_stream(self._stdout, data)
+            except Empty:
+                pass
+            try:
+                while True:
+                    data = self._queue_stderr.get_nowait()
+                    self.worker.report.output_command(data.decode('utf-8'), True)
+                    self._write_data_to_stream(self._stderr, data)
+            except Empty:
+                pass
+            if timeout is not None and monotonic() - start_time > timeout:
+                break
+            # Suggest that the thread to give up its CPU.
+            time.sleep(0.0)
+
+    def _is_not_complete(self):
+        return (self._exit_status is None or
+                self._queue_stdout.qsize() > 0 or
+                self._queue_stderr.qsize() > 0 or
+                not self._queue_threads[0].stop or
+                not self._queue_threads[1].stop)
 
     def _check_exit(self):
         if self._is_not_complete():
@@ -214,3 +236,13 @@ class BaseCommand(object):
 
     def _write_stdin(self, data):
         self.stdin.write(data)
+
+    def _create_subprocess(self):
+        self._is_shell = True if not isinstance(self.command, list) else False
+        return subprocess.Popen(self.command,
+                                shell=self._is_shell,
+                                cwd=self.worker.cwd,
+                                stdin=subprocess.PIPE,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                env=self.environment)
