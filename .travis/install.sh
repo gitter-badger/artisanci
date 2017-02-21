@@ -5,7 +5,7 @@ set -x
 
 # Installing VirtualBox on sudo-enabled builds.
 if [[ ! -z "$VIRTUALBOX" ]]; then
-    sudo deb http://download.virtualbox.org/virtualbox/debian trusty contrib
+    sudo su -c "echo 'deb http://download.virtualbox.org/virtualbox/debian trusty contrib' >> /etc/apt/sources.list"
     wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
     wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
     sudo apt-get update
