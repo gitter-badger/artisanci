@@ -31,11 +31,13 @@ matrix:
         - TOXENV=py27
         - VIRTUALBOX=true
       sudo: required
+      dist: trusty
     - python: 3.6
       env:
         - TOXENV=py36
         - VIRTUALBOX=true
       sudo: required
+      dist: trusty
 
     # Linux PyPy Build
     - python: pypy-5.4
