@@ -24,6 +24,20 @@ matrix:
       env: TOXENV=py36
     - python: nightly
       env: TOXENV=py37
+      
+    # Linux VirtualBox Builds
+    - python: 2.7
+      env:
+        - TOXENV=py27
+        - VIRTUALBOX=true
+      sudo: required
+      dist: trusty
+    - python: 3.6
+      env:
+        - TOXENV=py36
+        - VIRTUALBOX=true
+      sudo: required
+      dist: trusty
 
     # Linux PyPy Build
     - python: pypy-5.4
