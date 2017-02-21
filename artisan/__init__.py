@@ -25,6 +25,7 @@
           ______________________________________________________________
 """
 from .exceptions import (ArtisanException,
+                         ArtisanAPIException,
                          CommandTimeoutException,
                          CommandExitStatusException)
 from .worker import (Worker,
@@ -39,6 +40,7 @@ __version__ = 'dev'
 
 __all__ = [
     'ArtisanException',
+    'ArtisanAPIException',
     'CommandTimeoutException',
     'CommandExitStatusException',
     'Worker',

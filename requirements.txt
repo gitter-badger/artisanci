@@ -1,4 +1,5 @@
 colorama==0.3.7
+distro==1.0.2
 enum34==1.1.6
 monotonic==1.2
 requests==2.13.0
@@ -6,5 +7,6 @@ paramiko==2.1.1
 picklepipe==1.1.1
 psutil==5.1.3
 PyYAML==3.12
+semver==2.7.5
 selectors2==1.1.1
 six==1.10.0

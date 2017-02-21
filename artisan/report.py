@@ -1,5 +1,7 @@
 import sys
 import colorama
+import requests
+from .exceptions import ArtisanAPIException
 colorama.init()
 
 __all__ = [
@@ -10,38 +12,77 @@ __all__ = [
 
 class Report(object):
     def __init__(self):
-        self._state = 'install'
+        self._status = 'waiting'
 
-    def set_state(self, state):
-        self._state = state
-
-    def next_command(self, command):
+    def on_next_command(self, command):
         raise NotImplementedError()
 
-    def output_command(self, output, error=False):
+    def on_command_output(self, output):
         raise NotImplementedError()
 
-    def build_success(self):
+    def on_command_error(self, output):
         raise NotImplementedError()
 
-    def build_failure(self):
-        raise NotImplementedError()
+    def on_status_change(self, status):
+        self._status = status
+
+    @property
+    def status(self):
+        return self._status
 
 
 class CommandLineReport(Report):
-    def set_state(self, state):
-        super(CommandLineReport, self).set_state(state)
-        print(colorama.Fore.LIGHTCYAN_EX + state + ':' + colorama.Style.RESET_ALL)
+    def __init__(self):
+        super(CommandLineReport, self).__init__()
+        self._last_newline = True
 
-    def next_command(self, command):
-        print(colorama.Fore.YELLOW + '$ ' + command + colorama.Style.RESET_ALL)
+    def on_status_change(self, status):
+        super(CommandLineReport, self).on_status_change(status)
+        if status in ['failure', 'success']:
+            if status == 'failure':
+                print(('' if self._last_newline else '\r\n') + colorama.Fore.LIGHTRED_EX + 'Done. Your build completed with errors.' + colorama.Style.RESET_ALL)
+            else:
+                print(('' if self._last_newline else '\r\n') + colorama.Fore.LIGHTGREEN_EX + 'Done. Your build completed successfully.' + colorama.Style.RESET_ALL)
+        else:
+            print(('' if self._last_newline else '\r\n') + colorama.Fore.LIGHTCYAN_EX + ' ----- ' + status + ' ----- ' + colorama.Style.RESET_ALL)
+        self._last_newline = True
 
-    def output_command(self, output, error=False):
-        sys.stdout.write((colorama.Fore.LIGHTRED_EX if error else '') + output + colorama.Style.RESET_ALL)
+    def on_next_command(self, command):
+        print(('' if self._last_newline else '\r\n') + colorama.Fore.LIGHTYELLOW_EX + '$ ' + command + colorama.Style.RESET_ALL)
+        self._last_newline = True
+
+    def on_command_output(self, output):
+        self._last_newline = '\n' == output[-1]
+        sys.stdout.write(output)
         sys.stdout.flush()
 
-    def build_success(self):
-        print(colorama.Fore.LIGHTGREEN_EX + 'Done. Your build completed successfully.' + colorama.Style.RESET_ALL)
+    def on_command_error(self, output):
+        self._last_newline = '\n' == output[-1]
+        sys.stdout.write(colorama.Fore.LIGHTRED_EX + output + colorama.Style.RESET_ALL)
+        sys.stdout.flush()
 
-    def build_failure(self):
-        print(colorama.Fore.LIGHTRED_EX + 'Done. Your build completed with errors.' + colorama.Style.RESET_ALL)
+
+class APIReport(Report):
+    def __init__(self, job_id):
+        super(APIReport, self).__init__()
+        self._job_id = job_id
+
+    def on_status_change(self, status):
+        super(APIReport, self).on_status_change(status)
+        self._post_api_payload('status_change', status)
+
+    def on_next_command(self, command):
+        self._post_api_payload('next_command', command)
+
+    def on_command_output(self, output):
+        self._post_api_payload('command_output', output)
+
+    def on_command_error(self, output):
+        self._post_api_payload('command_error', output)
+
+    def _post_api_payload(self, event, data):
+        payload = {'event': event,
+                   'data': data}
+        r = requests.post('https://artisan.io/api/job/%s/report' % self._job_id, json=payload)
+        if not r.ok:
+            raise ArtisanAPIException('API responded with a bad status code: %d' % r.status_code)

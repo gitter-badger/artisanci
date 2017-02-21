@@ -17,6 +17,7 @@ are defined in this module. """
 
 __all__ = [
     'ArtisanException',
+    'ArtisanAPIException',
     'CommandExitStatusException',
     'CommandTimeoutException'
 ]
@@ -43,3 +44,9 @@ class CommandExitStatusException(ArtisanException):
             'Command `%s` exited with a non-zero exit status `%d`' % (command,
                                                                       exit_status))
         self.exit_status = exit_status
+
+
+class ArtisanAPIException(ArtisanException):
+    """ Exception that is raised when the API hosted at
+    https://artisan.io/api/... fails. """
+    pass

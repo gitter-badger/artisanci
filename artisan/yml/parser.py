@@ -1,8 +1,6 @@
 import itertools
 import six
 
-import yaml
-
 __all__ = [
     'expand_labels',
     'expand_include',

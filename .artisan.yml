@@ -31,19 +31,18 @@ jobs:
       matrix:
         platform:
           - 'linux'
-          - 'osx>=10'
-          - 'windows>=8'
+          - 'osx'
+          - 'windows'
 
   # Flake8 Style Checking
   - name: 'flake8'
     script: '.artisan/flake8.py'
     labels:
+      python: 'cpython>=2.7'
 
       # Python package versions
       python-virtualenv: '>=15.1.0'
       python-setuptools: '>=0.9.8'
-
-      python: 'cpython>=2.7'
 
   # Test Builds on Many Platforms
   - name: 'tests'

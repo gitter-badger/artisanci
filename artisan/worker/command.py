@@ -196,14 +196,14 @@ class Command(object):
             try:
                 while True:
                     data = self._queue_stdout.get_nowait()
-                    self.worker.report.output_command(data.decode('utf-8'))
+                    self.worker._notify_listeners('command_output', data.decode('utf-8'))
                     self._write_data_to_stream(self._stdout, data)
             except Empty:
                 pass
             try:
                 while True:
                     data = self._queue_stderr.get_nowait()
-                    self.worker.report.output_command(data.decode('utf-8'), True)
+                    self.worker._notify_listeners('command_error', data.decode('utf-8'))
                     self._write_data_to_stream(self._stderr, data)
             except Empty:
                 pass

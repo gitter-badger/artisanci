@@ -6,9 +6,8 @@ __all__ = [
 class BaseExecutor(object):
     """ Interface for Executors which setup and teardown the
     environment that a worker executes a job inside of. """
-    def __init__(self, report, python):
+    def __init__(self, python):
         self.python = python
-        self.report = report
         self.busy = False
 
         # This flag, if `True`, will allow the
