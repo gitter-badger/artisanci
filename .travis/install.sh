@@ -9,6 +9,8 @@ if [[ ! -z "$VIRTUALBOX" ]]; then
     wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
     wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
     sudo apt-get update
+    sudo apt-get install linux-headers-4.4.0-51-generic
+    sudo apt-get install linux-headers-generic
     sudo apt-get install dkms
     sudo apt-get install virtualbox-5.1
 fi
