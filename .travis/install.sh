@@ -3,6 +3,19 @@
 set -e
 set -x
 
+# Installing VirtualBox on sudo-enabled builds.
+if [[ ! -z "$VIRTUALBOX" ]]; then
+    sudo su -c "echo 'deb http://download.virtualbox.org/virtualbox/debian trusty contrib' >> /etc/apt/sources.list"
+    wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+    wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+    sudo apt-get update
+    sudo apt-get install linux-headers-4.4.0-51-generic
+    sudo apt-get install linux-headers-generic
+    sudo apt-get install dkms
+    sudo apt-get install virtualbox-5.1
+fi
+
+# Installing Python on OSX.
 if [[ "$(uname -s)" == 'Darwin' ]]; then
     # Install PyEnv
     git clone --depth 1 https://github.com/yyuu/pyenv.git ~/.pyenv
