@@ -21,27 +21,27 @@ if __name__ == '__main__':
     farm = artisan.Farm(key=ARTISAN_API_KEY,
                         secret=ARTISAN_API_SECRET)
 
-    # Create the executor and allow it to automatically detect labels to use.
-    # This executor in particular uses VirtualBox to run a Windows OS as a VM.
+    # Create the builder and allow it to automatically detect labels to use.
+    # This builder in particular uses VirtualBox to run a Windows OS as a VM.
     # The image for this VM is found at the path: `windows-1`. We also give
     # the path that Python is installed on and has Artisan installed.
-    win_exec = artisan.VirtualBoxExecutor('windows-1', r'C:\\Anaconda3\python.exe')
-    win_exec.detect_labels()  # If there's any problems with the executor we'll find them here.
+    win_exec = artisan.VirtualBoxBuilder('windows-1', r'C:\\Anaconda3\python.exe')
+    win_exec.detect_labels()  # If there's any problems with the builder we'll find them here.
 
     # Creating the schedule to use the US/Central timezone that I live in.
     schedule = artisan.policy.Schedule(timezone=' US/Central')
 
-    # This is the policy that allows others to use this executor while I'm at work or asleep.
+    # This is the policy that allows others to use this builder while I'm at work or asleep.
     schedule.add_policy(start=datetime.time(hour=23),
                         end=datetime.time(hour=17, minute=30),
                         policy=artisan.policy.AllowAllPolicy())
 
-    # Here's my policy that allows only me to use this executor when I come home from work.
+    # Here's my policy that allows only me to use this builder when I come home from work.
     schedule.add_policy(start=datetime.time(hour=17, minute=30),
                         end=datetime.time(hour=23),
                         policy=artisan.policy.GitHubPolicy(allow_users=['SethMichaelLarson']))
 
-    # Add the executor to the farm.
+    # Add the builder to the farm.
     farm.add_executor(win_exec)
 
     # Start the farm and run it until we exit out of it.

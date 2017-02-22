@@ -1,14 +1,14 @@
 import sys
-from .base_executor import BaseExecutor
+from .base_builder import BaseBuilder
 from ..worker import Worker
 
 __all__ = [
-    'LocalExecutor'
+    'LocalBuilder'
 ]
 
 
-class LocalExecutor(BaseExecutor):
-    """ :class:`artisan.executor.BaseExecutor` implementation
+class LocalBuilder(BaseBuilder):
+    """ :class:`artisan.builder.BaseExecutor` implementation
     that uses the local machine to execute jobs using a
     :class:`artisan.Worker`.
 
@@ -17,7 +17,7 @@ class LocalExecutor(BaseExecutor):
          Consider using a different Executor for untrusted jobs.
     """
     def __init__(self, python=sys.executable):
-        super(LocalExecutor, self).__init__(python)
+        super(LocalBuilder, self).__init__(python)
 
     def setup(self, job):
         pass

@@ -30,8 +30,8 @@ from .exceptions import (ArtisanException,
                          CommandExitStatusException)
 from .worker import (Worker,
                      Command)
-from .executor import (LocalExecutor,
-                       VirtualBoxExecutor)
+from .builder import (LocalBuilder,
+                      VirtualBoxBuilder)
 
 __author__ = 'Seth Michael Larson'
 __email__ = 'sethmichaellarson@protonmail.com'
@@ -45,6 +45,6 @@ __all__ = [
     'CommandExitStatusException',
     'Worker',
     'Command',
-    'LocalExecutor',
-    'VirtualBoxExecutor'
+    'LocalBuilder',
+    'VirtualBoxBuilder'
 ]

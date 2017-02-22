@@ -1,9 +1,9 @@
 __all__ = [
-    'BaseExecutor'
+    'BaseBuilder'
 ]
 
 
-class BaseExecutor(object):
+class BaseBuilder(object):
     """ Interface for Executors which setup and teardown the
     environment that a worker executes a job inside of. """
     def __init__(self, python):
@@ -11,7 +11,7 @@ class BaseExecutor(object):
         self.busy = False
 
         # This flag, if `True`, will allow the
-        # executor to have a public schedule.
+        # builder to have a public schedule.
         # Setting this flag as `True` for a non-secure
         # environment is strongly discouraged.
         self.is_secure = False
