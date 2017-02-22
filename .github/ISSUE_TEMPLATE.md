@@ -1,6 +1,6 @@
 #### Version Information
 - Artisan Version: [Example: 1.0.0]
-- Python Version: [Example: Python 2.7+]
+- Python Version: [Example: Python 2.7.12+]
 - Happens in latest released version?: [Yes/No]
 - Happens in latest development version?: [Yes/No]
 

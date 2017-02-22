@@ -13,8 +13,8 @@ Installing VirtualBox
   - Ubuntu
   - Solaris
 
-Creating Executors
-------------------
+Creating Builders
+-----------------
 
   - Windows
   - OSX

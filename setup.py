@@ -26,7 +26,7 @@ if base_package not in packages:
 
 if __name__ == '__main__':
     setup(name='artisan',
-          description='Open-Source Continuous Integration services that work for everyone.',
+          description='Community powered Continuous Integration!',
           long_description='\n\n'.join([readme, changes]),
           license=LICENSE,
           url='http://artisan.readthedocs.io',
@@ -39,12 +39,10 @@ if __name__ == '__main__':
                             'distro',
                             'enum34',
                             'monotonic',
-                            'paramiko',
-                            'picklepipe',
                             'psutil',
+                            'requests',
                             'PyYAML',
                             'semver',
-                            'selectors2',
                             'six'],
           keywords=['artisan', 'ci', 'build', 'continuous', 'integration', 'testing'],
           packages=packages,

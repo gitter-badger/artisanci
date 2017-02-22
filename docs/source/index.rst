@@ -13,16 +13,16 @@ Artisan CI
 
 Modern, flexible, and platform-agnostic interface for automation, continuous integration, and farm management.
 
-Getting Started with Artisan
-----------------------------
+Getting Started with Artisan CI
+-------------------------------
 
-Artisan is available on PyPI can be installed with `pip <https://pip.pypa.io>`_.::
+Artisan CI is available on PyPI can be installed with `pip <https://pip.pypa.io>`_.::
 
     $ python -m pip install artisan
 
-To install the latest development version from `Github <https://github.com/SethMichaelLarson/artisan>`_::
+To install the latest development version from `Github <https://github.com/SethMichaelLarson/artisan-ci>`_::
 
-    $ python -m pip install git+git://github.com/SethMichaelLarson/artisan.git
+    $ python -m pip install git+git://github.com/SethMichaelLarson/artisan-ci.git
 
 
 If your current Python installation doesn't have pip available, try `get-pip.py <bootstrap.pypa.io>`_
@@ -44,7 +44,7 @@ Support / Report Issues
 -----------------------
 
 All support requests and issue reports should be
-`filed on Github as an issue <https://github.com/artisanci/artisan/issues>`_.
+`filed on Github as an issue <https://github.com/SethMichaelLarson/artisan-ci/issues>`_.
 Make sure to follow the template so your request may be as handled as quickly as possible.
 Please respect contributors by not using personal contacts for support requests.
 

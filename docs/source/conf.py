@@ -96,9 +96,9 @@ todo_include_todos = True
 html_theme = 'alabaster'
 html_theme_path = [alabaster.get_path()]
 html_theme_options = {
-    'description': 'Open-Source Continuous Integration services that work for everyone.',
+    'description': 'Community powered Continuous Integration! :beers:',
     'github_user': 'SethMichaelLarson',
-    'github_repo': 'artisan',
+    'github_repo': 'artisan-ci',
     'github_button': True,
     'github_banner': True,
     'font_family': "'Cabin', Georgia, sans",

@@ -1,14 +1,32 @@
 import os
+import semver
 import shutil
 import time
 import tempfile
 from .base_builder import BaseBuilder
 from .._vendor import virtualbox
+from ..exceptions import ArtisanException
+
+__copyright__ = """
+          Copyright (c) 2017 Seth Michael Larson
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at:
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific
+language governing permissions and limitations under the License.
+"""
 
 __all__ = [
     'VirtualBoxBuilder'
 ]
-_MINIMUM_VIRTUALBOX_SDK_VERSION = (5, 1, 14)
+_MINIMUM_VIRTUALBOX_SDK_VERSION = '5.1.14'
 
 
 class VirtualBoxBuilder(BaseBuilder):
@@ -53,6 +71,13 @@ class VirtualBoxBuilder(BaseBuilder):
 
         manager = virtualbox.Manager()
         self._virtualbox = manager.get_virtualbox()
+
+        if not semver.match(self._virtualbox.version_normalized, '>=' + _MINIMUM_VIRTUALBOX_SDK_VERSION):
+            raise ArtisanException('VirtualBox API detected as version `%s`. '
+                                   'Artisan requires at least version `%s` or '
+                                   'above. Please upgrade your VirtualBox.' % (self._virtualbox.version_normalized,
+                                                                               _MINIMUM_VIRTUALBOX_SDK_VERSION))
+
         self._machine = self._virtualbox.find_machine(self.machine)
         self._session = manager.get_session()
         self._save_image = None

@@ -10,39 +10,68 @@ merrier as long as you're not over-working your computer. :) """
 import datetime
 
 import artisan
-import artisan.policy
+from artisan.policy import Schedule, AllowAllPolicy, GitHubPolicy
 
 # Put your own artisan.io secret token here.
 ARTISAN_API_KEY = 'fill-in-this-value'
-ARTISAN_API_SECRET = 'this-value-is-secret'
 
 
 if __name__ == '__main__':
-    farm = artisan.Farm(key=ARTISAN_API_KEY,
-                        secret=ARTISAN_API_SECRET)
+    farm = artisan.Farm(username='gh:SethMichaelLarson',
+                        key=ARTISAN_API_KEY)
 
     # Create the builder and allow it to automatically detect labels to use.
     # This builder in particular uses VirtualBox to run a Windows OS as a VM.
     # The image for this VM is found at the path: `windows-1`. We also give
     # the path that Python is installed on and has Artisan installed.
-    win_exec = artisan.VirtualBoxBuilder('windows-1', r'C:\\Anaconda3\python.exe')
-    win_exec.detect_labels()  # If there's any problems with the builder we'll find them here.
+    windows_builder = artisan.VirtualBoxBuilder(machine='windows-1',
+                                                username='artisan',
+                                                password='artisan',
+                                                python=r'C:\\Anaconda3\python.exe')
+
+    # This is a local builder that can only be used by myself.
+    local_builder = artisan.LocalBuilder()
+
+    # If there's any problems with the builder we'll find them here.
+    windows_builder.auto_detect_labels()
+    local_builder.auto_detect_labels()
 
     # Creating the schedule to use the US/Central timezone that I live in.
-    schedule = artisan.policy.Schedule(timezone=' US/Central')
+    schedule = Schedule(timezone='US/Central')
 
     # This is the policy that allows others to use this builder while I'm at work or asleep.
-    schedule.add_policy(start=datetime.time(hour=23),
-                        end=datetime.time(hour=17, minute=30),
-                        policy=artisan.policy.AllowAllPolicy())
+    schedule.add_policy(AllowAllPolicy(start=datetime.time(hour=23),
+                                       end=datetime.time(hour=17, minute=30),
+                                       karma=True))
+
+    # By setting `karma` equal to `True`, my farm will accrue
+    # Karma when it is used by others which then allows me
+    # additional access to the public farm.
 
     # Here's my policy that allows only me to use this builder when I come home from work.
-    schedule.add_policy(start=datetime.time(hour=17, minute=30),
-                        end=datetime.time(hour=23),
-                        policy=artisan.policy.GitHubPolicy(allow_users=['SethMichaelLarson']))
+    schedule.add_policy(GitHubPolicy(allow_users=['SethMichaelLarson'],
+                                     start=datetime.time(hour=17, minute=30),
+                                     end=datetime.time(hour=23),
+                                     karma=False))
 
-    # Add the builder to the farm.
-    farm.add_executor(win_exec)
+    # Setting `karma` to `False` means that Karma is not
+    # required to execute jobs on this builder. I also
+    # restrict the usage of this builder to GitHub projects
+    # that I myself execute.
+
+    # Update the schedule to match
+    windows_builder.set_schedule(schedule)
+
+    # Now to create a schedule for my LocalBuilder.
+    # Which will allow builds all day from only myself.
+    local_builder.set_schedule(Schedule(timezone='US/Central',
+                                        policy=GitHubPolicy(allow_users=['SethMichaelLarson'],
+                                                            all_day=True,
+                                                            karma=False)))
+
+    # Add the builders to the farm.
+    farm.add_builder(windows_builder)
+    farm.add_builder(local_builder)
 
     # Start the farm and run it until we exit out of it.
     farm.run_forever()
