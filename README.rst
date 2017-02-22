@@ -1,5 +1,5 @@
-Artisan
-=======
+Artisan CI
+==========
 
 .. image:: https://img.shields.io/travis/SethMichaelLarson/artisan/master.svg
     :target: https://travis-ci.org/SethMichaelLarson/artisan
@@ -31,40 +31,6 @@ the box and donate cycles to your favorite projects and developers.
 
 **WARNING: This project is very young and not nearly complete. Many many things can change. Do NOT use yet.**
 
-Features and Support
---------------------
-
-- Artisan is a full-featured self-hosted Continuous Integration service that integrates
-  with popular source code management services.
-- Supports GitHub, BitBucket, and GitLab
-
-Getting Started with Artisan
-----------------------------
-
-Artisan is available on PyPI can be installed with `pip <https://pip.pypa.io>`_.::
-
-    $ python -m pip install artisan
-
-To install the latest development version from `Github <https://github.com/artisanci/artisan>`_::
-
-    $ python -m pip install git+git://github.com/SethMichaelLarson/artisan.git
-
-
-If your current Python installation doesn't have pip available, try `get-pip.py <bootstrap.pypa.io>`_
-
-After installing Artisan, head to artisan.io and register and create an API key
-for free with a GitHub account.
-
-If you're planning on using Artisan for only personal use then setup is easy.
-
-.. code-block:: python
-
-    import artisan
-
-    farm = artisan.Farm()
-    farm
-
-
 API Reference
 -------------
 
@@ -76,7 +42,6 @@ Support / Report Issues
 All support requests and issue reports should be
 `filed on Github as an issue <https://github.com/SethMichaelLarson/artisan/issues>`_.
 Make sure to follow the template so your request may be as handled as quickly as possible.
-Please respect contributors by not using personal contacts for support requests.
 
 Contributing
 ------------
@@ -87,9 +52,3 @@ License
 -------
 
 Artisan is made available under the Apache 2.0 License. For more details, see `LICENSE.txt <https://github.com/artisanci/artisan/blob/master/LICENSE.txt>`_.
-
-Sponsorship
------------
-
-If your company benefits from this library please consider sponsoring its development.
-Money earned from sponsoring goes primarily towards maintaining hosts and infrastructure.
