@@ -14,4 +14,4 @@ def script(worker):
 
 def after_success(worker):
     assert isinstance(worker, Worker)
-    worker.execute('codecov --env ARTISAN_OS_NAME,TOXENV')
+    worker.execute('codecov --env ARTISAN_BUILD_ID,ARTISAN_JOB_ID')

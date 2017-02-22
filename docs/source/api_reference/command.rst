@@ -1,4 +1,4 @@
 Commands
 ========
 
-.. autoclass:: artisan.BaseCommand
+.. autoclass:: artisan.Command

@@ -1,2 +1,0 @@
-Install VirtualBox on Solaris
-=============================

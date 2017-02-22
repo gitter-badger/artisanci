@@ -96,7 +96,7 @@ todo_include_todos = True
 html_theme = 'alabaster'
 html_theme_path = [alabaster.get_path()]
 html_theme_options = {
-    'description': 'Community powered Continuous Integration! :beers:',
+    'description': 'Community powered Continuous Integration!',
     'github_user': 'SethMichaelLarson',
     'github_repo': 'artisan-ci',
     'github_button': True,

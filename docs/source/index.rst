@@ -5,13 +5,14 @@ Artisan CI
     :hidden:
     :maxdepth: 2
 
-    setup_guides/index
+    getting_started/index
+    environment
     api_reference/index
     changelog
     contributing
     about
 
-Modern, flexible, and platform-agnostic interface for automation, continuous integration, and farm management.
+Community powered Continuous Integration!
 
 Getting Started with Artisan CI
 -------------------------------
@@ -27,13 +28,8 @@ To install the latest development version from `Github <https://github.com/SethM
 
 If your current Python installation doesn't have pip available, try `get-pip.py <bootstrap.pypa.io>`_
 
-After installing Artisan you can use it like any other Python module.
-Here's a very simple example:
-
-.. code-block:: python
-
-    import artisan
-    # Fill this section in with the common use-case.
+Next read the :doc:`getting_started/index` documentation for guides on how to setup
+your first farm and builders and how to use the Artisan CI for your own projects.
 
 API Reference
 -------------
@@ -44,9 +40,8 @@ Support / Report Issues
 -----------------------
 
 All support requests and issue reports should be
-`filed on Github as an issue <https://github.com/SethMichaelLarson/artisan-ci/issues>`_.
+`filed on GitHub as an issue <https://github.com/SethMichaelLarson/artisan-ci/issues>`_.
 Make sure to follow the template so your request may be as handled as quickly as possible.
-Please respect contributors by not using personal contacts for support requests.
 
 Contributing
 ------------
@@ -56,4 +51,5 @@ We happily welcome contributions, please see :doc:`contributing` for details.
 License
 -------
 
-artisan is made available under the Apache 2.0 License. For more details, see :doc:`about`.
+Artisan CI is made available under the Apache 2.0 License.
+For more details, see :doc:`about`.

@@ -13,7 +13,7 @@ from .library_base import VBoxError
 
 # Py2 and Py3 compatibility  
 try:
-    import __builtin__ as builtin 
+    import __builtin__ as builtin
 except:
     import builtins as builtin
 try:

@@ -3,7 +3,7 @@ execute builds on the server between the hours of 11:00pm and 5:30pm
 and only allows myself (@SethMichaelLarson) to execute tests between
 the hours of 5:30pm and 11:00pm. This allows me to donate the cycles
 that would otherwise be lost from me being at work to the Open Source
-community.
+community and earn me Karma for
 
 Of course you can add a lot more executors to this Farm, the more the
 merrier as long as you're not over-working your computer. :) """
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # This builder in particular uses VirtualBox to run a Windows OS as a VM.
     # The image for this VM is found at the path: `windows-1`. We also give
     # the path that Python is installed on and has Artisan installed.
-    windows_builder = artisan.VirtualBoxBuilder(machine='windows-1',
+    windows_builder = artisan.VirtualBoxBuilder(machine='windows-10',
                                                 username='artisan',
                                                 password='artisan',
                                                 python=r'C:\\Anaconda3\python.exe')

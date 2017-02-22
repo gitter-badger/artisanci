@@ -1,5 +1,5 @@
-Executor Setup Guides
-=====================
+Getting Started
+===============
 
 Here are a collection of guides on how to setup a pool
 of executors and how to create executors using different
