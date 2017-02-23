@@ -13,17 +13,17 @@ pyvbox 1.0.0
 License: MIT
 
 It appears that ``pyvbox`` is not currently maintained. Last release was a year ago.
-All changes *should* be submitted against their `GitHub repository <https://github.com/mjdorma/pyvbox>`_
+All changes *should* be submitted against the `GitHub project <https://github.com/mjdorma/pyvbox>`_
 but it seems that there is slim chance of getting a new release. Feel free to submit
-any changes to Artisan, the original repository, or both.
+any changes to Artisan CI in addition to .
 
 vboxapi Revision 109501
 -----------------------
-Licenses: CDDL-1.0 and GPLv2
+License: CDDL-1.0
 
 From the VirtualBox SDK kit which can be found on the
 `VirtualBox Downloads page <https://www.virtualbox.org/wiki/Downloads>`_
 available for any host. All changes should be submitted upstream.
-The module ``vboxapi`` is dual licensed under CDDL-1.0 and GPLv2.
-For the purposes of Artisan the CDDL-1.0 License is used.
-All source code within ``vboxapi`` is not changed from it's distributed form.
+The module ``vboxapi`` is licensed under CDDL-1.0 as long as the code is
+distributed without any modifications. All source code within
+``artisan/_vendor/vboxapi/...`` is not changed from it's distributed form.
