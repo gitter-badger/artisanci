@@ -1,6 +1,6 @@
 # This is both an example `.artisan.yml` file
 # and the actual configuration for building the
-# Artisan project against itself. :)
+# Artisan CI project against itself. :)
 
 # When running locally, everything that can be built
 # given the labels will be built. Other jobs will be
@@ -11,14 +11,14 @@
 # Give a list of farms that this project can execute on.
 farms:
 
-  # allow: all means that any farm can be used to run this build.
-  # Otherwise this entry is simply a list of API keys.
-  allow: 'all'
+  # Give a list of farms to use for builders. 
+  - 'gh:SethMichaelLarson'
 
 jobs:
   # Documentation Builds
   - name: 'docs'
     script: '.artisan/docs.py'
+    duration: 5 # This job should take 10 minutes or less.
     labels:
       python: 'cpython>=2.7'
 
@@ -37,6 +37,7 @@ jobs:
   # Flake8 Style Checking
   - name: 'flake8'
     script: '.artisan/flake8.py'
+    duration: 10
     labels:
       python: 'cpython>=2.7'
 
@@ -47,16 +48,12 @@ jobs:
   # Test Builds on Many Platforms
   - name: 'tests'
     script: '.artisan/tests.py'
+    duration: 20
     labels:
 
       # Python package versions
       python-virtualenv: '>=15.1.0'
       python-setuptools: '>=0.9.8'
-
-      # Hardware requirements.
-      disk:   '>=1024'  # 1GB Free Disk Space
-      memory: '>=256'   # 256MB RAM
-      cpu:    '>=512'   # 512MHz CPU
 
       # Matrixes allow easy expansion of repeated values.
       # NOTE: You must use `include` in order to have multiple
@@ -77,7 +74,6 @@ jobs:
               - 'cpython==3.4'   # CPython 3.4
               - 'cpython==3.5'   # CPython 3.5
               - 'cpython==3.6'   # CPython 3.6
-
             # `include` within a `matrix` add entries.
             include:
               - python: 'cpython==3.7'
@@ -101,3 +97,25 @@ jobs:
             python:
               - 'pypy2>=5.6.0'   # PyPy2 (~2.7)
               - 'pypy3>=5.5'     # PyPy3 (~3.3)
+
+        # Matrix for builds with VirtualBox
+  - name: 'tests-virtualbox'
+    script: '.artisan/tests.py'
+    duration: 20
+    env:  # Set an environment variable so the tests for VirtualBox can run.
+      - 'VIRTUALBOX=true'
+    labels:
+      matrix:
+        platform:
+          - 'ubuntu>=14.04'
+          - 'windows>=10'
+        python:
+          - 'cpython==2.7'
+          - 'cpython==3.5'
+          - 'cpython==3.6'
+        virtualbox: '>=5.1.14'
+
+# Allow the PyPy builds to fail without failing the whole build.
+allow_failure:
+  - python: 'pypy2>=5.6.0'
+  - python: 'pypy3>=5.5'

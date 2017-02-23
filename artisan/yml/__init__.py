@@ -69,3 +69,4 @@ def parse_project_yaml(path):
 
     project = ProjectYml()
     project.jobs.extend(jobs)
+    return project
