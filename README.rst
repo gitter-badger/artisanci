@@ -7,9 +7,9 @@ Artisan CI
 .. image:: https://img.shields.io/appveyor/ci/SethMichaelLarson/artisan-ci/master.svg
     :target: https://ci.appveyor.com/project/SethMichaelLarson/artisan-ci
     :alt: Windows Build Status
-.. image:: https://img.shields.io/codecov/c/github/SethMichaelLarson/artisan/master.svg
-    :target: https://codecov.io/gh/SethMichaelLarson/artisan
-    :alt: Test Suite Coverage
+.. image:: https://img.shields.io/codecov/c/github/SethMichaelLarson/artisan-ci/master.svg
+    :target: https://codecov.io/gh/SethMichaelLarson/artisan-ci
+    :alt: Code Coverage
 .. image:: https://img.shields.io/codeclimate/github/SethMichaelLarson/artisan-ci.svg
     :target: https://codeclimate.com/github/SethMichaelLarson/artisan-ci
     :alt: Code Health
@@ -37,7 +37,7 @@ Features
   - Continuous Integration builders in a box. Run your own private farm.
   - Integrates with GitHub, GitLab, and BitBucket for automated builds and testing.
   - Support for all major platforms (Linux, Windows, Mac OS, and Solaris).
-  - Support for virtualized builders via `VirtualBox <https://www.virtualbox.org/wiki/VirtualBox>`_.
+  - Support for virtualized builders via `VirtualBox <https://www.virtualbox.org>`_.
   - Interface for providing your own builders to other projects.
   - Provides an extensible module interface for customized use-cases.
 
