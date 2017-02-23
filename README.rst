@@ -25,6 +25,9 @@ Artisan CI
 .. image:: https://img.shields.io/badge/say-thanks-ff69b4.svg
     :target: https://saythanks.io/to/SethMichaelLarson
     :alt: Say Thanks to the Maintainers
+.. image:: https://img.shields.io/twitter/follow/artisan_ci.svg?style=social&label=Follow
+    :target: https://twitter.com/artisan_ci
+    :alt: Follow Artisan CI on Twitter
 
 Community powered Continuous Integration! :beers: Run your own CI service out of
 the box and donate cycles to your favorite projects and developers.
