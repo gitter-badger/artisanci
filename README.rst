@@ -34,12 +34,12 @@ the box and donate cycles to your favorite projects and developers.
 Features
 --------
 
-  - Continuous Integration builders in a box. Run your own private farm.
-  - Integrates with GitHub, GitLab, and BitBucket for automated builds and testing.
-  - Support for all major platforms (Linux, Windows, Mac OS, and Solaris).
-  - Support for virtualized builders via `VirtualBox <https://www.virtualbox.org>`_.
-  - Interface for providing your own builders to other projects.
-  - Provides an extensible module interface for customized use-cases.
+- Continuous Integration builders in a box. Run your own private farm.
+- Integrates with GitHub, GitLab, and BitBucket for automated builds and testing.
+- Support for all major platforms (Linux, Windows, Mac OS, and Solaris).
+- Support for virtualized builders via `VirtualBox <https://www.virtualbox.org>`_.
+- Interface for providing your own builders to other projects.
+- Provides an extensible module interface for customized use-cases.
 
 Getting Started
 ---------------
