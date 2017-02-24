@@ -135,6 +135,24 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
         job = yml.jobs[0]
         self.assertEqual(job.environment, {'ARTISAN': '1', 'CI': '-1'})
 
+    def test_project_config_no_jobs(self):
+        self.assertRaises(ArtisanException, self.parse_artisan_yml, """
+        farms:
+          - 'gh/SethMichaelLarson'
+        """)
+
+    def test_job_has_no_name(self):
+        self.assertRaises(ArtisanException, self.parse_artisan_yml, """
+        jobs:
+          - script: script1
+        """)
+
+    def test_job_has_no_script(self):
+        self.assertRaises(ArtisanException, self.parse_artisan_yml, """
+        jobs:
+          - name: test1
+        """)
+
 
 class TestArtisanYmlLabelParser(unittest.TestCase):
     def test_simple_expand_labels(self):
@@ -354,7 +372,6 @@ DOT = random.randint(0, 1)  # Used to alternate using `.artisan.yml` or `artisan
 
 
 class TestArtisanYmlParserFromDirectory(_BaseTestArtisanYmlParser):
-
     def parse_artisan_yml(self, data):
         global DOT
         path = os.path.join(tempfile.gettempdir(), ('.' if DOT else '') + 'artisan.yml')
@@ -364,6 +381,9 @@ class TestArtisanYmlParserFromDirectory(_BaseTestArtisanYmlParser):
         self.addCleanup(_safe_remove, path)
         DOT = not DOT
         return ArtisanYml.from_path(tempfile.gettempdir())
+
+    def test_cant_find_artisan_yml(self):
+        self.assertRaises(ArtisanException, ArtisanYml.from_path, '/this/path/does/not/exist')
 
 
 def _safe_remove(path):
