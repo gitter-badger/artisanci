@@ -57,7 +57,7 @@ matrix:
     # Linux PyPy Builds
     - python: pypy
       env: TOXENV=pypy
-    - python: pypy3
+    - python: pypy-5.4
       env: TOXENV=pypy
 
     # OSX CPython Builds
