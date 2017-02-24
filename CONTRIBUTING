@@ -1,8 +1,43 @@
 Contributing
 ============
 
-Artisan is a community-maintained project and happily accepts contributions.
+Artisan CI is a community-maintained project and happily accepts contributions.
 Thank you for considering contributing. ❤️
+
+Community Code of Conduct
+-------------------------
+
+Artisan CI adopts the `Open Code of Conduct <http://todogroup.org/opencodeofconduct/>`_`
+as a set of guidelines for its community.
+
+Our community strives to:
+
+  - Be friendly an patient.
+  - Be welcoming.
+  - Be considerate.
+  - Be respectful.
+  - Be careful in the words we choose.
+  - Try to understand why we disagree.
+
+If another community member, contributor, or maintainer is harassing you or is
+otherwise acting with disregard for our guidelines we urge you to file a report with
+us by emailing `sethmichaellarson@protonmail.com`. Within your report please include:
+
+  - Your contact information
+  - Names (real, nicknames, pseudonums) of any individuals involved. If there are
+    additional witnesses, please include them as well. Your account of what occurred
+    and if you believe the incident is ongoing. If there is a publically available
+    record (e.g. a mailing list archive, public IRC logger), please include a link.
+  - Any additional information that may be helpful.
+
+As I am the only point of contact (for now) regarding these issues:
+If you feel harassed by me personally, feel free to send me a message or to post
+the issue publicly for the community to discuss. :) - Seth Michael Larson
+
+For further definitions here is the
+`full text of the Open Code of Conduct <http://todogroup.org/opencodeofconduct/>`_.
+All contributors and community members are expected to follow this Code of Conduct
+at all times when interacting with other contributors.
 
 Adding Features / Fixing Bugs
 -----------------------------
