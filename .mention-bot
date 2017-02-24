@@ -1,9 +1,9 @@
 {
   "maxReviewers": 3,
   "numFilesToCheck": 10,
-  "message": "Thanks @pullRequester for the Pull Request! Reviewers will respond shortly. I've identified @reviewers as potential reviewers.",
+  "message": "Hello @pullRequester! :wave::robot: I've analyzed your Pull Request and assigned @reviewers as your reviewer(s). Thank you for your submission!\n\n---\n\nQuestions? Concerns? [Open up an issue](https://github.com/SethMichaelLarson/artisan/issues/new) on GitHub, [tweet at me](https://twitter.com/artisan_ci), or [contact me via email](mailto:sethmichaellarson@protonmail.com).",
   "findPotentialReviewers": true,
-  "fileBlacklist": ["*.rst"],
+  "fileBlacklist": [],
   "userBlacklist": [],
   "userBlacklistForPR": [],
   "requiredOrgs": [],

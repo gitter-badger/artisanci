@@ -1,7 +1,8 @@
 import os
 import six
 import yaml
-from .parser import expand_labels
+from .env_parser import parse_env
+from .label_parser import parse_labels
 from ..exceptions import ArtisanException
 from ..job import Job
 
@@ -71,21 +72,24 @@ class ArtisanYml(object):
             raise ArtisanException('Could not parse project configuration. '
                                    'Requires a `jobs` entry.')
         for job_json in artisan_yml['jobs']:
-            print(job_json)
             if 'name' not in job_json:
                 raise ArtisanException('Could not parse project configuration. '
                                        'Requires a `name` entry in each job.')
             if 'script' not in job_json:
                 raise ArtisanException('Could not parse project configuration. '
                                        'Requires a `script` entry in each job.')
+
+            job = Job(job_json['name'], job_json['script'], {})
+
             if 'labels' in job_json:
-                for label_json in expand_labels(job_json['labels']):
+                for label_json in parse_labels(job_json['labels']):
                     job = Job(job_json['name'], job_json['script'], {})
                     for key, value in six.iteritems(label_json):
                         job.labels[key] = value
-                    jobs.append(job)
-            else:
-                jobs.append(Job(job_json['name'], job_json['script'], {}))
+            if 'env' in job_json:
+                job.environment = parse_env(job_json['env'])
+
+            jobs.append(job)
 
         project = ArtisanYml()
         project.jobs.extend(jobs)

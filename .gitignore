@@ -90,6 +90,3 @@ ENV/
 
 # PyCharm
 .idea/
-
-# debugme.py
-debugme.py

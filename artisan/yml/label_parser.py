@@ -1,3 +1,6 @@
+""" Module for parsing the label expression
+from the projects ``.artisan.yml`` file. """
+
 import itertools
 import six
 
@@ -18,9 +21,7 @@ language governing permissions and limitations under the License.
 """
 
 __all__ = [
-    'expand_labels',
-    'expand_include',
-    'expand_matrix'
+    'parse_labels'
 ]
 
 # These are words that are used within a labels: option but
@@ -28,8 +29,8 @@ __all__ = [
 _LABEL_KEYWORDS = set(['matrix', 'include', 'omit'])
 
 
-def expand_labels(labels):
-    """ Expands a ``labels`` entry in a label expression.
+def parse_labels(labels):
+    """ Parses a ``labels`` entry in a label expression.
     Also the starting point for the global labels option. """
     assert isinstance(labels, dict)
 
@@ -56,6 +57,7 @@ def expand_labels(labels):
     if len(groups) == 0:
         groups = [global_labels]
 
+    expand_omit(groups, labels.get('omit', []))
     return groups
 
 
@@ -65,7 +67,7 @@ def expand_include(include):
 
     groups = []
     for entry in include:
-        groups.extend(expand_labels(entry))
+        groups.extend(parse_labels(entry))
     return groups
 
 
@@ -73,32 +75,55 @@ def expand_matrix(matrix):
     """ Expands a ``matrix`` entry in a label expression. """
     assert isinstance(matrix, dict)
 
-    omit = matrix.get('omit', None)
+    omit = matrix.get('omit', [])
     names = [key for key in matrix.keys() if key not in _LABEL_KEYWORDS]
     groups = []
-    for entry in itertools.product(*[matrix[key] for key in names]):
-        omitted = False
+    if len(names):
+        for entry in itertools.product(*[matrix[key] for key in names]):
+            omitted = False
 
-        if omit is not None:
-            entry_dict = {}
-            for i, value in enumerate(entry):
-                entry_dict[names[i]] = value
+            if len(omit) > 0:
+                entry_dict = {}
+                for i, value in enumerate(entry):
+                    entry_dict[names[i]] = value
+                for omit_dict in omit:
+                    for omit_key, omit_value in six.iteritems(omit_dict):
+                        if omit_key not in entry_dict:
+                            break
+                        if entry_dict[omit_key] != omit_value:
+                            break
+                    else:
+                        omitted = True
+                        break
+
+            if not omitted:
+                groups.append({})
+                for i, value in enumerate(entry):
+                    groups[-1][names[i]] = value
+
+    if 'include' in matrix:
+        groups.extend(expand_include(matrix['include']))
+    if 'matrix' in matrix:
+        groups.extend(expand_matrix(matrix['matrix']))
+
+    expand_omit(groups, omit)
+    return groups
+
+
+def expand_omit(groups, omit):
+    """ Applies an ``omit`` entry in a label expression. """
+    if len(omit) > 0:
+        for i in range(len(groups) - 1, -1, -1):
+            group = groups[i]
+            omitted = False
             for omit_dict in omit:
                 for omit_key, omit_value in six.iteritems(omit_dict):
-                    if omit_key not in entry_dict:
+                    if omit_key not in group:
                         break
-                    if entry_dict[omit_key] != omit_value:
+                    if group[omit_key] != omit_value:
                         break
                 else:
                     omitted = True
                     break
-
-        if not omitted:
-            groups.append({})
-            for i, value in enumerate(entry):
-                groups[-1][names[i]] = value
-
-    if 'include' in matrix:
-        groups.extend(matrix['include'])
-
-    return groups
+            if omitted:
+                del groups[i]

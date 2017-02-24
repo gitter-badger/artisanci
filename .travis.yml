@@ -54,8 +54,10 @@ matrix:
         - TOXENV=py37
         - VIRTUALBOX=true
 
-    # Linux PyPy Build
-    - python: pypy-5.4
+    # Linux PyPy Builds
+    - python: pypy
+      env: TOXENV=pypy
+    - python: pypy3
       env: TOXENV=pypy
 
     # OSX CPython Builds

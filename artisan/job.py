@@ -34,6 +34,7 @@ class Job(object):
         self.params = params
         self.report = None
         self.labels = {}
+        self.environment = {}
 
         self._cleanup_calls = []
 
