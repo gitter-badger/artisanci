@@ -54,13 +54,13 @@ from __future__ import absolute_import
 from contextlib import contextmanager
 import time
 
-from . import VirtualBox
-from . import Session
-from .library import LockType
-from .library import SessionState
-from .library import MachineState
-from .library import DeviceType
-from .library import DeviceActivity
+from virtualbox import VirtualBox
+from virtualbox import Session 
+from virtualbox.library import LockType
+from virtualbox.library import SessionState 
+from virtualbox.library import MachineState 
+from virtualbox.library import DeviceType 
+from virtualbox.library import DeviceActivity 
 
 class MachinePool(object):
     """MachinePool manages a pool of resources and enable cross process 

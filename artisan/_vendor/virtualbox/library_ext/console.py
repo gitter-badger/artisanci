@@ -1,7 +1,7 @@
 from __future__ import print_function
 
-
-from .. import library
+import virtualbox
+from virtualbox import library
 
 """
 Add helper code to the default IConsole class.

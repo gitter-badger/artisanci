@@ -4,8 +4,8 @@ import sys
 import os
 import shutil
 
-from .. import library
-from ... import virtualbox
+import virtualbox
+from virtualbox import library
 
 """
 Add helper code to the default IMachine class.

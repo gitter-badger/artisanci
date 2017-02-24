@@ -1,7 +1,7 @@
 import time
 import os
 
-from .. import library
+from virtualbox import library
 
 """
 Add helper code to the default IGuestSession class.

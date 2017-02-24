@@ -1,5 +1,5 @@
-from .. import library
-from .progress import IProgress
+from virtualbox import library
+from virtualbox.library_ext.progress import IProgress
 
 
 class IHost(library.IHost):

@@ -1,9 +1,10 @@
 import time
 import os
 
-from .. import library
-from ..library_base import Enum
-from ..library import VirtualSystemDescriptionType as DescType
+import virtualbox
+from virtualbox import library
+from virtualbox.library_base import Enum
+from virtualbox.library import VirtualSystemDescriptionType as DescType
 
 """
 Add helper code to the default IVirtualSystemDescription class.

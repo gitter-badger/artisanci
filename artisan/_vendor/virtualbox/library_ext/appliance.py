@@ -1,9 +1,10 @@
 import time
 import os
 
-from .. import library
-from ..library import VirtualSystemDescriptionType as DescType
-from ..library import VirtualSystemDescriptionValueType as DescValueType
+import virtualbox
+from virtualbox import library
+from virtualbox.library import VirtualSystemDescriptionType as DescType
+from virtualbox.library import VirtualSystemDescriptionValueType as DescValueType
 
 """
 Add helper code to the default IAppliance class.

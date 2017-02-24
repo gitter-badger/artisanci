@@ -1,4 +1,4 @@
-from .. import library
+from virtualbox import library
 
 
 """

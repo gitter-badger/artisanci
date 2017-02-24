@@ -27,10 +27,11 @@ if __name__ == '__main__':
     windows_builder = artisan.VirtualBoxBuilder(machine='windows-10',
                                                 username='artisan',
                                                 password='artisan',
-                                                python=r'C:\\Anaconda3\python.exe')
+                                                python=r'C:\\Anaconda3\python.exe',
+                                                instances=5)  # Allow 5 instances to be run at once.
 
     # This is a local builder that can only be used by myself.
-    local_builder = artisan.LocalBuilder()
+    local_builder = artisan.LocalBuilder(instances='*')  # Allow any number of instances.
 
     # If there's any problems with either builder we'll find them here.
     windows_builder.auto_detect_labels()

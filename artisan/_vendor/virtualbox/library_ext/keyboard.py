@@ -1,6 +1,6 @@
 import time
 
-from .. import library
+from virtualbox import library
 
 """
 Add helper code to the default IKeyboard class.

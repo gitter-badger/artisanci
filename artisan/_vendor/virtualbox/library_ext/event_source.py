@@ -1,7 +1,8 @@
 from __future__ import print_function
 
-from .. import library
-from .. import events
+import virtualbox
+from virtualbox import library
+from virtualbox import events
 
 """
 Add helper code to the default IEventSource class.

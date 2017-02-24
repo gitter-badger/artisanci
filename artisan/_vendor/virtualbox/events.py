@@ -10,7 +10,8 @@ import inspect
 import traceback
 import threading
 
-from . import library
+import virtualbox
+from virtualbox import library
 
 
 _lookup = {} 

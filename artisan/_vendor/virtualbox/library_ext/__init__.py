@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 import inspect
-from .. import library
+
+import virtualbox
+from virtualbox import library
 
 """
  This module is responsible for shimming out the auto generated libraries found

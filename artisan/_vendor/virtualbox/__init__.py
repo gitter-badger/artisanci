@@ -13,7 +13,7 @@ import atexit
 from multiprocessing import current_process
 from threading import current_thread
 
-from .library_ext import library
+from virtualbox.library_ext import library
 
 
 # Adopt on the library API root documentation
@@ -30,56 +30,8 @@ def import_vboxapi():
 
     :rtype: vboxapi module
     """
-    try:
-        from .. import vboxapi
-    except ImportError:
-        system = platform.system()
-        py_mm_ver = sys.version_info[:2]
-        packages = ['vboxapi']
-        if system == 'Windows':
-            packages.extend(['win32com', 'win32', 'win32api', 'pywintypes', 'win32comext'])
-            search = [
-                        'C:\\Python%s%s\\Lib\\site-packages' % py_mm_ver,
-                        'C:\\Python%s%s\\Lib\\site-packages\\win32' % py_mm_ver,
-                        'C:\\Python%s%s\\Lib\\site-packages\\win32\\lib' % py_mm_ver,
-                        'C:\\Program Files\\Oracle\\VirtualBox\\sdk\\install',
-                        'C:\\Program Files (x86)\\Oracle\\VirtualBox\\sdk\\install',
-                     ]
-        elif system == 'Linux':
-            search = [
-                        '/usr/lib/python%s.%s/dist-packages' % py_mm_ver,
-                        '/usr/lib/python%s.%s/site-packages' % py_mm_ver,
-                        '/usr/share/pyshared',
-                     ]
-        elif system == 'Darwin':
-            search = [
-                        '/Library/Python/%s.%s/site-packages' % py_mm_ver,
-                     ]
-        else:
-            # No idea where to look...
-            raise
-        packages = set(packages)
-        original_path = copy.copy(sys.path)
-        for path in search:
-            if not os.path.isdir(path):
-                continue
-            listing = set([os.path.splitext(f)[0] for f in os.listdir(path)])
-            if packages.intersection(listing):
-                sys.path.append(path)
-            packages -= listing
-            if not packages:
-                break
-        else:
-            # After search each path we still failed to find 
-            # the required set of packages.
-            raise
-        import vboxapi
-        try:
-            yield vboxapi
-        finally:
-            sys.path = original_path
-    else:
-        yield vboxapi
+    from .. import vboxapi
+    yield vboxapi
 
 
 _managers = {} 
@@ -190,8 +142,8 @@ class WebServiceManager(Manager):
         
         Options:
             url - url to connect with the VirtualBox server 
-            user - username used to policy to the VirtualBox server service
-            password - password used to policy to the VirtualBox server service
+            user - username used to auth to the VirtualBox server service
+            password - password used to auth to the VirtualBox server service
 
         Example:
             manager = WebServiceManager(user="mick", password="password")
@@ -203,6 +155,6 @@ class WebServiceManager(Manager):
 
 
 # Lazy include...
-from . import pool
-from . import events
-from . import version
+from virtualbox import pool
+from virtualbox import events
+from virtualbox import version
