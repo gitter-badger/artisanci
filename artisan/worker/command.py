@@ -177,7 +177,7 @@ class Command(object):
 
         # Windows requires SYSTEMROOT environment variable to be set before executing.
         if ('SYSTEMROOT' in self.worker.environment and
-            'SYSTEMROOM' not in self.worker.environment):
+                'SYSTEMROOM' not in self.worker.environment):
             environment['SYSTEMROOT'] = self.worker.environment['SYSTEMROOT']
 
         return environment

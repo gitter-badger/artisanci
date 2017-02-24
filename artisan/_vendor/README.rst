@@ -15,7 +15,7 @@ License: MIT
 It appears that ``pyvbox`` is not currently maintained. Last release was a year ago.
 All changes *should* be submitted against the `GitHub project <https://github.com/mjdorma/pyvbox>`_
 but it seems that there is slim chance of getting a new release. Feel free to submit
-any changes to Artisan CI in addition to .
+any changes to Artisan CI in addition to the actual GitHub project.
 
 vboxapi Revision 109501
 -----------------------

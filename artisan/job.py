@@ -65,8 +65,10 @@ class Job(object):
 
             # Show all environment variables sorted.
             self.report.on_next_command('env')
+            line_feed = '\r\n' if worker.platform == 'Windows' else '\n'
             for key, value in sorted(worker.environment.items()):
-                self.report.on_command_output('%s=%s%s' % (key, value, '\r\n' if worker.platform == 'Windows' else '\n'))
+                self.report.on_command_output('%s=%s%s' % (key, value,
+                                                           line_feed))
 
             if hasattr(script, 'install'):
                 self.report.on_status_change('install')
@@ -125,13 +127,17 @@ class Job(object):
             worker.remove_directory('.venv')
         worker.execute('virtualenv -p %s .venv' % sys.executable)
         if worker.platform == 'Windows':
-            worker.environment['PATH'] = os.path.join(worker.cwd, '.venv', 'Scripts') + ';' + worker.environment.get('PATH', '')
+            worker.environment['PATH'] = (os.path.join(worker.cwd, '.venv', 'Scripts') + ';' +
+                                          worker.environment.get('PATH', ''))
         else:
-            worker.environment['PATH'] = os.path.join(worker.cwd, '.venv', 'bin') + ':' + worker.environment.get('PATH', '')
+            worker.environment['PATH'] = (os.path.join(worker.cwd, '.venv', 'bin') + ':' +
+                                          worker.environment.get('PATH', ''))
         worker.environment['VIRTUAL_ENV'] = os.path.join(worker.cwd, '.venv')
 
     def __str__(self):
-        return '<%s script=\'%s\' labels=\'%s\'>' % (type(self).__name__, self.script, self.labels)
+        return '<%s script=\'%s\' labels=\'%s\'>' % (type(self).__name__,
+                                                     self.script,
+                                                     self.labels)
 
     def __repr__(self):
         return self.__str__()

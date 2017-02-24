@@ -68,15 +68,16 @@ class ArtisanYml(object):
         artisan_yml = yaml.load(string)
 
         if 'jobs' not in artisan_yml:
-            raise ArtisanException('Could not parse project configuration. Requires a `jobs` entry.')
+            raise ArtisanException('Could not parse project configuration. '
+                                   'Requires a `jobs` entry.')
         for job_json in artisan_yml['jobs']:
             print(job_json)
             if 'name' not in job_json:
-                raise ArtisanException(
-                    'Could not parse project configuration. Requires a `name` entry in each job.')
+                raise ArtisanException('Could not parse project configuration. '
+                                       'Requires a `name` entry in each job.')
             if 'script' not in job_json:
-                raise ArtisanException(
-                    'Could not parse project configuration. Requires a `script` entry in each job.')
+                raise ArtisanException('Could not parse project configuration. '
+                                       'Requires a `script` entry in each job.')
             if 'labels' in job_json:
                 for label_json in expand_labels(job_json['labels']):
                     job = Job(job_json['name'], job_json['script'], {})

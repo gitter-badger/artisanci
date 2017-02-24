@@ -72,11 +72,13 @@ class VirtualBoxBuilder(BaseBuilder):
         manager = virtualbox.Manager()
         self._virtualbox = manager.get_virtualbox()
 
-        if not semver.match(self._virtualbox.version_normalized, '>=' + _MINIMUM_VIRTUALBOX_SDK_VERSION):
+        if not semver.match(self._virtualbox.version_normalized,
+                            '>=' + _MINIMUM_VIRTUALBOX_SDK_VERSION):
+            fmt = (self._virtualbox.version_normalized,
+                   _MINIMUM_VIRTUALBOX_SDK_VERSION)
             raise ArtisanException('VirtualBox API detected as version `%s`. '
                                    'Artisan requires at least version `%s` or '
-                                   'above. Please upgrade your VirtualBox.' % (self._virtualbox.version_normalized,
-                                                                               _MINIMUM_VIRTUALBOX_SDK_VERSION))
+                                   'above. Please upgrade your VirtualBox.' % fmt)
 
         self._machine = self._virtualbox.find_machine(self.machine)
         self._session = manager.get_session()
@@ -90,7 +92,8 @@ class VirtualBoxBuilder(BaseBuilder):
             raise ValueError('Timeout!')
 
         self._save_image = os.path.join(tempfile.gettempdir(), 'save-image')
-        self._source_image = os.path.join(os.path.dirname(self._machine.snapshot_folder), self.machine + '.vdi')
+        self._source_image = os.path.join(os.path.dirname(self._machine.snapshot_folder),
+                                          self.machine + '.vdi')
 
         shutil.copyfile(self._source_image, self._save_image)
 

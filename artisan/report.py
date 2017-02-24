@@ -56,15 +56,27 @@ class CommandLineReport(Report):
         super(CommandLineReport, self).on_status_change(status)
         if status in ['failure', 'success']:
             if status == 'failure':
-                print(('' if self._last_newline else '\r\n') + colorama.Fore.LIGHTRED_EX + 'Done. Your build completed with errors.' + colorama.Style.RESET_ALL)
+                print(('' if self._last_newline else '\r\n') +
+                      colorama.Fore.LIGHTRED_EX +
+                      'Done. Your build completed with errors.' +
+                      colorama.Style.RESET_ALL)
             else:
-                print(('' if self._last_newline else '\r\n') + colorama.Fore.LIGHTGREEN_EX + 'Done. Your build completed successfully.' + colorama.Style.RESET_ALL)
+                print(('' if self._last_newline else '\r\n') +
+                      colorama.Fore.LIGHTGREEN_EX +
+                      'Done. Your build completed successfully.' +
+                      colorama.Style.RESET_ALL)
         else:
-            print(('' if self._last_newline else '\r\n') + colorama.Fore.LIGHTCYAN_EX + ' ----- ' + status + ' ----- ' + colorama.Style.RESET_ALL)
+            print(('' if self._last_newline else '\r\n') +
+                  colorama.Fore.LIGHTCYAN_EX +
+                  ' ----- ' + status + ' ----- ' +
+                  colorama.Style.RESET_ALL)
         self._last_newline = True
 
     def on_next_command(self, command):
-        print(('' if self._last_newline else '\r\n') + colorama.Fore.LIGHTYELLOW_EX + '$ ' + command + colorama.Style.RESET_ALL)
+        print(('' if self._last_newline else '\r\n') +
+              colorama.Fore.LIGHTYELLOW_EX +
+              '$ ' + command +
+              colorama.Style.RESET_ALL)
         self._last_newline = True
 
     def on_command_output(self, output):
@@ -74,7 +86,9 @@ class CommandLineReport(Report):
 
     def on_command_error(self, output):
         self._last_newline = '\n' == output[-1]
-        sys.stdout.write(colorama.Fore.LIGHTRED_EX + output + colorama.Style.RESET_ALL)
+        sys.stdout.write(colorama.Fore.LIGHTRED_EX +
+                         output +
+                         colorama.Style.RESET_ALL)
         sys.stdout.flush()
 
 
