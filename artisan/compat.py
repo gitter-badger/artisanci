@@ -34,7 +34,8 @@ __all__ = [
     'Semaphore',
     'RLock',
     'Condition',
-    'cmp_to_key'
+    'cmp_to_key',
+    'xrange'
 ]
 
 # Python version checking.
@@ -44,6 +45,10 @@ PY33 = sys.version_info >= (3, 3)
 PY34 = sys.version_info >= (3, 4)
 PY35 = sys.version_info >= (3, 5)
 
+if PY3:
+    xrange = range
+else:
+    xrange = xrange
 
 if PY33:
     _FOLLOWS_SYMLINKS = set()

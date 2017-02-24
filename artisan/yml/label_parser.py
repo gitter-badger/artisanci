@@ -3,6 +3,7 @@ from the projects ``.artisan.yml`` file. """
 
 import itertools
 import six
+from ..compat import xrange
 
 __copyright__ = """
           Copyright (c) 2017 Seth Michael Larson
@@ -113,7 +114,7 @@ def expand_matrix(matrix):
 def expand_omit(groups, omit):
     """ Applies an ``omit`` entry in a label expression. """
     if len(omit) > 0:
-        for i in range(len(groups) - 1, -1, -1):
+        for i in xrange(len(groups) - 1, -1, -1):
             group = groups[i]
             omitted = False
             for omit_dict in omit:
