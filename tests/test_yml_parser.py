@@ -64,7 +64,7 @@ jobs:
         self.assertEqual(job.labels, {})
         self.assertEqual(job.name, 'test1')
         self.assertEqual(job.script, 'script1')
-        
+
 
 class TestArtisanYmlParserExpand(unittest.TestCase):
     def test_simple_expand_labels(self):
@@ -165,6 +165,19 @@ class TestArtisanYmlParserExpand(unittest.TestCase):
                         {'a': '2', 'b': '1'},
                         {'a': '1', 'b': '2'},
                         {'a': '2', 'b': '2'}]:
+            self.assertIn(element, labels)
+
+    def test_matrix_bug_parse_single_entry(self):  # See Issue #92
+        labels = {'matrix': {'a': ['1', '2'],
+                             'b': ['1', '2'],
+                             'c': '3'}}
+
+        labels = expand_labels(labels)
+        self.assertEqual(len(labels), 4)
+        for element in [{'a': '1', 'b': '1', 'c': '3'},
+                        {'a': '2', 'b': '1', 'c': '3'},
+                        {'a': '1', 'b': '2', 'c': '3'},
+                        {'a': '2', 'b': '2', 'c': '3'}]:
             self.assertIn(element, labels)
 
 
