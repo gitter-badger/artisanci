@@ -21,52 +21,71 @@ either express or implied. See the License for the specific
 language governing permissions and limitations under the License.
 """
 
+__all__ = [
+    'ArtisanYml'
+]
 
-class ProjectYml(object):
+
+class ArtisanYml(object):
+    """ Instance describing a project's ``.artisan.yml`` file. """
     def __init__(self):
         self.jobs = []
 
+    @staticmethod
+    def from_path(path):
+        """ Loads a :class:`artisan.yml.ProjectYml` instance
+        from a path. Can be either a directory (where it will
+        search for a proper file) or an actual file.
 
-def parse_project_yaml(path):
-    """
-    Parses a ``.artisan.yml`` file into a list of :class:`artisan.Job` instances
-    that are ready to be executed or sent to the farms.
+        :param str path: Directory or file to read ``.artisan.yml`` from.
+        :rtype: artisan.yml.ArtisanYml
+        :return: :class:`artisan.yml.ArtisanYml` instance.
+        """
+        yml = None
+        if os.path.isfile(path):
+            yml = path
+        elif os.path.isdir(path):
+            listdir = os.listdir(path)
+            if '.artisan.yml' in listdir:
+                yml = os.path.join(path, '.artisan.yml')
+            elif 'artisan.yml' in listdir:
+                yml = os.path.join(path, 'artisan.yml')
+        if yml is None:
+            raise ArtisanException('Could not find an `.artisan.yml` file in the project root.')
+        with open(yml, 'r') as f:
+            return ArtisanYml.from_string(f.read())
 
-    :param str path: Either the path to a ``.artisan.yml`` file or the project root.
-    :return: List of :class:`artisan.Job` instances.
-    """
-    yml = None
-    if os.path.isfile(path):
-        yml = path
-    elif os.path.isdir(path):
-        listdir = os.listdir(path)
-        if '.artisan.yml' in listdir:
-            yml = os.path.join(path, '.artisan.yml')
-        elif 'artisan.yml' in listdir:
-            yml = os.path.join(path, 'artisan.yml')
-    if yml is None:
-        raise ArtisanException('Could not find an `.artisan.yml` file in the project root.')
+    @staticmethod
+    def from_string(string):
+        """ Loads a :class:`artisan.yml.ArtisanYml` instance
+        from a string.
 
-    jobs = []
-    with open(yml, 'r') as f:
-        artisan_yml = yaml.load(f.read())
+        :param str string: String of a ``.artisan.yml`` file.
+        :rtype: artisan.yml.ArtisanYml
+        :return: :class:`artisan.yml.ArtisanYml` instance.
+        """
+        jobs = []
+        artisan_yml = yaml.load(string)
 
         if 'jobs' not in artisan_yml:
-            raise ArtisanException('Could not parse project configuration. Requires a `job` entry.')
+            raise ArtisanException('Could not parse project configuration. Requires a `jobs` entry.')
         for job_json in artisan_yml['jobs']:
+            print(job_json)
             if 'name' not in job_json:
-                raise ArtisanException('Could not parse project configuration. Requires a `name` entry in each job.')
+                raise ArtisanException(
+                    'Could not parse project configuration. Requires a `name` entry in each job.')
             if 'script' not in job_json:
-                raise ArtisanException('Could not parse project configuration. Requires a `script` entry in each job.')
+                raise ArtisanException(
+                    'Could not parse project configuration. Requires a `script` entry in each job.')
             if 'labels' in job_json:
                 for label_json in expand_labels(job_json['labels']):
-                    job = Job(job_json['script'], {})
+                    job = Job(job_json['name'], job_json['script'], {})
                     for key, value in six.iteritems(label_json):
                         job.labels[key] = value
                     jobs.append(job)
             else:
-                jobs.append(Job(job_json['script'], {}))
+                jobs.append(Job(job_json['name'], job_json['script'], {}))
 
-    project = ProjectYml()
-    project.jobs.extend(jobs)
-    return project
+        project = ArtisanYml()
+        project.jobs.extend(jobs)
+        return project

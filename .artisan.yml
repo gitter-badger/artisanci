@@ -18,7 +18,7 @@ jobs:
   # Documentation Builds
   - name: 'docs'
     script: '.artisan/docs.py'
-    duration: 5 # This job should take 10 minutes or less.
+    duration: 5 # This job should take 5 minutes or less.
     labels:
       python: 'cpython>=2.7'
 

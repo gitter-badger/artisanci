@@ -28,7 +28,8 @@ __all__ = [
 
 
 class Job(object):
-    def __init__(self, script, params):
+    def __init__(self, name, script, params):
+        self.name = name
         self.script = script
         self.params = params
         self.report = None
@@ -39,9 +40,6 @@ class Job(object):
     def setup(self, worker):
         assert isinstance(worker, Worker)
         worker.add_listener(self.report)
-
-        if 'ARTISAN_API_KEY' in os.environ:
-            worker.environment['ARTISAN_API_KEY'] = os.environ['ARTISAN_API_KEY']
 
     def execute(self, worker):
         # Executing each part of the script.

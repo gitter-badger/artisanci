@@ -52,6 +52,10 @@ def expand_labels(labels):
             if label not in group:
                 group[label] = desc
 
+    # If no groups were found then we only have a single entry of globals.
+    if len(groups) == 0:
+        groups = [global_labels]
+
     return groups
 
 
