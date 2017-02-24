@@ -48,6 +48,8 @@ matrix:
         - VIRTUALBOX=true
 
     - python: nightly
+      sudo: required
+      dist: trusty
       env:
         - TOXENV=py37
         - VIRTUALBOX=true
