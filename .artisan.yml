@@ -12,7 +12,7 @@
 farms:
 
   # Give a list of farms to use for builders. 
-  - 'gh:SethMichaelLarson'
+  - 'gh/SethMichaelLarson'
 
 jobs:
   # Documentation Builds
@@ -37,7 +37,7 @@ jobs:
   # Flake8 Style Checking
   - name: 'flake8'
     script: '.artisan/flake8.py'
-    duration: 10
+    duration: 5
     labels:
       python: 'cpython>=2.7'
 
@@ -48,7 +48,7 @@ jobs:
   # Test Builds on Many Platforms
   - name: 'tests'
     script: '.artisan/tests.py'
-    duration: 20
+    duration: 10
     labels:
 
       # Python package versions

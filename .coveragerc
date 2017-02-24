@@ -5,6 +5,7 @@ omit =
     artisan/compat.py
     artisan/worker/expandvars.py
     artisan/_vendor/*
+concurrency = multiprocessing
 
 [report]
 exclude_lines =

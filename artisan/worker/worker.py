@@ -118,7 +118,10 @@ class Worker(object):
         :param str path: Path to change workers cwd to.
         """
         self._notify_listeners('next_command', 'cd %s' % path)
-        self._cwd = self._normalize_path(path)
+        cwd = self._normalize_path(path)
+        if not self.is_directory(cwd):
+            raise ValueError('`%s` is not a valid directory.' % cwd)
+        self._cwd = cwd
 
     def list_directory(self, path='.'):
         """

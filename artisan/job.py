@@ -2,6 +2,7 @@
 import os
 import sys
 import uuid
+from .report import DoNothingReport
 from .worker import Worker
 
 __copyright__ = """
@@ -46,13 +47,19 @@ class Job(object):
         # Executing each part of the script.
         error = None
         script = None
+
+        # If the Job doesn't have a report attached
+        # then we're just going to do nothing.
+        if self.report is None:
+            self.report = DoNothingReport()
+
         self.report.on_status_change('setup')
         try:
             self.setup(worker)
 
             # Importing the script module.
             script_path = self.script
-            if os.path.isabs(self.script):
+            if os.path.isabs(script_path):
                 script_path = os.path.join(worker.cwd, script_path)
             script_module = os.path.basename(script_path)
             if script_module.endswith('.py'):
@@ -145,8 +152,8 @@ class Job(object):
 
 
 class LocalJob(Job):
-    def __init__(self, script, path):
-        super(LocalJob, self).__init__(script, {'path': path})
+    def __init__(self, name, script, path):
+        super(LocalJob, self).__init__(name, script, {'path': path})
 
     def setup(self, worker):
         super(LocalJob, self).setup(worker)
@@ -155,10 +162,10 @@ class LocalJob(Job):
 
 
 class GitJob(Job):
-    def __init__(self, script, repo, branch):
+    def __init__(self, name, script, repo, branch):
         params = {'repo': repo,
                   'branch': branch}
-        super(GitJob, self).__init__(script, params)
+        super(GitJob, self).__init__(name, script, params)
 
     def setup(self, worker):
         super(GitJob, self).setup(worker)

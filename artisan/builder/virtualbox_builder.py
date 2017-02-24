@@ -63,8 +63,8 @@ class VirtualBoxBuilder(BaseBuilder):
         These steps are taken from the `Virtual Box Manual Chapter 13
         <https://www.virtualbox.org/manual/ch13.html>`_.
     """
-    def __init__(self, machine, username, password, python):
-        super(VirtualBoxBuilder, self).__init__(python)
+    def __init__(self, machine, username, password, python, builders=1):
+        super(VirtualBoxBuilder, self).__init__(python=python, builders=builders)
         self.machine = machine
         self.username = username
         self.password = password

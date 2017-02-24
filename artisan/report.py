@@ -22,7 +22,8 @@ language governing permissions and limitations under the License.
 
 __all__ = [
     'Report',
-    'CommandLineReport'
+    'CommandLineReport',
+    'DoNothingReport'
 ]
 
 
@@ -45,6 +46,17 @@ class Report(object):
     @property
     def status(self):
         return self._status
+
+
+class DoNothingReport(Report):
+    def on_command_error(self, output):
+        pass
+
+    def on_command_output(self, output):
+        pass
+
+    def on_next_command(self, command):
+        pass
 
 
 class CommandLineReport(Report):

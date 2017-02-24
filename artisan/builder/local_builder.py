@@ -1,3 +1,4 @@
+import six
 import sys
 from .base_builder import BaseBuilder
 from ..worker import Worker
@@ -29,17 +30,20 @@ class LocalBuilder(BaseBuilder):
     :class:`artisan.Worker`.
 
      .. warning::
-         This Executor is not safe for untrusted jobs.
-         Consider using a different Executor for untrusted jobs.
+         This builder is not safe for Community jobs.
     """
-    def __init__(self, python=sys.executable):
-        super(LocalBuilder, self).__init__(python)
+    def __init__(self, builders=1, python=sys.executable):
+        super(LocalBuilder, self).__init__(builders=builders, python=python)
 
     def setup(self, job):
         pass
 
     def execute(self, job):
-        job.execute(Worker())
+        worker = Worker()
+        worker.change_directory(job.params['path'])
+        for key, value in six.iteritems(job.environment):
+            worker.environment[key] = value
+        job.execute(worker)
 
     def teardown(self, job):
         pass
