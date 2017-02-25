@@ -24,7 +24,8 @@ language governing permissions and limitations under the License.
 __all__ = [
     'Job',
     'LocalJob',
-    'GitJob'
+    'GitJob',
+    'MercurialJob'
 ]
 
 
@@ -171,7 +172,7 @@ class GitJob(Job):
         super(GitJob, self).setup(worker)
 
         worker.environment['ARTISAN_BUILD_TYPE'] = 'git'
-        worker.environment['ARTISAN_GIT_SLUG'] = self.params['repo']
+        worker.environment['ARTISAN_GIT_REPOSITORY'] = self.params['repo']
         worker.environment['ARTISAN_GIT_BRANCH'] = self.params['branch']
 
         tmp_dir = self.make_temporary_directory(worker)
@@ -180,3 +181,22 @@ class GitJob(Job):
         worker.change_directory(repository)
         worker.execute('git fetch origin %s' % self.params['branch'])
         worker.execute('git checkout -qf FETCH_HEAD')
+
+
+class MercurialJob(Job):
+    def __init__(self, name, script, repo, branch):
+        params = {'repo': repo,
+                  'branch': branch}
+        super(MercurialJob, self).__init__(name, script, params)
+
+    def setup(self, worker):
+        super(MercurialJob, self).setup(worker)
+
+        worker.environment['ARTISAN_BUILD_TYPE'] = 'mercurial'
+        worker.environment['ARTISAN_MERCURIAL_REPOSITORY'] = self.params['repo']
+        worker.environment['ARTISAN_MERCURIAL_BRANCH'] = self.params['branch']
+
+        tmp_dir = self.make_temporary_directory(worker)
+        worker.execute('hg clone %s -r %s' % (self.params['repo'], self.params['branch']))
+        repository = os.path.join(tmp_dir, worker.list_directory()[0])
+        worker.change_directory(repository)

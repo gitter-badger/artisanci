@@ -7,7 +7,7 @@ Thank you for considering contributing. ❤️
 Community Code of Conduct
 -------------------------
 
-Artisan CI adopts the `Open Code of Conduct <http://todogroup.org/opencodeofconduct/>`_`
+Artisan CI adopts the `Open Code of Conduct <http://todogroup.org/opencodeofconduct>`_
 as a set of guidelines for its community.
 
 Our community strives to:
@@ -24,18 +24,14 @@ otherwise acting with disregard for our guidelines we urge you to file a report 
 us by emailing `sethmichaellarson@protonmail.com`. Within your report please include:
 
   - Your contact information
-  - Names (real, nicknames, pseudonums) of any individuals involved. If there are
+  - Names (real, nicknames, pseudonyms) of any individuals involved. If there are
     additional witnesses, please include them as well. Your account of what occurred
-    and if you believe the incident is ongoing. If there is a publically available
+    and if you believe the incident is ongoing. If there is a publicly available
     record (e.g. a mailing list archive, public IRC logger), please include a link.
   - Any additional information that may be helpful.
 
-As I am the only point of contact (for now) regarding these issues:
-If you feel harassed by me personally, feel free to send me a message or to post
-the issue publicly for the community to discuss. :) - Seth Michael Larson
-
 For further definitions here is the
-`full text of the Open Code of Conduct <http://todogroup.org/opencodeofconduct/>`_.
+`full text of the Open Code of Conduct <http://todogroup.org/opencodeofconduct>`_.
 All contributors and community members are expected to follow this Code of Conduct
 at all times when interacting with other contributors.
 

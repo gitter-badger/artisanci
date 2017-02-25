@@ -35,7 +35,7 @@ class TestLocalBuilder(unittest.TestCase):
 
         builder.acquire()
         self.assertTrue(os.path.isfile(delete_this))
-        builder.run(job)
+        builder.build_job(job)
         self.assertFalse(os.path.isfile(delete_this))
         builder.release()
 

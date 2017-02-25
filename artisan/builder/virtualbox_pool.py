@@ -33,7 +33,7 @@ class MachinePool(object):
         self.machine = machine
 
     @contextmanager
-    def _lock(self, timeout_ms=1):
+    def _lock(self, timeout_ms=-1):
         vbox = VirtualBox()
         machine = vbox.find_machine(self.machine)
         wait_time = 0

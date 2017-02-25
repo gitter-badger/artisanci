@@ -55,7 +55,7 @@ class BaseBuilder(object):
     def is_secure(self):
         return self.__is_secure
 
-    def run(self, job):
+    def build_job(self, job):
         proc = multiprocessing.Process(target=self._run, args=(job,))
         proc.start()
         proc.join()

@@ -70,9 +70,7 @@ class VirtualBoxBuilder(BaseBuilder):
         self._pool = None
         self._session = None
 
-        manager = virtualbox.Manager()
-        vbox = manager.get_virtualbox()
-
+        vbox = virtualbox.VirtualBox()
         if not semver.match(vbox.version_normalized,
                             '>=' + _MINIMUM_VIRTUALBOX_SDK_VERSION):
             fmt = (vbox.version_normalized,
@@ -86,8 +84,16 @@ class VirtualBoxBuilder(BaseBuilder):
         self._session = self._pool.acquire()
 
     def execute(self, job):
-        import time
-        time.sleep(60.0)
+        console = self._session.console
+        guest = console.guest
+        try:
+            guest_session = guest.create_session(self.username,
+                                                 self.password,
+                                                 timeout_ms=5 * 60 * 1000)
+            guest_session.execute(self.python, ['-m', 'artisan'] + job.args)
+            guest_session.close()
+        except Exception:
+            pass
 
     def teardown(self, job):
         if self._pool is not None:
