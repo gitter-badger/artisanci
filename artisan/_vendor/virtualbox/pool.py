@@ -55,16 +55,16 @@ from contextlib import contextmanager
 import time
 
 from virtualbox import VirtualBox
-from virtualbox import Session 
+from virtualbox import Session
 from virtualbox.library import LockType
-from virtualbox.library import SessionState 
-from virtualbox.library import MachineState 
-from virtualbox.library import DeviceType 
-from virtualbox.library import DeviceActivity 
+from virtualbox.library import SessionState
+from virtualbox.library import MachineState
+from virtualbox.library import DeviceType
+from virtualbox.library import DeviceActivity
 
 class MachinePool(object):
-    """MachinePool manages a pool of resources and enable cross process 
-    coordination of a linked machine clone. 
+    """MachinePool manages a pool of resources and enable cross process
+    coordination of a linked machine clone.
     """
     def __init__(self, machine_name):
         """Create a MachinePool instance.
@@ -97,7 +97,7 @@ class MachinePool(object):
             else:
                 try:
                     yield session
-                finally: 
+                finally:
                     session.unlock_machine()
                 break
 
@@ -133,7 +133,7 @@ class MachinePool(object):
         "Acquire a Machine resource."
         with self._lock() as root_session:
             for clone in self._clones:
-                # Search for a free clone 
+                # Search for a free clone
                 session = Session()
                 try:
                     clone.lock_machine(session, LockType.write)
@@ -181,13 +181,12 @@ class MachinePool(object):
             p.wait_for_completion(60*1000)
             session = clone.create_session()
             return session
-    
+
     def release(self, session):
         "Release a machine session resource."
         if session.state != SessionState.locked:
-            return 
+            return
         with self._lock():
             return self._power_down(session)
-
 
 

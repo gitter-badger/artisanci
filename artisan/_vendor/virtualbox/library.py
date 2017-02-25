@@ -12293,8 +12293,8 @@ created differencing media, should not happen).
             Machine is currently locked for a session.
         
         """
-        if not isinstance(cleanup_mode, CleanupMode):
-            raise TypeError("cleanup_mode can only be an instance of type CleanupMode")
+        #if not isinstance(cleanup_mode, CleanupMode):
+        #    raise TypeError("cleanup_mode can only be an instance of type CleanupMode")
         media = self._call("unregister",
                      in_p=[cleanup_mode])
         media = [IMedium(a) for a in media]

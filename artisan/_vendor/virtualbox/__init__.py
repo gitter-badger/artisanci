@@ -30,7 +30,7 @@ def import_vboxapi():
 
     :rtype: vboxapi module
     """
-    from .. import vboxapi
+    import vboxapi
     yield vboxapi
 
 

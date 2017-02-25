@@ -1,9 +1,7 @@
-import os
+
 import semver
-import shutil
-import time
-import tempfile
 from .base_builder import BaseBuilder
+from .virtualbox_pool import MachinePool
 from .._vendor import virtualbox
 from ..exceptions import ArtisanException
 
@@ -69,61 +67,31 @@ class VirtualBoxBuilder(BaseBuilder):
         self.username = username
         self.password = password
 
-        manager = virtualbox.Manager()
-        self._virtualbox = manager.get_virtualbox()
+        self._pool = None
+        self._session = None
 
-        if not semver.match(self._virtualbox.version_normalized,
+        manager = virtualbox.Manager()
+        vbox = manager.get_virtualbox()
+
+        if not semver.match(vbox.version_normalized,
                             '>=' + _MINIMUM_VIRTUALBOX_SDK_VERSION):
-            fmt = (self._virtualbox.version_normalized,
+            fmt = (vbox.version_normalized,
                    _MINIMUM_VIRTUALBOX_SDK_VERSION)
             raise ArtisanException('VirtualBox API detected as version `%s`. '
                                    'Artisan requires at least version `%s` or '
                                    'above. Please upgrade your VirtualBox.' % fmt)
 
-        self._machine = self._virtualbox.find_machine(self.machine)
-        self._session = manager.get_session()
-        self._save_image = None
-        self._source_image = None
-
     def setup(self, job):
-        progress = self._machine.launch_vm_process(self._session, 'gui', '')
-        progress.wait_for_completion(10000)
-        if progress.result_code != 0:
-            raise ValueError('Timeout!')
-
-        self._save_image = os.path.join(tempfile.gettempdir(), 'save-image')
-        self._source_image = os.path.join(os.path.dirname(self._machine.snapshot_folder),
-                                          self.machine + '.vdi')
-
-        shutil.copyfile(self._source_image, self._save_image)
-
-        guest = self._session.console.guest.create_session(self.username, self.password)
-        while True:
-            time.sleep(5.0)
-            try:
-                guest.execute(self.python, ['--version'])
-                break
-            except Exception:
-                pass
+        self._pool = MachinePool(self.machine)
+        self._session = self._pool.acquire()
 
     def execute(self, job):
-        pass
+        import time
+        time.sleep(60.0)
 
     def teardown(self, job):
-        try:
-            progress = self._session.console.power_down()
-            progress.wait_for_completion(10000)
-        except Exception:
-            pass
-        if self._save_image is not None:
-            shutil.copyfile(self._save_image, self._source_image)
-            try:
-                os.remove(self._save_image)
-            except Exception:
-                pass
-
-        self._session = None
-        self._machine = None
-        self._virtualbox = None
-        self._save_image = None
-        self._source_image = None
+        if self._pool is not None:
+            if self._session is not None:
+                self._pool.release(self._session)
+                self._session = None
+            self._pool = None
