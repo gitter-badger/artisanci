@@ -1,7 +1,7 @@
 {
   "maxReviewers": 3,
   "numFilesToCheck": 10,
-  "message": "Hello @pullRequester! :wave::robot: I've analyzed your Pull Request and assigned @reviewers as your reviewer(s). Thank you for your submission!\n\n---\n\nQuestions? Concerns? [Open up an issue](https://github.com/SethMichaelLarson/artisan/issues/new) on GitHub, [tweet at me](https://twitter.com/artisan_ci), or [contact me via email](mailto:sethmichaellarson@protonmail.com).",
+  "message": "Hello @pullRequester! :wave::robot: I've analyzed your Pull Request and assigned @reviewers as your reviewer(s). Thank you for your submission!\n\n---\n\nQuestions? Concerns? [Open up an issue](https://github.com/SethMichaelLarson/artisan/issues/new) on GitHub, [tweet at me](https://twitter.com/artisan_ci), or [contact me via email](mailto:sethmichaellarson@protonmail.com).\n:robot::beer: *Cheers!*",
   "findPotentialReviewers": true,
   "fileBlacklist": [],
   "userBlacklist": [],
