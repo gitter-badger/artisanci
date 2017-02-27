@@ -5,7 +5,7 @@ import string
 import time
 from .._vendor.virtualbox import VirtualBox, Session
 from .._vendor.virtualbox.library import CleanupMode
-from .._vendor.virtualbox.pool import LockType, SessionState
+from .._vendor.virtualbox.pool import LockType
 
 __copyright__ = """
           Copyright (c) 2017 Seth Michael Larson
@@ -70,7 +70,8 @@ class MachinePool(object):
     def acquire(self, frontend='gui'):
         with self._lock() as root_session:
             machine = root_session.machine
-            clone = machine.clone(name='%s clone-%s' % (self.machine, ''.join(random.choice(string.ascii_letters) for _ in range(32))))
+            token = ''.join(random.choice(string.ascii_letters) for _ in range(32))
+            clone = machine.clone(name='%s clone-%s' % (self.machine, token))
             p = clone.launch_vm_process(type_p=frontend)
             p.wait_for_completion(60 * 1000)
             session = clone.create_session()
