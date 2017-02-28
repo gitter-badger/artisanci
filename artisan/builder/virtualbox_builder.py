@@ -3,7 +3,7 @@ import semver
 from .base_builder import BaseBuilder
 from .virtualbox_pool import MachinePool
 from .._vendor import virtualbox
-from ..exceptions import ArtisanException
+from ..exceptions import ArtisanSecurityException
 
 __copyright__ = """
           Copyright (c) 2017 Seth Michael Larson
@@ -24,11 +24,11 @@ language governing permissions and limitations under the License.
 __all__ = [
     'VirtualBoxBuilder'
 ]
-_MINIMUM_VIRTUALBOX_SDK_VERSION = '5.1.14'
+_MINIMUM_VIRTUALBOX_VERSION = '5.1.14'
 
 
 class VirtualBoxBuilder(BaseBuilder):
-    """ :class:`artisan.builder.BaseExecutor` implementation
+    """ :class:`artisan.builder.BaseBuilder` implementation
     that uses VirtualBox in order to create a secure environment
     for untrusted tests to execute in.
 
@@ -47,40 +47,44 @@ class VirtualBoxBuilder(BaseBuilder):
         - Disable CD/DVD pass-through.
         - Disable USB pass-through.
         - Disable Drag-and-Drop.
-
-        The following steps are recommended and if not taken may leave your
-        Virtual Machine potentially vulnerable:
-
         - Disable Page Fusion.
+        - Disable Audio drivers.
         - Do not run Windows versions older than Vista with Service Pack 1.
 
         In addition to these steps make sure to always update your VirtualBox
-        and Guest Additions to their latest versions. Artisan will error if
+        and Guest Additions to their latest versions. Artisan CI will error if
         an insecure version of VirtualBox is being used.
 
-        These steps are taken from the `Virtual Box Manual Chapter 13
+        These steps are taken from the `VirtualBox Manual Chapter 13
         <https://www.virtualbox.org/manual/ch13.html>`_.
     """
     def __init__(self, machine, username, password, python, builders=1):
         super(VirtualBoxBuilder, self).__init__(python=python, builders=builders)
+
+        # Check that the VirtualBox version being used is
+        # at least the minimum SDK version listed.
+        vbox = virtualbox.VirtualBox()
+        if not semver.match(vbox.version_normalized,
+                            '>=' + _MINIMUM_VIRTUALBOX_VERSION):
+            fmt = (vbox.version_normalized,
+                   _MINIMUM_VIRTUALBOX_VERSION)
+            raise ArtisanSecurityException('VirtualBox detected as version `%s`. '
+                                           'Artisan CI requires at version `%s` or '
+                                           'above to use `VirtualBoxBuilder`. Please '
+                                           'upgrade your VirtualBox.' % fmt)
+
         self.machine = machine
         self.username = username
         self.password = password
 
-        self._pool = None
+        self._pool = MachinePool(self.machine)
         self._session = None
 
-        vbox = virtualbox.VirtualBox()
-        if not semver.match(vbox.version_normalized,
-                            '>=' + _MINIMUM_VIRTUALBOX_SDK_VERSION):
-            fmt = (vbox.version_normalized,
-                   _MINIMUM_VIRTUALBOX_SDK_VERSION)
-            raise ArtisanException('VirtualBox API detected as version `%s`. '
-                                   'Artisan requires at least version `%s` or '
-                                   'above. Please upgrade your VirtualBox.' % fmt)
+    @property
+    def is_secure(self):
+        return self._pool.is_secure
 
     def setup(self, job):
-        self._pool = MachinePool(self.machine)
         self._session = self._pool.acquire()
 
     def execute(self, job):
@@ -90,7 +94,7 @@ class VirtualBoxBuilder(BaseBuilder):
             guest_session = guest.create_session(self.username,
                                                  self.password,
                                                  timeout_ms=5 * 60 * 1000)
-            guest_session.execute(self.python, ['-m', 'artisan'] + job.args)
+            guest_session.execute(self.python, ['-m', 'artisan'] + job.as_args())
             guest_session.close()
         except Exception:
             pass

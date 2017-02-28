@@ -44,6 +44,28 @@ Features
 - Interface for providing your own builders to other projects.
 - Provides an extensible module interface for customized use-cases.
 
+Supported Platforms
+-------------------
+Artisan CI supports the following four platforms as capable of running a builder farm:
+
+ - Windows Vista SP1+
+ - Mac OSX 10.9+
+ - Linux (Debian 7+, Ubuntu 12.04+, Oracle 5+. RedHat 5+, Fedora 6+, Gentoo, openSUSE 11.4+)
+
+Virtualized builders support a very large range of guest platforms
+(Copied from `VirtualBox website <https://www.virtualbox.org/manual/ch03.html#guestossupport>`_):
+ - Windows NT 4.0
+ - Windows 2000, XP, Vista, 7, 8, 8.1, 10
+ - Windows Server 2003, 2008, 2012
+ - DOS / Windows 3.x / 95 / 98 / ME
+ - Linux 2.6, 3.x (Limited support for Linux 2.4<)
+ - Solaris 10 (u6 and higher), Solaris 11, Express
+ - OS/2 Warp 4.5 (Limited support)
+ - Mac OSX (`See limitations of Mac OSX guests <https://www.virtualbox.org/manual/ch03.html#guestossupport>`_)
+ - Although VirtualBox supports NetBSD and OpenBSD it does not support Guest Additions
+   for those platforms. Artisan CI requires Guest Additions to operate currently. This
+   may change in the future.
+
 Getting Started
 ---------------
 
@@ -55,11 +77,11 @@ The guides also feature many examples on how best to configure a farm. If you're
 having trouble getting Artisan CI working correctly do not hesitate to `open an
 issue on GitHub <https://github.com/SethMichaelLarson/artisan-ci/issues>`_.
 
-Reference
----------
+References
+----------
 
-The `Module and API Reference on readthedocs.io <http://artisan-ci.readthedocs.io>`_ provides documentation
-for the web API and the module ``artisan``.
+The `Module and API Reference on readthedocs.io <http://artisan-ci.readthedocs.io>`_
+provides documentation for the web API and the module ``artisan``.
 
 Issues and Support
 ------------------

@@ -5,8 +5,7 @@ import subprocess
 import threading
 import time
 from artisan.compat import monotonic
-from artisan.exceptions import (CommandTimeoutException,
-                                CommandExitStatusException)
+from artisan.exceptions import ArtisanException
 
 __copyright__ = """
           Copyright (c) 2017 Seth Michael Larson
@@ -159,9 +158,9 @@ class Command(object):
                     timed_out = True
                     break
         if self._is_not_complete() and timed_out and error_on_timeout:
-            raise CommandTimeoutException(self.command, timeout)
+            raise ArtisanException()
         if not_complete and error_on_exit and self._exit_status not in [None, 0]:
-            raise CommandExitStatusException(self.command, self._exit_status)
+            raise ArtisanException()
         return not self._is_not_complete()
 
     def _apply_minimum_environment(self, environment):

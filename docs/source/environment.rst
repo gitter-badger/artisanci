@@ -10,6 +10,7 @@ They should always be defined and available with these values:
 - ``CI=true``
 - ``ARTISAN=true``
 - ``CONTINUOUS_INTEGRATION=true``
+- ``ARTISAN_VERSION``: Current version of Artisan CI being used.
 
 Additionally the following environment variables are used and set to different
 values depending on the configuration of the build.

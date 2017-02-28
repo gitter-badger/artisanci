@@ -19,36 +19,17 @@ language governing permissions and limitations under the License.
 
 __all__ = [
     'ArtisanException',
-    'ArtisanAPIException',
-    'CommandExitStatusException',
-    'CommandTimeoutException'
+    'ArtisanSecurityException'
 ]
 
 
 class ArtisanException(Exception):
+    """ Generic exception type thrown by the Artisan CI module. """
     pass
 
 
-class CommandTimeoutException(ArtisanException):
-    """ Exception for calling :meth:`artisan.BaseCommand.wait` with
-    ``error_on_timeout`` parameter equal to True and the command times out. """
-    def __init__(self, command='', timeout=0.0):
-        super(CommandTimeoutException, self).__init__(
-            'Command `%s` did not exit' % command, timeout)
-
-
-class CommandExitStatusException(ArtisanException):
-    """ Exception for calling :meth:`artisan.BaseCommand.wait` with
-    ``error_on_exit`` equal to True and the command exits with
-    a non-zero exit status."""
-    def __init__(self, command='', exit_status=0):
-        super(CommandExitStatusException, self).__init__(
-            'Command `%s` exited with a non-zero exit status `%d`' % (command,
-                                                                      exit_status))
-        self.exit_status = exit_status
-
-
-class ArtisanAPIException(ArtisanException):
-    """ Exception that is raised when the API hosted at
-    https://artisan.io/api/... fails. """
+class ArtisanSecurityException(BaseException):
+    """ This exception represents a security risk with the current
+    configuration of Artisan CI. It should NEVER be caught in an
+    except block except to handle shutdown correctly. """
     pass

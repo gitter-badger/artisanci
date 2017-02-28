@@ -1,7 +1,7 @@
 import sys
 import colorama
 import requests
-from .exceptions import ArtisanAPIException
+from .exceptions import ArtisanException
 colorama.init()
 
 __copyright__ = """
@@ -127,4 +127,4 @@ class APIReport(Report):
                    'data': data}
         r = requests.post('https://artisan.io/api/job/%s/report' % self._job_id, json=payload)
         if not r.ok:
-            raise ArtisanAPIException('API responded with a bad status code: %d' % r.status_code)
+            raise ArtisanException('API responded with a bad status code: %d' % r.status_code)

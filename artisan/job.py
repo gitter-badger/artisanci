@@ -2,6 +2,7 @@
 import os
 import sys
 import uuid
+from . import __version__
 from .report import DoNothingReport
 from .worker import Worker
 
@@ -69,6 +70,12 @@ class Job(object):
             script = __import__(script_module)
             sys.path = sys.path[1:]
 
+            # Setup all default environment variables
+            worker.environment['ARTISAN'] = 'true'
+            worker.environment['CI'] = 'true'
+            worker.environment['CONTINUOUS_INTEGRATION'] = 'true'
+            worker.environment['ARTISAN_VERSION'] = __version__
+
             # Set the build directory to the current directory.
             worker.environment['ARTISAN_BUILD_DIR'] = worker.cwd
 
@@ -131,6 +138,13 @@ class Job(object):
         self.add_cleanup(worker.remove_directory, tmp_dir)
         return tmp_dir
 
+    def as_args(self):
+        """
+        Converts the Job into arguments to be run as if run by
+        ``python -m artisan ...[job.as_args()]``
+        """
+        raise NotImplementedError()
+
     def activate_python_virtualenv(self, worker):
         if worker.is_directory('.venv'):
             worker.remove_directory('.venv')
@@ -161,6 +175,12 @@ class LocalJob(Job):
 
         worker.environment['ARTISAN_BUILD_TYPE'] = 'local'
 
+    def as_args(self):
+        return ['--type', 'local',
+                '--script', self.script,
+                '--name', self.name,
+                '--path', self.params['path']]
+
 
 class GitJob(Job):
     def __init__(self, name, script, repo, branch):
@@ -182,6 +202,13 @@ class GitJob(Job):
         worker.execute('git fetch origin %s' % self.params['branch'])
         worker.execute('git checkout -qf FETCH_HEAD')
 
+    def as_args(self):
+        return ['--type', 'git',
+                '--script', self.script,
+                '--name', self.name,
+                '--repo', self.params['repo'],
+                '--branch', self.params['branch']]
+
 
 class MercurialJob(Job):
     def __init__(self, name, script, repo, branch):
@@ -200,3 +227,10 @@ class MercurialJob(Job):
         worker.execute('hg clone %s -r %s' % (self.params['repo'], self.params['branch']))
         repository = os.path.join(tmp_dir, worker.list_directory()[0])
         worker.change_directory(repository)
+
+    def as_args(self):
+        return ['--type', 'mercurial',
+                '--script', self.script,
+                '--name', self.name,
+                '--repo', self.params['repo'],
+                '--branch', self.params['branch']]

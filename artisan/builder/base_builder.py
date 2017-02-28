@@ -30,15 +30,10 @@ class BaseBuilder(object):
             raise TypeError('`python` must be of type `str`.')
         if not isinstance(builders, int):
             raise TypeError('`builders` must be of type `int`.')
+
         self.python = python
         self.builders = builders
         self._semaphore = None
-
-        # This flag, if `True`, will allow the
-        # builder to have a public schedule.
-        # Setting this flag as `True` for a non-secure
-        # environment is strongly discouraged.
-        self.__is_secure = False
 
     def acquire(self):
         if self._semaphore is None:
@@ -53,7 +48,11 @@ class BaseBuilder(object):
 
     @property
     def is_secure(self):
-        return self.__is_secure
+        # This flag, if `True`, will allow the
+        # builder to have a public schedule.
+        # Setting this flag as `True` for a non-secure
+        # environment is **strongly** discouraged.
+        return False
 
     def build_job(self, job):
         proc = multiprocessing.Process(target=self._run, args=(job,))

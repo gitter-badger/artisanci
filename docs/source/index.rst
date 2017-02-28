@@ -7,6 +7,7 @@ Artisan CI
 
     getting_started/index
     environment
+    module_reference/index
     api_reference/index
     changelog
     contributing
@@ -31,10 +32,14 @@ If your current Python installation doesn't have pip available, try `get-pip.py 
 Next read the :doc:`getting_started/index` documentation for guides on how to setup
 your first farm and builders and how to use the Artisan CI for your own projects.
 
-API Reference
--------------
+References
+----------
 
-The :doc:`api_reference/index` documentation provides API-level documentation.
+The :doc:`module_reference/index` provides documentation for all structures
+that the Artisan CI core module ``artisan`` uses.
+
+The :doc:`api_reference/index` provides documentation on the HTTP API that
+``https://artisan.io/api/...`` exposes to interact with Artisan CI on the fly.
 
 Support / Report Issues
 -----------------------

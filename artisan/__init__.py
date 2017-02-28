@@ -10,10 +10,7 @@
                  * Community-Powered Continuous Integration! *
                     Copyright (c) 2017 Seth Michael Larson
 """
-from .exceptions import (ArtisanException,
-                         ArtisanAPIException,
-                         CommandTimeoutException,
-                         CommandExitStatusException)
+from .exceptions import ArtisanException
 from .worker import (Worker,
                      Command)
 from .builder import (LocalBuilder,
@@ -41,7 +38,6 @@ __version__ = 'dev'
 
 __all__ = [
     'ArtisanException',
-    'ArtisanAPIException',
     'CommandTimeoutException',
     'CommandExitStatusException',
     'Worker',
