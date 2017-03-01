@@ -13,6 +13,7 @@ if [[ ! -z "$VIRTUALBOX" ]]; then
     sudo apt-get install linux-headers-generic
     sudo apt-get install dkms
     sudo apt-get install virtualbox-5.1
+    ls -Al /usr/lib/python2.7/site-packages
 fi
 
 # Installing Python on OSX.
