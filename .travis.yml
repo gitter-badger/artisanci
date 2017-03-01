@@ -11,52 +11,29 @@ matrix:
     - python: 3.5
       env: TOXENV=docs
 
-    # Linux CPython Builds (w/ VirtualBox)
+    # Linux CPython Builds
     - python: 2.7
-      sudo: required
-      dist: trusty
-      env:
-        - TOXENV=py27
-        - VIRTUALBOX=true
+      env: TOXENV=py27
 
     - python: 3.3
-      sudo: required
-      dist: trusty
-      env:
-        - TOXENV=py33
-        - VIRTUALBOX=true
+      env: TOXENV=py33
 
     - python: 3.4
-      sudo: required
-      dist: trusty
-      env:
-        - TOXENV=py34
-        - VIRTUALBOX=true
+      env: TOXENV=py34
 
     - python: 3.5
-      sudo: required
-      dist: trusty
-      env:
-        - TOXENV=py35
-        - VIRTUALBOX=true
+      env: TOXENV=py35
 
     - python: 3.6-dev
-      sudo: required
-      dist: trusty
-      env:
-        - TOXENV=py36
-        - VIRTUALBOX=true
+      env: TOXENV=py36
 
     - python: nightly
-      sudo: required
-      dist: trusty
-      env:
-        - TOXENV=py37
-        - VIRTUALBOX=true
+      env: TOXENV=py37
 
     # Linux PyPy Builds
     - python: pypy
       env: TOXENV=pypy
+
     - python: pypy-5.4
       env: TOXENV=pypy
 
@@ -64,9 +41,11 @@ matrix:
     - language: generic
       os: osx
       env: TOXENV=py27
+
     - language: generic
       os: osx
       env: TOXENV=py35
+
     - language: generic
       os: osx
       env: TOXENV=py36

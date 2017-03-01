@@ -1,12 +1,8 @@
 from contextlib import contextmanager
-import copy
-import os
 import random
 import semver
 import string
-import sys
 import time
-import platform
 import virtualbox
 from virtualbox import VirtualBox, Session
 from virtualbox.library import CleanupMode, ClipboardMode, DnDMode, DeviceType, LockType
@@ -33,69 +29,6 @@ __all__ = [
     'VirtualBoxBuilder'
 ]
 _MINIMUM_VIRTUALBOX_VERSION = '5.1.14'
-
-
-@contextmanager
-def _import_vboxapi():
-    """This import is designed to help when loading vboxapi inside of
-    alternative Python environments (virtualenvs etc).
-    :rtype: vboxapi module
-    """
-    try:
-        import vboxapi
-    except ImportError:
-        system = platform.system()
-        py_mm_ver = sys.version_info[:2]
-        packages = ['vboxapi']
-        if system == 'Windows':
-            packages.extend(['win32com', 'win32', 'win32api', 'pywintypes', 'win32comext'])
-            search = [
-                        'C:\\Python%s%s\\Lib\\site-packages' % py_mm_ver,
-                        'C:\\Python%s%s\\Lib\\site-packages\\win32' % py_mm_ver,
-                        'C:\\Python%s%s\\Lib\\site-packages\\win32\\lib' % py_mm_ver,
-                        'C:\\Program Files\\Oracle\\VirtualBox\\sdk\\install',
-                        'C:\\Program Files (x86)\\Oracle\\VirtualBox\\sdk\\install',
-                     ]
-        elif system == 'Linux':
-            search = [
-                        '/usr/lib/python%s.%s/dist-packages' % py_mm_ver,
-                        '/usr/lib/python%s.%s/site-packages' % py_mm_ver,
-                        '/usr/share/pyshared',
-                     ]
-            if 'VIRTUAL_ENV' in os.environ:
-                search.append(os.path.join(os.environ['VIRTUAL_ENV'], 'lib', 'python%s.%s' % py_mm_ver, 'site-packages'))
-        elif system == 'Darwin':
-            search = [
-                        '/Library/Python/%s.%s/site-packages' % py_mm_ver,
-                     ]
-        else:
-            # No idea where to look...
-            raise
-        packages = set(packages)
-        original_path = copy.copy(sys.path)
-        for path in search:
-            if not os.path.isdir(path):
-                continue
-            listing = set([os.path.splitext(f)[0] for f in os.listdir(path)])
-            if packages.intersection(listing):
-                sys.path.append(path)
-            packages -= listing
-            if not packages:
-                break
-        else:
-            # After search each path we still failed to find
-            # the required set of packages.
-            raise
-        import vboxapi
-        try:
-            yield vboxapi
-        finally:
-            sys.path = original_path
-    else:
-        yield vboxapi
-
-# Patch ``import_vboxapi`` to improve the searching capabilities of pyvbox.
-virtualbox.import_vboxapi = _import_vboxapi
 
 
 class VirtualBoxBuilder(BaseBuilder):
