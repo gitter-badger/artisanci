@@ -13,7 +13,7 @@ if [[ ! -z "$VIRTUALBOX" ]]; then
     sudo apt-get install linux-headers-generic
     sudo apt-get install dkms
     sudo apt-get install virtualbox-5.1
-    ls -Al /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages | grep v
+    ls -Al /home/travis/virtualenv/python2.7.12/lib/python2.7/site-packages | grep vbox
     ls -Al /usr/lib/python2.7/site-packages
 fi
 
