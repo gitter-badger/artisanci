@@ -4,6 +4,7 @@ enum34==1.1.6
 monotonic==1.2
 requests==2.13.0
 psutil==5.1.3
+pyvbox==1.0.0
 PyYAML==3.12
 semver==2.7.6
 six==1.10.0

@@ -8,7 +8,6 @@ Artisan CI
     getting_started/index
     environment
     module_reference/index
-    api_reference/index
     changelog
     contributing
     about
@@ -37,9 +36,6 @@ References
 
 The :doc:`module_reference/index` provides documentation for all structures
 that the Artisan CI core module ``artisan`` uses.
-
-The :doc:`api_reference/index` provides documentation on the HTTP API that
-``https://artisan.io/api/...`` exposes to interact with Artisan CI on the fly.
 
 Support / Report Issues
 -----------------------

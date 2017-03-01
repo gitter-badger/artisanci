@@ -41,6 +41,7 @@ if __name__ == '__main__':
                             'monotonic',
                             'psutil',
                             'requests',
+                            'pyvbox',
                             'PyYAML',
                             'semver',
                             'six'],

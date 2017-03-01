@@ -50,7 +50,8 @@ Artisan CI supports the following four platforms as capable of running a builder
 
  - Windows Vista SP1+
  - Mac OSX 10.9+
- - Linux (Debian 7+, Ubuntu 12.04+, Oracle 5+. RedHat 5+, Fedora 6+, Gentoo, openSUSE 11.4+)
+ - Linux 2.4+ (Debian 7+, Ubuntu 12.04+, Oracle 5+. RedHat 5+, Fedora 6+, Gentoo, openSUSE 11.4+)
+ - Solaris 10, 11
 
 Virtualized builders support a very large range of guest platforms
 (Copied from `VirtualBox website <https://www.virtualbox.org/manual/ch03.html#guestossupport>`_):
