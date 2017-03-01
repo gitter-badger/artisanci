@@ -4,6 +4,7 @@ from the projects ``.artisan.yml`` file. """
 import itertools
 import six
 from ..compat import xrange
+from ..exceptions import ArtisanException
 
 __copyright__ = """
           Copyright (c) 2017 Seth Michael Larson
@@ -33,7 +34,10 @@ _LABEL_KEYWORDS = set(['matrix', 'include', 'omit'])
 def parse_labels(labels):
     """ Parses a ``labels`` entry in a label expression.
     Also the starting point for the global labels option. """
-    assert isinstance(labels, dict)
+    if not isinstance(labels, dict):
+        raise ArtisanException('Project configuration `artisan.yml` is not '
+                               'structured properly at `jobs.*.labels`. '
+                               'See the documentation for more details.')
 
     groups = []
     global_labels = {}
@@ -64,7 +68,10 @@ def parse_labels(labels):
 
 def expand_include(include):
     """ Expands an ``include`` entry in a label expression. """
-    assert isinstance(include, list)
+    if not isinstance(include, list):
+        raise ArtisanException('Project configuration `artisan.yml` is not '
+                               'structured properly. See the documentation '
+                               'for more details.')
 
     groups = []
     for entry in include:
@@ -74,7 +81,10 @@ def expand_include(include):
 
 def expand_matrix(matrix):
     """ Expands a ``matrix`` entry in a label expression. """
-    assert isinstance(matrix, dict)
+    if not isinstance(matrix, dict):
+        raise ArtisanException('Project configuration `artisan.yml` is not '
+                               'structured properly. See the documentation '
+                               'for more details.')
 
     omit = matrix.get('omit', [])
     names = [key for key in matrix.keys() if key not in _LABEL_KEYWORDS]

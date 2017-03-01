@@ -41,8 +41,9 @@ def parse_env(env):
                 value = str(value)
 
             if not isinstance(key, str) or not isinstance(value, str):
-                print(type(key), type(value))
-                raise TypeError('All keys and values must be strings.')
+                raise ArtisanException('Project configuration `artisan.yml` is not '
+                                       'structured properly. See the documentation '
+                                       'for more details.')
 
             env[key] = value
         return env
@@ -69,5 +70,6 @@ def parse_env(env):
             raise ArtisanException('Could not parse `env` entry `%s`. Must '
                                    'be of the form `KEY=VALUE`' % env)
     else:
-        raise TypeError('Could not parse `env` entry `%s`. Must '
-                        'be either a mapping, list, or string.' % env)
+        raise ArtisanException('Project configuration `artisan.yml` is not '
+                               'structured properly. See the documentation '
+                               'for more details.')

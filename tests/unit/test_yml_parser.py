@@ -347,6 +347,18 @@ class TestArtisanYmlLabelParser(unittest.TestCase):
 
         self.assertEqual(labels, [{'a': '2', 'b': '3'}])
 
+    def test_wrong_types_labels(self):
+        for labels in [(1,), 1, 's', []]:
+            self.assertRaises(ArtisanException, parse_labels, labels)
+
+    def test_wrong_types_include(self):
+        for include in [(1,), 1, 's', {}]:
+            self.assertRaises(ArtisanException, parse_labels, {'include': include})
+
+    def test_wrong_types_matrix(self):
+        for matrix in [(1,), 1, 's', []]:
+            self.assertRaises(ArtisanException, parse_labels, {'matrix': matrix})
+
 
 class TestArtisanYmlEnvParser(unittest.TestCase):
     def test_empty_environment(self):
@@ -364,7 +376,7 @@ class TestArtisanYmlEnvParser(unittest.TestCase):
 
     def test_bad_types_parse_dict(self):
         for env in [{'key': (1,)}, {None: 'value'}]:
-            self.assertRaises(TypeError, parse_env, env)
+            self.assertRaises(ArtisanException, parse_env, env)
 
     def test_duplicate_keys(self):
         self.assertRaises(ArtisanException, parse_env, ['ARTISAN=1', 'ARTISAN=2'])
@@ -375,7 +387,7 @@ class TestArtisanYmlEnvParser(unittest.TestCase):
 
     def test_completely_wrong_type(self):
         for env in [None, (1,)]:
-            self.assertRaises(TypeError, parse_env, env)
+            self.assertRaises(ArtisanException, parse_env, env)
 
     def test_convert_yaml_types_to_strings(self):
         self.assertEqual(parse_env({'true': True, 'false': False, 'int': 1}),

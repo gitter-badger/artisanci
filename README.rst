@@ -48,24 +48,25 @@ Supported Platforms
 -------------------
 Artisan CI supports the following four platforms as capable of running a builder farm:
 
- - Windows Vista SP1+
- - Mac OSX 10.9+
- - Linux 2.4+ (Debian 7+, Ubuntu 12.04+, Oracle 5+. RedHat 5+, Fedora 6+, Gentoo, openSUSE 11.4+)
- - Solaris 10, 11
+- Windows Vista SP1+
+- Mac OSX 10.9+
+- Linux 2.4+ (Debian 7+, Ubuntu 12.04+, Oracle 5+. RedHat 5+, Fedora 6+, Gentoo, openSUSE 11.4+)
+- Solaris 10, 11
 
 Virtualized builders support a very large range of guest platforms
 (Copied from `VirtualBox website <https://www.virtualbox.org/manual/ch03.html#guestossupport>`_):
- - Windows NT 4.0
- - Windows 2000, XP, Vista, 7, 8, 8.1, 10
- - Windows Server 2003, 2008, 2012
- - DOS / Windows 3.x / 95 / 98 / ME
- - Linux 2.6, 3.x (Limited support for Linux 2.4<)
- - Solaris 10 (u6 and higher), Solaris 11, Express
- - OS/2 Warp 4.5 (Limited support)
- - Mac OSX (`See limitations of Mac OSX guests <https://www.virtualbox.org/manual/ch03.html#guestossupport>`_)
- - Although VirtualBox supports NetBSD and OpenBSD it does not support Guest Additions
-   for those platforms. Artisan CI requires Guest Additions to operate currently. This
-   may change in the future.
+- Windows NT 4.0
+- Windows 2000, XP, Vista, 7, 8, 8.1, 10
+- Windows Server 2003, 2008, 2012
+- DOS / Windows 3.x / 95 / 98 / ME
+- Linux 2.6, 3.x (Limited support for Linux 2.4<)
+- Solaris 10 (u6 and higher), Solaris 11, Express
+- OS/2 Warp 4.5 (Limited support)
+- Mac OSX (`See limitations of Mac OSX guests <https://www.virtualbox.org/manual/ch03.html#guestossupport>`_)
+
+Although VirtualBox supports NetBSD and OpenBSD it does not support Guest Additions
+for those platforms. Artisan CI requires Guest Additions to operate currently. This
+may change in the future.
 
 Getting Started
 ---------------
@@ -88,7 +89,7 @@ Issues and Support
 ------------------
 
 All support requests and issue reports should be
-`filed on Github as an issue <https://github.com/SethMichaelLarson/artisan-ci/issues>`_.
+`filed on GitHub as an issue <https://github.com/SethMichaelLarson/artisan-ci/issues>`_.
 Make sure to follow the template so your request may be as handled as quickly as possible.
 
 Contributing
