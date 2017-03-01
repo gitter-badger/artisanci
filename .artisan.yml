@@ -10,9 +10,9 @@
 
 # Give a list of farms that this project can execute on.
 farms:
-
-  # Give a list of farms to use for builders. 
-  - 'gh/SethMichaelLarson'
+  community: true  # Allow the project to run on Community farms.
+  omit:  # Except don't run on the following farms. Sorry @artisan-bot!
+    - 'gh/artisan-bot'
 
 jobs:
   # Documentation Builds
@@ -20,7 +20,7 @@ jobs:
     script: '.artisan/docs.py'
     duration: 5 # This job should take 5 minutes or less.
     labels:
-      python: 'cpython>=2.7'
+      python: '>=2.7'
 
       # Python package versions
       python-virtualenv: '>=15.1.0'
@@ -39,7 +39,7 @@ jobs:
     script: '.artisan/flake8.py'
     duration: 5
     labels:
-      python: 'cpython>=2.7'
+      python: '>=2.7'
 
       # Python package versions
       python-virtualenv: '>=15.1.0'
@@ -69,25 +69,25 @@ jobs:
               - 'centos|rhel'    # CentOS or RedHat
               - 'solaris'        # Solaris
             python:
-              - 'cpython==2.7'   # CPython 2.7
-              - 'cpython==3.3'   # CPython 3.3
-              - 'cpython==3.4'   # CPython 3.4
-              - 'cpython==3.5'   # CPython 3.5
-              - 'cpython==3.6'   # CPython 3.6
+              - '==2.7'   # CPython 2.7
+              - '==3.3'   # CPython 3.3
+              - '==3.4'   # CPython 3.4
+              - '==3.5'   # CPython 3.5
+              - '==3.6'   # CPython 3.6
             # `include` within a `matrix` add entries.
             include:
-              - python: 'cpython==3.7'
+              - python: '==3.7'
                 platform: 'ubuntu>=12.04'
 
             # `omit` within a matrix remove entries.
             omit:
-              - python: 'cpython==3.3'
+              - python: '==3.3'
                 platform: 'solaris'
-              - python: 'cpython==3.4'
+              - python: '==3.4'
                 platform: 'solaris'
-              - python: 'cpython==3.3'
+              - python: '==3.3'
                 platform: 'centos|rhel'
-              - python: 'cpython==3.4'
+              - python: '==3.4'
                 platform: 'centos|rhel'
 
         # Matrix for PyPy builds.
@@ -110,9 +110,9 @@ jobs:
           - 'ubuntu>=14.04'
           - 'windows>=10'
         python:
-          - 'cpython==2.7'
-          - 'cpython==3.5'
-          - 'cpython==3.6'
+          - '==2.7'
+          - '==3.5'
+          - '==3.6'
         virtualbox: '>=5.1.14'
 
 # Allow the PyPy builds to fail without failing the whole build.

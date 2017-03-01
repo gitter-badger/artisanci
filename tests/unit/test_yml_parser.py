@@ -6,6 +6,7 @@ from artisan import ArtisanException
 from artisan.yml import ArtisanYml
 from artisan.yml.label_parser import parse_labels
 from artisan.yml.env_parser import parse_env
+from artisan.yml.farms_parser import parse_farms
 
 
 class _BaseTestArtisanYmlParser(unittest.TestCase):
@@ -152,6 +153,34 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
         jobs:
           - name: test1
         """)
+
+    def test_farms_include(self):
+        yml = self.parse_artisan_yml("""
+        farms:
+          include:
+            - 'gh/artisan-bot'
+        jobs:
+          - name: 'test1'
+            script: 'script1'
+        """)
+        self.assertIsInstance(yml, ArtisanYml)
+        self.assertEqual(yml.include_farms, ['gh/artisan-bot'])
+        self.assertEqual(yml.omit_farms, [])
+        self.assertFalse(yml.community_farms)
+
+    def test_farms_omit(self):
+        yml = self.parse_artisan_yml("""
+        farms:
+          omit:
+            - 'gh/artisan-bot'
+        jobs:
+          - name: 'test1'
+            script: 'script1'
+        """)
+        self.assertIsInstance(yml, ArtisanYml)
+        self.assertEqual(yml.include_farms, [])
+        self.assertEqual(yml.omit_farms, ['gh/artisan-bot'])
+        self.assertTrue(yml.community_farms)
 
 
 class TestArtisanYmlLabelParser(unittest.TestCase):
@@ -351,6 +380,45 @@ class TestArtisanYmlEnvParser(unittest.TestCase):
     def test_convert_yaml_types_to_strings(self):
         self.assertEqual(parse_env({'true': True, 'false': False, 'int': 1}),
                          {'true': 'true', 'false': 'false', 'int': '1'})
+
+
+class TestArtisanYmlFarmsParser(unittest.TestCase):
+    def test_farms_empty_community_true(self):
+        self.assertEqual(parse_farms({}), ([], [], True))
+
+    def test_farms_with_true_community(self):
+        self.assertEqual(parse_farms({'community': True}), ([], [], True))
+
+    def test_farms_with_false_community(self):
+        self.assertRaises(ArtisanException, parse_farms, {'community': False})
+
+    def test_farms_with_single_include(self):
+        self.assertEqual(parse_farms({'include': ['gh/artisan-bot']}), (['gh/artisan-bot'], [], False))
+
+    def test_farms_with_single_include_as_string(self):
+        self.assertEqual(parse_farms({'include': 'gh/artisan-bot'}), (['gh/artisan-bot'], [], False))
+
+    def test_farms_with_single_omit(self):
+        self.assertEqual(parse_farms({'omit': ['gh/artisan-bot']}), ([], ['gh/artisan-bot'], True))
+
+    def test_farms_with_single_omit_as_string(self):
+        self.assertEqual(parse_farms({'omit': 'gh/artisan-bot'}), ([], ['gh/artisan-bot'], True))
+
+    def test_farms_not_a_dict_exception(self):
+        for entry in [None, 1, 's', [], set()]:
+            self.assertRaises(ArtisanException, parse_farms, entry)
+
+    def test_farms_bad_keys(self):
+        self.assertRaises(ArtisanException, parse_farms, {'includes': ['gh/artisan-bot']})
+
+    def test_farms_include_not_a_list_or_string(self):
+        self.assertRaises(ArtisanException, parse_farms, {'include': ('gh/artisan-bot',)})
+
+    def test_farms_community_not_a_bool(self):
+        self.assertRaises(ArtisanException, parse_farms, {'community': 'false'})
+
+    def test_farms_community_true_and_include_are_exclusive(self):
+        self.assertRaises(ArtisanException, parse_farms, {'community': True, 'include': ['gh/artisan-bot']})
 
 
 class TestArtisanYmlParserFromString(_BaseTestArtisanYmlParser):

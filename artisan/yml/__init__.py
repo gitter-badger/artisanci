@@ -3,6 +3,7 @@ import six
 import yaml
 from .env_parser import parse_env
 from .label_parser import parse_labels
+from .farms_parser import parse_farms
 from ..exceptions import ArtisanException
 from ..job import Job
 
@@ -31,6 +32,9 @@ class ArtisanYml(object):
     """ Instance describing a project's ``.artisan.yml`` file. """
     def __init__(self):
         self.jobs = []
+        self.include_farms = []
+        self.omit_farms = []
+        self.community_farms = False
 
     @staticmethod
     def from_path(path):
@@ -67,6 +71,7 @@ class ArtisanYml(object):
         """
         jobs = []
         artisan_yml = yaml.load(string)
+        project = ArtisanYml()
 
         if 'jobs' not in artisan_yml:
             raise ArtisanException('Could not parse project configuration. '
@@ -91,6 +96,14 @@ class ArtisanYml(object):
 
             jobs.append(job)
 
-        project = ArtisanYml()
         project.jobs.extend(jobs)
+
+        if 'farms' in artisan_yml:
+            include, omit, community = parse_farms(artisan_yml['farms'])
+            project.include_farms = include
+            project.omit_farms = omit
+            project.community_farms = community
+        else:
+            project.community_farms = True
+
         return project
