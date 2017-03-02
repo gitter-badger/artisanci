@@ -32,9 +32,9 @@ _MINIMUM_VIRTUALBOX_VERSION = '5.1.14'
 
 
 class VirtualBoxBuilder(BaseBuilder):
-    """ :class:`artisan.builder.BaseBuilder` implementation
+    """ :class:`artisan.BaseBuilder` implementation
     that uses VirtualBox in order to create a secure environment
-    for untrusted tests to execute in.
+    for untrusted community jobs to execute in.
 
      .. warning::
 
@@ -53,7 +53,7 @@ class VirtualBoxBuilder(BaseBuilder):
         - Disable Drag-and-Drop.
         - Disable Page Fusion.
         - Disable Audio drivers.
-        - Do not run Windows versions older than Vista with Service Pack 1.
+        - Do not run on Windows versions older than Vista with Service Pack 1 as a host.
 
         In addition to these steps make sure to always update your VirtualBox
         and Guest Additions to their latest versions. Artisan CI will error if
@@ -76,7 +76,7 @@ class VirtualBoxBuilder(BaseBuilder):
             fmt = (vbox.version_normalized,
                    _MINIMUM_VIRTUALBOX_VERSION)
             raise ArtisanSecurityException('VirtualBox detected as version `%s`. '
-                                           'Artisan CI requires at version `%s` or '
+                                           'Artisan CI requires version `%s` or '
                                            'above to use `VirtualBoxBuilder`. Please '
                                            'upgrade your VirtualBox.' % fmt)
 
@@ -91,10 +91,10 @@ class VirtualBoxBuilder(BaseBuilder):
     def is_secure(self):
         return self._pool.is_secure
 
-    def setup(self, job):
+    def _setup(self, _):
         self._session = self._pool.acquire()
 
-    def execute(self, job):
+    def _execute(self, job):
         console = self._session.console
         guest = console.guest
         try:
@@ -106,7 +106,7 @@ class VirtualBoxBuilder(BaseBuilder):
         except Exception:
             pass
 
-    def teardown(self, job):
+    def _teardown(self, _):
         if self._pool is not None:
             if self._session is not None:
                 self._pool.release(self._session)

@@ -9,9 +9,10 @@ def install(worker):
 
 def script(worker):
     assert isinstance(worker, Worker)
-    worker.execute('nosetests -v tests/')
+    worker.execute('nosetests tests/unit/ tests/integration/', merge_stderr=True)
 
 
 def after_success(worker):
     assert isinstance(worker, Worker)
-    worker.execute('codecov --env ARTISAN_BUILD_ID,ARTISAN_JOB_ID')
+    if worker.environment['ARTISAN_BUILD_TRIGGER'] != 'manual':
+        worker.execute('codecov --env ARTISAN_BUILD_ID,ARTISAN_JOB_ID')

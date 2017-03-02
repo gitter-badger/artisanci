@@ -40,6 +40,7 @@ variables defined in addition to the above variables:
 
 - ``ARTISAN_GIT_REPOSITORY``
 - ``ARTISAN_GIT_BRANCH``
+- ``ARTISAN_GIT_COMMIT``
 - ``ARTISAN_GIT_TAG``
 
 Mercurial Builds

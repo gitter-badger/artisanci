@@ -59,21 +59,21 @@ class BaseBuilder(object):
         proc.start()
         proc.join()
 
-    def execute(self, job):
+    def _execute(self, job):
         raise NotImplementedError()
 
-    def setup(self, job):
+    def _setup(self, job):
         raise NotImplementedError()
 
-    def teardown(self, job):
+    def _teardown(self, job):
         raise NotImplementedError()
 
     def _run(self, job):
         try:
-            self.setup(job)
-            self.execute(job)
+            self._setup(job)
+            self._execute(job)
         finally:
-            self.teardown(job)
+            self._teardown(job)
 
     def __getstate__(self):
         __dict__ = self.__dict__.copy()

@@ -9,7 +9,6 @@ import platform
 import requests
 from .command import Command
 from .expandvars import expandvars
-from .file_attrs import stat_to_file_attrs
 from ..compat import PY2, PY33, follows_symlinks
 
 __copyright__ = """
@@ -57,7 +56,7 @@ class Worker(object):
             if hasattr(listener, event_func):
                 getattr(listener, event_func)(event_data)
 
-    def execute(self, command, environment=None, timeout=None):
+    def execute(self, command, environment=None, timeout=None, merge_stderr=False):
         """
         Executes a command on the worker and returns an instance
         of :class:`artisan.BaseCommand` in order to track the command
@@ -72,6 +71,10 @@ class Worker(object):
         :param float timeout:
             Number of seconds to wait before the command errors
             with a timeout exception.
+        :param bool merge_stderr:
+            If True will merge the stderr stream into stdout.
+            This is good for commands that output everything
+            in stderr to prevent the screen from appearing red.
         :rtype: artisan.Command
         :returns: :class:`artisan.Command` instance.
         """
@@ -83,10 +86,10 @@ class Worker(object):
             self._notify_listeners('next_command', ' '.join(command))
         else:
             self._notify_listeners('next_command', command)
-        command = Command(self, command, environment)
-        command.wait(timeout=timeout,
-                     error_on_timeout=True,
-                     error_on_exit=True)
+        command = Command(self, command, environment, merge_stderr=merge_stderr)
+        command._wait(timeout=timeout,
+                      error_on_timeout=True,
+                      error_on_exit=True)
         return command
 
     @property
@@ -94,12 +97,7 @@ class Worker(object):
         """ The current working directory for the worker. """
         return self._cwd
 
-    @property
-    def path(self):
-        """ The path to use for path manipulations of the worker. """
-        raise NotImplementedError()
-
-    def create_directory(self, path):
+    def mkdir(self, path):
         """
         Creates a directory if it does not exist.
 
@@ -111,7 +109,7 @@ class Worker(object):
         except OSError:
             pass
 
-    def change_directory(self, path):
+    def chdir(self, path):
         """
         Changes the current working directory for the worker.
 
@@ -119,11 +117,11 @@ class Worker(object):
         """
         self._notify_listeners('next_command', 'cd %s' % path)
         cwd = self._normalize_path(path)
-        if not self.is_directory(cwd):
+        if not os.path.isdir(cwd):
             raise ValueError('`%s` is not a valid directory.' % cwd)
         self._cwd = cwd
 
-    def list_directory(self, path='.'):
+    def listdir(self, path='.'):
         """
         Lists all file names in a directory on the worker.
 
@@ -133,7 +131,7 @@ class Worker(object):
         self._notify_listeners('next_command', 'ls %s' % path)
         return os.listdir(self._normalize_path(path))
 
-    def change_file_mode(self, path, mode, follow_symlinks=True):
+    def chmod(self, path, mode, follow_symlinks=True):
         """
         Change a file's mode.
 
@@ -167,7 +165,7 @@ class Worker(object):
                 path = os.path.realpath(path)
             os.chmod(path, mode)
 
-    def change_file_owner(self, path, user_id, follow_symlinks=True):
+    def chown(self, path, user_id, follow_symlinks=True):
         """
         Changes a file's owner to a different UID.
 
@@ -190,7 +188,7 @@ class Worker(object):
                 path = os.path.realpath(path)
             os.chown(path, user_id, st.st_gid)
 
-    def change_file_group(self, path, group_id, follow_symlinks=True):
+    def chgrp(self, path, group_id, follow_symlinks=True):
         """
         Changes a file's group to a different GID.
 
@@ -213,7 +211,7 @@ class Worker(object):
                 path = os.path.realpath(path)
             os.chown(path, st.st_uid, group_id)
 
-    def stat_file(self, path, follow_symlinks=True):
+    def stat(self, path, follow_symlinks=True):
         """
         Gets the attributes about a file on the worker's machine.
 
@@ -223,9 +221,9 @@ class Worker(object):
         """
         st = _stat_follow(self._normalize_path(path), follow_symlinks)
         self._notify_listeners('next_command', 'stat %s' % path)
-        return stat_to_file_attrs(st)
+        return st
 
-    def is_directory(self, path):
+    def isdir(self, path):
         """
         Checks to see if a path is a directory.
 
@@ -235,7 +233,7 @@ class Worker(object):
         self._notify_listeners('next_command', 'test -d %s' % path)
         return os.path.isdir(self._normalize_path(path))
 
-    def is_file(self, path):
+    def isfile(self, path):
         """
         Checks to see if a path is a file.
 
@@ -245,7 +243,7 @@ class Worker(object):
         self._notify_listeners('next_command', 'test -f %s' % path)
         return os.path.isfile(self._normalize_path(path))
 
-    def is_symlink(self, path):
+    def islink(self, path):
         """
         Checks to see if a path is a symlink.
 
@@ -253,12 +251,12 @@ class Worker(object):
         :returns: True if the path is a symlink, False otherwise.
         """
         self._notify_listeners('next_command', 'test -L %s' % path)
-        path = self._expandvars(os.path.expanduser(path))
+        path = expandvars(self, os.path.expanduser(path))
         if not os.path.isabs(path):
             path = os.path.join(self._cwd, path)
         return stat.S_ISLNK(os.lstat(path).st_mode)
 
-    def open_file(self, path, mode='r'):
+    def open(self, path, mode='r'):
         """
         Opens a file on the worker machine for reading, writing, appending
         in the same way that :meth:`open` works on a local machine.
@@ -283,34 +281,28 @@ class Worker(object):
             mode = 'w'
         return open(path, mode)
 
-    def remove_file(self, path):
+    def remove(self, path):
         """
         Removes a file that exists at a path.
 
         :param str path: Path to the file to remove.
         """
-        self._notify_listeners('next_command', 'rm %s' % path)
-        os.remove(self._normalize_path(path))
+        norm_path = self._normalize_path(path)
+        if os.path.isdir(path):
+            self._notify_listeners('next_command', 'rm -rf %s' % path)
+            shutil.rmtree(norm_path, ignore_errors=True)
+        else:
+            self._notify_listeners('next_command', 'rm %s' % path)
+            os.remove(norm_path)
 
-    def remove_directory(self, path):
-        """
-        Removes a directory that exists at a path.
-
-        :param str path: Path to the directory to remove.
-        """
-        self._notify_listeners('next_command', 'rm -rf %s' % path)
-        path = self._normalize_path(path)
-        shutil.rmtree(path, ignore_errors=True)
-
-    def create_symlink(self, source_path, link_path):
+    def symlink(self, source_path, link_path):
         """
         Creates a symbolic link to a source file or directory.
 
         :param str source_path: Path of the file or directory to link to.
         :param str link_path: Path to the symbolic link.
-        :raises: :class:`artisan.OperationNotSupported` on Windows.
         """
-        self._notify_listeners('next_command', 'symlink %s %s' % (source_path, link_path))
+        self._notify_listeners('next_command', 'ln -s %s %s' % (source_path, link_path))
         os.symlink(self._normalize_path(source_path),
                    self._normalize_path(link_path))
 
@@ -335,7 +327,7 @@ class Worker(object):
         """ Gets the temporary directory for the worker. """
         return tempfile.gettempdir()
 
-    def download_file(self, url, path):
+    def download(self, url, path):
         """
         Attempts to download a file from a website given a URL.
         Returns the return code of the HTTP request.
@@ -346,13 +338,10 @@ class Worker(object):
         """
         self._notify_listeners('next_command', 'curl %s --output %s' % (url, path))
         r = requests.get(url, stream=True)
-        with self.open_file(path, 'wb') as f:
+        with self.open(path, 'wb') as f:
             for chunk in r.iter_content(8192):
                 f.write(chunk)
         return r.status_code
-
-    def _get_default_environment(self):
-        raise NotImplementedError()
 
     def _normalize_path(self, path):
         path = expandvars(self, os.path.expanduser(path))

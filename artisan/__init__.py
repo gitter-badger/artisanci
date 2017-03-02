@@ -13,7 +13,8 @@
 from .exceptions import ArtisanException
 from .worker import (Worker,
                      Command)
-from .builder import (LocalBuilder,
+from .builder import (BaseBuilder,
+                      LocalBuilder,
                       VirtualBoxBuilder)
 
 __copyright__ = """
@@ -42,6 +43,7 @@ __all__ = [
     'CommandExitStatusException',
     'Worker',
     'Command',
+    'BaseBuilder',
     'LocalBuilder',
     'VirtualBoxBuilder'
 ]

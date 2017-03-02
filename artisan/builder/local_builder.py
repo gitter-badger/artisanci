@@ -25,7 +25,7 @@ __all__ = [
 
 
 class LocalBuilder(BaseBuilder):
-    """ :class:`artisan.builder.BaseExecutor` implementation
+    """ :class:`artisan.BaseBuilder` implementation
     that uses the local machine to execute jobs using a
     :class:`artisan.Worker`.
 
@@ -35,15 +35,12 @@ class LocalBuilder(BaseBuilder):
     def __init__(self, builders=1, python=sys.executable):
         super(LocalBuilder, self).__init__(builders=builders, python=python)
 
-    def setup(self, job):
+    def _setup(self, job):
         pass
 
-    def execute(self, job):
+    def _execute(self, job):
         worker = Worker()
-        worker.change_directory(job.params['path'])
-        for key, value in six.iteritems(job.environment):
-            worker.environment[key] = value
         job.execute(worker)
 
-    def teardown(self, job):
+    def _teardown(self, job):
         pass

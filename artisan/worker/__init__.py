@@ -1,7 +1,6 @@
 """ Module containing all interfaces and
 implementations of the workers used by Artisan. """
 
-from .file_attrs import FileAttributes
 from .worker import Worker
 from .command import Command
 
@@ -23,6 +22,5 @@ language governing permissions and limitations under the License.
 
 __all__ = [
     'Worker',
-    'FileAttributes',
     'Command'
 ]

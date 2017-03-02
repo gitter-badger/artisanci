@@ -5,7 +5,7 @@ from .env_parser import parse_env
 from .label_parser import parse_labels
 from .farms_parser import parse_farms
 from ..exceptions import ArtisanException
-from ..job import Job
+from ..job import BaseJob
 
 __copyright__ = """
           Copyright (c) 2017 Seth Michael Larson
@@ -32,6 +32,7 @@ class ArtisanYml(object):
     """ Instance describing a project's ``.artisan.yml`` file. """
     def __init__(self):
         self.jobs = []
+        self.source_farms = []
         self.include_farms = []
         self.omit_farms = []
         self.community_farms = False
@@ -84,11 +85,11 @@ class ArtisanYml(object):
                 raise ArtisanException('Could not parse project configuration. '
                                        'Requires a `script` entry in each job.')
 
-            job = Job(job_json['name'], job_json['script'], {})
+            job = BaseJob(job_json['name'], job_json['script'], {})
 
             if 'labels' in job_json:
                 for label_json in parse_labels(job_json['labels']):
-                    job = Job(job_json['name'], job_json['script'], {})
+                    job = BaseJob(job_json['name'], job_json['script'], {})
                     for key, value in six.iteritems(label_json):
                         job.labels[key] = value
             if 'env' in job_json:
@@ -99,11 +100,13 @@ class ArtisanYml(object):
         project.jobs.extend(jobs)
 
         if 'farms' in artisan_yml:
-            include, omit, community = parse_farms(artisan_yml['farms'])
+            sources, include, omit, community = parse_farms(artisan_yml['farms'])
+            project.source_farms = sources
             project.include_farms = include
             project.omit_farms = omit
             project.community_farms = community
         else:
             project.community_farms = True
+            project.source_farms = ['https://farms.artisan.io']
 
         return project

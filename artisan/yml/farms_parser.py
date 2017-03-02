@@ -6,7 +6,7 @@ __all__ = [
 ]
 
 # These are the only valid keys within a farms key-value.
-_VALID_KEYS = ['include', 'omit', 'community']
+_VALID_KEYS = ['sources', 'include', 'omit', 'community']
 
 
 def parse_farms(farms):
@@ -17,13 +17,13 @@ def parse_farms(farms):
                                'structured properly at `farms`. See the doc'
                                'umentation for more details.')
 
-    include, omit, community = [], [], None
+    sources, include, omit, community = [], [], [], None
     for key, value in six.iteritems(farms):
         if key not in _VALID_KEYS:
             raise ArtisanException('The key `%s` is not valid. Valid keys for '
                                    '`farms` are: `%s`. See the documentation for '
                                    'more details.' % (key, '`, `'.join(_VALID_KEYS)))
-        if key == 'include' or key == 'omit':
+        if key == 'include' or key == 'omit' or key == 'sources':
             if not isinstance(value, (list, str)):
                 raise ArtisanException('Project configuration `artisan.yml` is not '
                                        'structured properly at `farms.%s`. See the '
@@ -32,6 +32,8 @@ def parse_farms(farms):
                 value = [value]
             if key == 'include':
                 include = value
+            elif key == 'sources':
+                sources = value
             else:
                 omit = value
         elif key == 'community':
@@ -51,4 +53,7 @@ def parse_farms(farms):
                                    '`farms` configuration.')
         community = True
 
-    return include, omit, bool(community)
+    if len(sources) == 0:
+        sources = ['https://farms.artisan.io']
+
+    return sources, include, omit, bool(community)

@@ -10,8 +10,16 @@
 
 # Give a list of farms that this project can execute on.
 farms:
-  community: true  # Allow the project to run on Community farms.
-  omit:  # Except don't run on the following farms. Sorry @artisan-bot!
+  # Which web servers should we send requests to.
+  # The default is `https://farms.artisan.io` if not given.
+  sources:
+    - 'https://farms.artisan.io'
+
+  # Allow the project to run on Community farms.
+  community: true
+
+  # Except don't run on the following farms. Sorry @artisan-bot!
+  omit:
     - 'gh/artisan-bot'
 
 jobs:
@@ -48,7 +56,7 @@ jobs:
   # Test Builds on Many Platforms
   - name: 'tests'
     script: '.artisan/tests.py'
-    duration: 10
+    duration: 5
     labels:
 
       # Python package versions
@@ -102,8 +110,6 @@ jobs:
   - name: 'tests-virtualbox'
     script: '.artisan/tests.py'
     duration: 20
-    env:  # Set an environment variable so the tests for VirtualBox can run.
-      - 'VIRTUALBOX=true'
     labels:
       matrix:
         platform:

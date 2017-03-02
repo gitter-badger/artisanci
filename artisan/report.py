@@ -1,3 +1,4 @@
+import time
 import sys
 import colorama
 import requests
@@ -63,19 +64,23 @@ class CommandLineReport(Report):
     def __init__(self):
         super(CommandLineReport, self).__init__()
         self._last_newline = True
+        self._start_time = None
 
     def on_status_change(self, status):
         super(CommandLineReport, self).on_status_change(status)
+        if self._start_time is None:
+            self._start_time = time.time()
         if status in ['failure', 'success']:
+            duration = '%.2f seconds' % (time.time() - self._start_time,)
             if status == 'failure':
                 print(('' if self._last_newline else '\r\n') +
                       colorama.Fore.LIGHTRED_EX +
-                      'Done. Your build completed with errors.' +
+                      'Job completed with errors in %s.' % duration +
                       colorama.Style.RESET_ALL)
             else:
                 print(('' if self._last_newline else '\r\n') +
                       colorama.Fore.LIGHTGREEN_EX +
-                      'Done. Your build completed successfully.' +
+                      'Job completed successfully in %s.' % duration +
                       colorama.Style.RESET_ALL)
         else:
             print(('' if self._last_newline else '\r\n') +
@@ -92,16 +97,18 @@ class CommandLineReport(Report):
         self._last_newline = True
 
     def on_command_output(self, output):
-        self._last_newline = '\n' == output[-1]
-        sys.stdout.write(output)
-        sys.stdout.flush()
+        if len(output) > 0:
+            self._last_newline = '\n' == output[-1]
+            sys.stdout.write(output)
+            sys.stdout.flush()
 
     def on_command_error(self, output):
-        self._last_newline = '\n' == output[-1]
-        sys.stdout.write(colorama.Fore.LIGHTRED_EX +
-                         output +
-                         colorama.Style.RESET_ALL)
-        sys.stdout.flush()
+        if len(output) > 0:
+            self._last_newline = '\n' == output[-1]
+            sys.stdout.write(colorama.Fore.LIGHTRED_EX +
+                             output +
+                             colorama.Style.RESET_ALL)
+            sys.stdout.flush()
 
 
 class APIReport(Report):

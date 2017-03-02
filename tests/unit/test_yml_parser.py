@@ -182,6 +182,32 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
         self.assertEqual(yml.omit_farms, ['gh/artisan-bot'])
         self.assertTrue(yml.community_farms)
 
+    def test_farms_sources_default(self):
+        yml = self.parse_artisan_yml("""
+        jobs:
+          - name: 'test'
+            script: '.artisan/test.py'
+            labels:
+              python: 'cpython==2.7'
+        """)
+        self.assertIsInstance(yml, ArtisanYml)
+        self.assertEqual(yml.source_farms, ['https://farms.artisan.io'])
+
+    def test_farms_sources_given(self):
+        yml = self.parse_artisan_yml("""
+        farms:
+          sources:
+            - https://farm-a.com
+            - https://farm-b.com
+        jobs:
+          - name: 'test'
+            script: '.artisan/test.py'
+            labels:
+              python: 'cpython==2.7'
+        """)
+        self.assertIsInstance(yml, ArtisanYml)
+        self.assertEqual(yml.source_farms, ['https://farm-a.com', 'https://farm-b.com'])
+
 
 class TestArtisanYmlLabelParser(unittest.TestCase):
     def test_simple_expand_labels(self):
@@ -396,25 +422,31 @@ class TestArtisanYmlEnvParser(unittest.TestCase):
 
 class TestArtisanYmlFarmsParser(unittest.TestCase):
     def test_farms_empty_community_true(self):
-        self.assertEqual(parse_farms({}), ([], [], True))
+        self.assertEqual(parse_farms({}), (['https://farms.artisan.io'], [], [], True))
 
     def test_farms_with_true_community(self):
-        self.assertEqual(parse_farms({'community': True}), ([], [], True))
+        self.assertEqual(parse_farms({'community': True}), (['https://farms.artisan.io'], [], [], True))
 
     def test_farms_with_false_community(self):
         self.assertRaises(ArtisanException, parse_farms, {'community': False})
 
     def test_farms_with_single_include(self):
-        self.assertEqual(parse_farms({'include': ['gh/artisan-bot']}), (['gh/artisan-bot'], [], False))
+        self.assertEqual(parse_farms({'include': ['gh/artisan-bot']}), (['https://farms.artisan.io'], ['gh/artisan-bot'], [], False))
 
     def test_farms_with_single_include_as_string(self):
-        self.assertEqual(parse_farms({'include': 'gh/artisan-bot'}), (['gh/artisan-bot'], [], False))
+        self.assertEqual(parse_farms({'include': 'gh/artisan-bot'}), (['https://farms.artisan.io'], ['gh/artisan-bot'], [], False))
 
     def test_farms_with_single_omit(self):
-        self.assertEqual(parse_farms({'omit': ['gh/artisan-bot']}), ([], ['gh/artisan-bot'], True))
+        self.assertEqual(parse_farms({'omit': ['gh/artisan-bot']}), (['https://farms.artisan.io'], [], ['gh/artisan-bot'], True))
 
     def test_farms_with_single_omit_as_string(self):
-        self.assertEqual(parse_farms({'omit': 'gh/artisan-bot'}), ([], ['gh/artisan-bot'], True))
+        self.assertEqual(parse_farms({'omit': 'gh/artisan-bot'}), (['https://farms.artisan.io'], [], ['gh/artisan-bot'], True))
+
+    def test_farms_with_single_source(self):
+        self.assertEqual(parse_farms({'sources': ['https://artisan-farm-here.com']}), (['https://artisan-farm-here.com'], [], [], True))
+
+    def test_farms_with_single_source_as_string(self):
+        self.assertEqual(parse_farms({'sources': 'https://artisan-farm-here.com'}), (['https://artisan-farm-here.com'], [], [], True))
 
     def test_farms_not_a_dict_exception(self):
         for entry in [None, 1, 's', [], set()]:

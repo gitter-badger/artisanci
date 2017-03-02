@@ -6,4 +6,4 @@ def install(worker):
 
 
 def script(worker):
-    worker.remove_file(worker.environment['DELETE_THIS'])
+    worker.remove(worker.environment['DELETE_THIS'])
