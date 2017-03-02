@@ -10,6 +10,8 @@ def install(worker):
 def script(worker):
     assert isinstance(worker, Worker)
     worker.execute('nosetests tests/unit/ tests/integration/', merge_stderr=True)
+    worker.execute('coverage combine')
+    worker.execute('coverage html')
 
 
 def after_success(worker):

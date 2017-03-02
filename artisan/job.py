@@ -3,7 +3,6 @@ import os
 import six
 import sys
 import uuid
-from . import __version__
 from .exceptions import ArtisanException
 from .report import DoNothingReport
 from .worker import Worker
@@ -148,8 +147,11 @@ class BaseJob(object):
         worker.environment['ARTISAN'] = 'true'
         worker.environment['CI'] = 'true'
         worker.environment['CONTINUOUS_INTEGRATION'] = 'true'
-        worker.environment['ARTISAN_VERSION'] = __version__
         worker.environment['ARTISAN_BUILD_TRIGGER'] = 'manual'
+
+        # Set the Artisan version.
+        from . import __version__
+        worker.environment['ARTISAN_VERSION'] = __version__
 
         # Set the build directory to the current directory.
         worker.environment['ARTISAN_BUILD_DIR'] = worker.cwd

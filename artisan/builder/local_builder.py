@@ -1,4 +1,3 @@
-import six
 import sys
 from .base_builder import BaseBuilder
 from ..worker import Worker

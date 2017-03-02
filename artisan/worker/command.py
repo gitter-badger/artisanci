@@ -1,6 +1,5 @@
 """ Defines the interface for a command resulting from BaseWorker.execute() """
 
-import io
 import subprocess
 import threading
 import time
