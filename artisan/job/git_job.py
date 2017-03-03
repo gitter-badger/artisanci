@@ -1,3 +1,17 @@
+#           Copyright (c) 2017 Seth Michael Larson
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at:
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific
+# language governing permissions and limitations under the License.
+
 import os
 from .base_job import BaseJob
 
@@ -19,18 +33,18 @@ class GitJob(BaseJob):
     def setup(self, worker):
         super(GitJob, self).setup(worker)
 
-        worker.execute('git --version')
+        worker.run('git --version')
 
         tmp_dir = self.make_temporary_directory(worker)
         project_root = os.path.join(tmp_dir, 'git-project')
-        worker.execute('git clone --depth=50 --branch=%s %s %s' % (self.params['branch'],
-                                                                   self.params['repo'],
-                                                                   project_root))
+        worker.run('git clone --depth=50 --branch=%s %s %s' % (self.params['branch'],
+                                                               self.params['repo'],
+                                                               project_root))
         worker.chdir(project_root)
-        worker.execute('git checkout -qf %s' % self.params['commit'])
+        worker.run('git checkout -qf %s' % self.params['commit'])
 
         if self.params['commit'] == 'HEAD':
-            rev_parse = worker.execute('git rev-parse HEAD')
+            rev_parse = worker.run('git rev-parse HEAD')
             self.params['commit'] = rev_parse.stdout.decode('utf-8').strip()
 
         self.params['path'] = project_root

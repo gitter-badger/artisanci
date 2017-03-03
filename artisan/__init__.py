@@ -10,6 +10,7 @@
                  * Community-Powered Continuous Integration! *
                     Copyright (c) 2017 Seth Michael Larson
 """
+
 from .exceptions import ArtisanException
 from .builder import (BaseBuilder,
                       LocalBuilder,

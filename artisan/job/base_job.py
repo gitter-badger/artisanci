@@ -1,3 +1,19 @@
+#           Copyright (c) 2017 Seth Michael Larson
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at:
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific
+# language governing permissions and limitations under the License.
+
+""" Module for the base Job interface. """
+
 import os
 import six
 import sys
@@ -22,16 +38,8 @@ class BaseJob(object):
 
         self._cleanup_calls = []
 
-    def setup(self, worker):
-        assert isinstance(worker, Worker)
-        worker.add_listener(self.report)
-
-        self.setup_environment(worker)
-
-        if 'python' in self.params:
-            self.setup_python(worker)
-
-    def execute(self, worker):
+    def run(self, worker):
+        """ Run the job using a worker. """
         # Executing each part of the script.
         error = None
         script = None
@@ -43,7 +51,7 @@ class BaseJob(object):
 
         self.report.on_status_change('setup')
         try:
-            self.setup(worker)
+            self.setup_job(worker)
 
             # All environment setup is completed, time to display them.
             self.display_environment(worker)
@@ -70,7 +78,7 @@ class BaseJob(object):
                 pass
         try:
             self.report.on_status_change('cleanup')
-            self.cleanup(worker)
+            self.cleanup_job(worker)
         except Exception:
             pass
         if error is not None:
@@ -78,10 +86,16 @@ class BaseJob(object):
         else:
             self.report.on_status_change('success')
 
-    def add_cleanup(self, func, *args, **kwargs):
-        self._cleanup_calls.append((func, args, kwargs))
+    def setup_job(self, worker):
+        assert isinstance(worker, Worker)
+        worker.add_listener(self.report)
 
-    def cleanup(self, worker):
+        self.setup_environment(worker)
+
+        if 'python' in self.params:
+            self.setup_python(worker)
+
+    def cleanup_job(self, worker):
         for func, args, kwargs in self._cleanup_calls:
             try:
                 func(*args, **kwargs)
@@ -89,7 +103,18 @@ class BaseJob(object):
                 pass
         worker.remove_listener(self.report)
 
+    def add_cleanup(self, func, *args, **kwargs):
+        """
+        Adds a function to be called during the clean-up phase for the worker.
+
+        :param func: Function to be called.
+        :param args: Positional arguments to be passed to the function.
+        :param kwargs: Key-word arguments to be passed to the function.
+        """
+        self._cleanup_calls.append((func, args, kwargs))
+
     def display_environment(self, worker):
+        """ Shows the environment variables the worker is using. """
         # Show all environment variables sorted.
         self.report.on_next_command('env')
         line_feed = '\r\n' if worker.platform == 'Windows' else '\n'
@@ -98,6 +123,7 @@ class BaseJob(object):
                                                        line_feed))
 
     def setup_script(self, worker):
+        """ Loads the script into a module. """
         script_path = self.script
         if os.path.isabs(script_path):
             script_path = os.path.join(worker.cwd, script_path)
@@ -113,8 +139,9 @@ class BaseJob(object):
         return script
 
     def setup_environment(self, worker):
+        """ Sets up the environment for the worker. """
         # Filter all external environment variables
-        no_filter = {'PATH', 'LD_LIBRARY_PATH', 'SYSTEMPATH'}
+        no_filter = {'PATH', 'LD_LIBRARY_PATH', 'SYSTEMROOT'}
         for key in six.iterkeys(worker.environment.copy()):
             if key not in no_filter:
                 del worker.environment[key]
@@ -137,6 +164,7 @@ class BaseJob(object):
         worker.environment['ARTISAN_BUILD_DIR'] = worker.cwd
 
     def make_temporary_directory(self, worker):
+        """ Creates and navigates to a temporary directory. """
         assert isinstance(worker, Worker)
         worker.chdir(worker.tmp)
         tmp_dir = uuid.uuid4().hex
@@ -148,14 +176,8 @@ class BaseJob(object):
         self.add_cleanup(worker.remove, tmp_dir)
         return tmp_dir
 
-    def as_args(self):
-        """
-        Converts the Job into arguments to be run as if run by
-        ``python -m artisan ...[job.as_args()]``
-        """
-        raise NotImplementedError()
-
     def setup_python(self, worker):
+        """ Creates a Python virtual environment from a Python interpreter. """
         venv = os.path.join(worker.tmp, '.artisan-ci-venv')
         if worker.isdir(venv):
             worker.remove(venv)
@@ -169,10 +191,9 @@ class BaseJob(object):
         worker.environment['VIRTUAL_ENV'] = venv
         self.add_cleanup(worker.remove, venv)
 
-    def __str__(self):
-        return '<%s script=\'%s\' labels=\'%s\'>' % (type(self).__name__,
-                                                     self.script,
-                                                     self.labels)
-
-    def __repr__(self):
-        return self.__str__()
+    def as_args(self):
+        """
+        Converts the Job into arguments to be run as if run by
+        ``python -m artisan ...[job.as_args()]``
+        """
+        raise NotImplementedError()

@@ -1,4 +1,18 @@
-""" Definition of the Worker interface. """
+#           Copyright (c) 2017 Seth Michael Larson
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at:
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific
+# language governing permissions and limitations under the License.
+
+""" Worker implementation for cross-platform . """
 
 import os
 import shutil
@@ -10,22 +24,6 @@ import requests
 from .command import Command
 from .expandvars import expandvars
 from ..compat import PY2, PY33, follows_symlinks
-
-__copyright__ = """
-          Copyright (c) 2017 Seth Michael Larson
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at:
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
-either express or implied. See the License for the specific
-language governing permissions and limitations under the License.
-"""
 
 __all__ = [
     'Worker'
@@ -59,7 +57,7 @@ class Worker(object):
     def execute(self, command, environment=None, timeout=None, merge_stderr=False):
         """
         Executes a command on the worker and returns an instance
-        of :class:`artisan.BaseCommand` in order to track the command
+        of :class:`artisan.Command` in order to track the command
         call.
 
         :param str command:

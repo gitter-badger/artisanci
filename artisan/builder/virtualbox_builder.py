@@ -1,3 +1,19 @@
+#           Copyright (c) 2017 Seth Michael Larson
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at:
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific
+# language governing permissions and limitations under the License.
+
+""" Module for the virtualized builder using VirtualBox API. """
+
 from contextlib import contextmanager
 import random
 import semver
@@ -8,22 +24,6 @@ from virtualbox import VirtualBox, Session
 from virtualbox.library import CleanupMode, ClipboardMode, DnDMode, DeviceType, LockType
 from .base_builder import BaseBuilder
 from ..exceptions import ArtisanException, ArtisanSecurityException
-
-__copyright__ = """
-          Copyright (c) 2017 Seth Michael Larson
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at:
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
-either express or implied. See the License for the specific
-language governing permissions and limitations under the License.
-"""
 
 __all__ = [
     'VirtualBoxBuilder'
@@ -101,7 +101,7 @@ class VirtualBoxBuilder(BaseBuilder):
             guest_session = guest.create_session(self.username,
                                                  self.password,
                                                  timeout_ms=5 * 60 * 1000)
-            guest_session.execute(self.python, ['-m', 'artisan'] + job.as_args())
+            guest_session.run(self.python, ['-m', 'artisan'] + job.as_args())
             guest_session.close()
         except Exception:
             pass
