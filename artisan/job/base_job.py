@@ -1,33 +1,13 @@
-""" Types of Jobs that can be executed. """
 import os
 import six
 import sys
 import uuid
-from .exceptions import ArtisanException
-from .report import DoNothingReport
-from .worker import Worker
-
-__copyright__ = """
-          Copyright (c) 2017 Seth Michael Larson
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at:
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
-either express or implied. See the License for the specific
-language governing permissions and limitations under the License.
-"""
+from ..exceptions import ArtisanException
+from ..report import DoNothingReport
+from ..worker import Worker
 
 __all__ = [
-    'BaseJob',
-    'LocalJob',
-    'GitJob',
-    'MercurialJob'
+    'BaseJob'
 ]
 
 
@@ -150,7 +130,7 @@ class BaseJob(object):
         worker.environment['ARTISAN_BUILD_TRIGGER'] = 'manual'
 
         # Set the Artisan version.
-        from . import __version__
+        from .. import __version__
         worker.environment['ARTISAN_VERSION'] = __version__
 
         # Set the build directory to the current directory.
@@ -196,90 +176,3 @@ class BaseJob(object):
 
     def __repr__(self):
         return self.__str__()
-
-
-class LocalJob(BaseJob):
-    def __init__(self, name, script, path):
-        super(LocalJob, self).__init__(name, script, {'path': path})
-
-    def setup(self, worker):
-        super(LocalJob, self).setup(worker)
-        worker.chdir(self.params['path'])
-        worker.environment['ARTISAN_BUILD_TYPE'] = 'local'
-
-    def as_args(self):
-        return ['--type', 'local',
-                '--script', self.script,
-                '--name', self.name,
-                '--path', self.params['path']]
-
-
-class GitJob(BaseJob):
-    def __init__(self, name, script, repo, branch, commit=None):
-        if commit is None:
-            commit = 'HEAD'  # Get the latest if commit is None.
-
-        params = {'repo': repo,
-                  'branch': branch,
-                  'commit': commit}
-        super(GitJob, self).__init__(name, script, params)
-
-    def setup(self, worker):
-        super(GitJob, self).setup(worker)
-
-        worker.execute('git --version')
-
-        tmp_dir = self.make_temporary_directory(worker)
-        project_root = os.path.join(tmp_dir, 'git-project')
-        worker.execute('git clone --depth=50 --branch=%s %s %s' % (self.params['branch'],
-                                                                   self.params['repo'],
-                                                                   project_root))
-        worker.chdir(project_root)
-        worker.execute('git checkout -qf %s' % self.params['commit'])
-
-        if self.params['commit'] == 'HEAD':
-            rev_parse = worker.execute('git rev-parse HEAD')
-            self.params['commit'] = rev_parse.stdout.decode('utf-8').strip()
-
-        self.params['path'] = project_root
-
-        worker.environment['ARTISAN_BUILD_TYPE'] = 'git'
-        worker.environment['ARTISAN_GIT_REPOSITORY'] = self.params['repo']
-        worker.environment['ARTISAN_GIT_BRANCH'] = self.params['branch']
-        worker.environment['ARTISAN_GIT_COMMIT'] = self.params['commit']
-
-    def as_args(self):
-        return ['--type', 'git',
-                '--script', self.script,
-                '--name', self.name,
-                '--repo', self.params['repo'],
-                '--branch', self.params['branch'],
-                '--commit', self.params['commit']]
-
-
-class MercurialJob(BaseJob):
-    def __init__(self, name, script, repo, branch, commit):
-        params = {'repo': repo,
-                  'branch': branch,
-                  'commit': commit}
-        super(MercurialJob, self).__init__(name, script, params)
-
-    def setup(self, worker):
-        super(MercurialJob, self).setup(worker)
-
-        worker.environment['ARTISAN_BUILD_TYPE'] = 'mercurial'
-        worker.environment['ARTISAN_MERCURIAL_REPOSITORY'] = self.params['repo']
-        worker.environment['ARTISAN_MERCURIAL_BRANCH'] = self.params['branch']
-        worker.environment['ARTISAN_MERCURIAL_COMMIT'] = self.params['commit']
-
-        tmp_dir = self.make_temporary_directory(worker)
-        worker.execute('hg clone %s -r %s' % (self.params['repo'], self.params['branch']))
-        repository = os.path.join(tmp_dir, worker.list_directory()[0])
-        worker.change_directory(repository)
-
-    def as_args(self):
-        return ['--type', 'mercurial',
-                '--script', self.script,
-                '--name', self.name,
-                '--repo', self.params['repo'],
-                '--branch', self.params['branch']]
