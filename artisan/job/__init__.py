@@ -18,11 +18,20 @@ jobs that builders can execute. """
 from .base_job import BaseJob
 from .git_job import GitJob
 from .local_job import LocalJob
-from .mercurial_job import MercurialJob
+from ..exceptions import ArtisanException
 
 __all__ = [
     'BaseJob',
     'GitJob',
     'LocalJob',
-    'MercurialJob'
+    'job_factory'
 ]
+
+
+def job_factory(type, name, script, **kwargs):
+    if type == 'local':
+        return LocalJob(name, script, **kwargs)
+    elif type == 'git':
+        return GitJob(name, script, **kwargs)
+    else:
+        raise ArtisanException('Unknown job type `%s`.' % type)

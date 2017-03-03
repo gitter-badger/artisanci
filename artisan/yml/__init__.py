@@ -19,7 +19,7 @@ from .env_parser import parse_env
 from .label_parser import parse_labels
 from .farms_parser import parse_farms
 from ..exceptions import ArtisanException
-from ..job import BaseJob
+from ..job import job_factory
 
 __all__ = [
     'ArtisanYml'
@@ -36,14 +36,14 @@ class ArtisanYml(object):
         self.community_farms = False
 
     @staticmethod
-    def from_path(path):
-        """ Loads a :class:`artisan.yml.ProjectYml` instance
+    def from_path(type, path, **kwargs):
+        """ Loads a :class:`artisan.ArtisanYml` instance
         from a path. Can be either a directory (where it will
         search for a proper file) or an actual file.
 
         :param str path: Directory or file to read ``.artisan.yml`` from.
-        :rtype: artisan.yml.ArtisanYml
-        :return: :class:`artisan.yml.ArtisanYml` instance.
+        :rtype: artisan.ArtisanYml
+        :return: :class:`artisan.ArtisanYml` instance.
         """
         yml = None
         if os.path.isfile(path):
@@ -57,18 +57,18 @@ class ArtisanYml(object):
         if yml is None:
             raise ArtisanException('Could not find an `.artisan.yml` file in the project root.')
         with open(yml, 'r') as f:
-            return ArtisanYml.from_string(f.read())
+            return ArtisanYml.from_string(type, f.read(), **kwargs)
 
     @staticmethod
-    def from_string(string):
-        """ Loads a :class:`artisan.yml.ArtisanYml` instance
+    def from_string(type, string, **kwargs):
+        """ Loads a :class:`artisan.ArtisanYml` instance
         from a string.
 
         :param str string: String of a ``.artisan.yml`` file.
-        :rtype: artisan.yml.ArtisanYml
-        :return: :class:`artisan.yml.ArtisanYml` instance.
+        :param str path: Optional, if given means that this function was called from_path().
+        :rtype: artisan.ArtisanYml
+        :return: :class:`artisan.ArtisanYml` instance.
         """
-        jobs = []
         artisan_yml = yaml.load(string)
         project = ArtisanYml()
 
@@ -83,19 +83,21 @@ class ArtisanYml(object):
                 raise ArtisanException('Could not parse project configuration. '
                                        'Requires a `script` entry in each job.')
 
-            job = BaseJob(job_json['name'], job_json['script'], {})
+            env = {}
+            if 'env' in job_json:
+                env = parse_env(job_json['env'])
 
             if 'labels' in job_json:
                 for label_json in parse_labels(job_json['labels']):
-                    job = BaseJob(job_json['name'], job_json['script'], {})
+                    job = job_factory(type, job_json['name'], job_json['script'], **kwargs)
                     for key, value in six.iteritems(label_json):
                         job.labels[key] = value
-            if 'env' in job_json:
-                job.environment = parse_env(job_json['env'])
-
-            jobs.append(job)
-
-        project.jobs.extend(jobs)
+                    job.environment = env
+                    project.jobs.append(job)
+            else:
+                job = job_factory(type, job_json['name'], job_json['script'], **kwargs)
+                job.environment = env
+                project.jobs.append(job)
 
         if 'farms' in artisan_yml:
             sources, include, omit, community = parse_farms(artisan_yml['farms'])

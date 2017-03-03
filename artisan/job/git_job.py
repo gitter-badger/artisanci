@@ -25,39 +25,35 @@ class GitJob(BaseJob):
         if commit is None:
             commit = 'HEAD'  # Get the latest if commit is None.
 
-        params = {'repo': repo,
-                  'branch': branch,
-                  'commit': commit}
-        super(GitJob, self).__init__(name, script, params)
+        super(GitJob, self).__init__(name, script)
 
-    def setup(self, worker):
-        super(GitJob, self).setup(worker)
+        self.repo = repo
+        self.branch = branch
+        self.commit = commit
 
-        worker.run('git --version')
+    def fetch_project(self, worker):
+        worker.execute('git --version')
 
-        tmp_dir = self.make_temporary_directory(worker)
-        project_root = os.path.join(tmp_dir, 'git-project')
-        worker.run('git clone --depth=50 --branch=%s %s %s' % (self.params['branch'],
-                                                               self.params['repo'],
-                                                               project_root))
-        worker.chdir(project_root)
-        worker.run('git checkout -qf %s' % self.params['commit'])
+        project = os.path.join(worker.cwd, 'project')
+        worker.execute('git clone --depth=50 --branch=%s %s %s' % (self.branch,
+                                                                   self.repo,
+                                                                   project))
+        worker.chdir(project)
+        worker.execute('git checkout -qf %s' % self.commit)
 
-        if self.params['commit'] == 'HEAD':
-            rev_parse = worker.run('git rev-parse HEAD')
-            self.params['commit'] = rev_parse.stdout.decode('utf-8').strip()
-
-        self.params['path'] = project_root
+        if self.commit == 'HEAD':
+            rev_parse = worker.execute('git rev-parse HEAD')
+            self.commit = rev_parse.stdout.decode('utf-8').strip()
 
         worker.environment['ARTISAN_BUILD_TYPE'] = 'git'
-        worker.environment['ARTISAN_GIT_REPOSITORY'] = self.params['repo']
-        worker.environment['ARTISAN_GIT_BRANCH'] = self.params['branch']
-        worker.environment['ARTISAN_GIT_COMMIT'] = self.params['commit']
+        worker.environment['ARTISAN_GIT_REPOSITORY'] = self.repo
+        worker.environment['ARTISAN_GIT_BRANCH'] = self.branch
+        worker.environment['ARTISAN_GIT_COMMIT'] = self.commit
 
     def as_args(self):
         return ['--type', 'git',
                 '--script', self.script,
                 '--name', self.name,
-                '--repo', self.params['repo'],
-                '--branch', self.params['branch'],
-                '--commit', self.params['commit']]
+                '--repo', self.repo,
+                '--branch', self.branch,
+                '--commit', self.commit]

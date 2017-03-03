@@ -36,23 +36,9 @@ class Worker(object):
 
         self._closed = False
         self._cwd = os.getcwd()
-        self._listeners = []
 
-    def add_listener(self, listener):
-        if listener in self._listeners:
-            raise ValueError('This listener is already listening.')
-        self._listeners.append(listener)
-
-    def remove_listener(self, listener):
-        if listener not in self._listeners:
-            raise ValueError('This listener is not listening.')
-        self._listeners.remove(listener)
-
-    def _notify_listeners(self, event_type, event_data):
-        event_func = 'on_' + event_type
-        for listener in self._listeners:
-            if hasattr(listener, event_func):
-                getattr(listener, event_func)(event_data)
+    def _notify_listeners(self, _, p):
+        pass
 
     def execute(self, command, environment=None, timeout=None, merge_stderr=False):
         """
@@ -80,10 +66,6 @@ class Worker(object):
             raise TypeError('Command must be of type list or string.')
         if environment is None:
             environment = self.environment
-        if isinstance(command, list):
-            self._notify_listeners('next_command', ' '.join(command))
-        else:
-            self._notify_listeners('next_command', command)
         command = Command(self, command, environment, merge_stderr=merge_stderr)
         command._wait(timeout=timeout,
                       error_on_timeout=True,

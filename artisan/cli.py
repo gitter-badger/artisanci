@@ -12,12 +12,12 @@
 # either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-""" Command line entry point. """
+""" Command line entry point. Uses ``fire``
+module as an interface specification. """
 
 __all__ = [
     'main'
 ]
 
-
 def main():
-    pass  # TODO: Command line stuff
+    pass

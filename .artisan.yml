@@ -111,6 +111,7 @@ jobs:
     script: '.artisan/tests.py'
     duration: 20
     labels:
+      virtualbox: '>=5.1.14'
       matrix:
         platform:
           - 'ubuntu>=14.04'
@@ -119,7 +120,6 @@ jobs:
           - '==2.7'
           - '==3.5'
           - '==3.6'
-        virtualbox: '>=5.1.14'
 
 # Allow the PyPy builds to fail without failing the whole build.
 allow_failure:

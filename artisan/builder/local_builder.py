@@ -34,12 +34,9 @@ class LocalBuilder(BaseBuilder):
     def __init__(self, builders=1, python=sys.executable):
         super(LocalBuilder, self).__init__(builders=builders, python=python)
 
-    def _setup(self, job):
-        pass
-
-    def _execute(self, job):
+    def _build_job_target(self, job):
         worker = Worker()
-        job.run(worker)
-
-    def _teardown(self, job):
-        pass
+        job.fetch_project(worker)
+        job.setup_project(worker)
+        job.execute_project(worker)
+        job.cleanup_project(worker)

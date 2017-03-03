@@ -19,8 +19,6 @@ import six
 import sys
 import uuid
 from ..exceptions import ArtisanException
-from ..report import DoNothingReport
-from ..worker import Worker
 
 __all__ = [
     'BaseJob'
@@ -28,102 +26,46 @@ __all__ = [
 
 
 class BaseJob(object):
-    def __init__(self, name, script, params):
+    def __init__(self, name, script):
         self.name = name
         self.script = script
-        self.params = params
         self.report = None
         self.labels = {}
         self.environment = {}
 
-        self._cleanup_calls = []
+    def execute_project(self, worker):
+        worker.environment['ARTISAN_BUILD_DIR'] = worker.cwd
 
-    def run(self, worker):
-        """ Run the job using a worker. """
-        # Executing each part of the script.
-        error = None
-        script = None
+        self.display_worker_environment(worker)
+        script = self.load_script(worker)
 
-        # If the Job doesn't have a report attached
-        # then we're just going to do nothing.
-        if self.report is None:
-            self.report = DoNothingReport()
-
-        self.report.on_status_change('setup')
         try:
-            self.setup_job(worker)
-
-            # All environment setup is completed, time to display them.
-            self.display_environment(worker)
-
-            script = self.setup_script(worker)
             if hasattr(script, 'install'):
-                self.report.on_status_change('install')
+                sys.stdout.write('I')
+                sys.stdout.flush()
                 script.install(worker)
+
             if hasattr(script, 'script'):
-                self.report.on_status_change('script')
+                sys.stdout.write('S')
+                sys.stdout.flush()
                 script.script(worker)
+
+            sys.stdout.write('P')
             if hasattr(script, 'after_success'):
-                self.report.on_status_change('after_success')
+                sys.stdout.flush()
                 script.after_success(worker)
+
         except Exception as e:
-            error = e
-            self.report.on_command_error('%s: %s' % (type(error).__name__, str(error)))
-        if error is not None:
-            try:
-                if hasattr(script, 'after_failure'):
-                    self.report.on_status_change('after_failure')
-                    script.after_failure(worker)
-            except Exception:
-                pass
-        try:
-            self.report.on_status_change('cleanup')
-            self.cleanup_job(worker)
-        except Exception:
+            sys.stdout.write('F')
+            if hasattr(script, 'after_failure'):
+                sys.stdout.flush()
+                script.after_failure(worker)
+
+    def display_worker_environment(self, worker):
+        for name, value in six.iteritems(worker.environment):
             pass
-        if error is not None:
-            self.report.on_status_change('failure')
-        else:
-            self.report.on_status_change('success')
 
-    def setup_job(self, worker):
-        assert isinstance(worker, Worker)
-        worker.add_listener(self.report)
-
-        self.setup_environment(worker)
-
-        if 'python' in self.params:
-            self.setup_python(worker)
-
-    def cleanup_job(self, worker):
-        for func, args, kwargs in self._cleanup_calls:
-            try:
-                func(*args, **kwargs)
-            except Exception:
-                pass
-        worker.remove_listener(self.report)
-
-    def add_cleanup(self, func, *args, **kwargs):
-        """
-        Adds a function to be called during the clean-up phase for the worker.
-
-        :param func: Function to be called.
-        :param args: Positional arguments to be passed to the function.
-        :param kwargs: Key-word arguments to be passed to the function.
-        """
-        self._cleanup_calls.append((func, args, kwargs))
-
-    def display_environment(self, worker):
-        """ Shows the environment variables the worker is using. """
-        # Show all environment variables sorted.
-        self.report.on_next_command('env')
-        line_feed = '\r\n' if worker.platform == 'Windows' else '\n'
-        for key, value in sorted(worker.environment.items()):
-            self.report.on_command_output('%s=%s%s' % (key, value,
-                                                       line_feed))
-
-    def setup_script(self, worker):
-        """ Loads the script into a module. """
+    def load_script(self, worker):
         script_path = self.script
         if os.path.isabs(script_path):
             script_path = os.path.join(worker.cwd, script_path)
@@ -138,50 +80,11 @@ class BaseJob(object):
         sys.path = sys.path[1:]
         return script
 
-    def setup_environment(self, worker):
-        """ Sets up the environment for the worker. """
-        # Filter all external environment variables
-        no_filter = {'PATH', 'LD_LIBRARY_PATH', 'SYSTEMROOT'}
-        for key in six.iterkeys(worker.environment.copy()):
-            if key not in no_filter:
-                del worker.environment[key]
-
-        # Setup the environment for the job
-        for key, value in six.iteritems(self.environment):
-            worker.environment[key] = value
-
-        # Setup all default environment variables
-        worker.environment['ARTISAN'] = 'true'
-        worker.environment['CI'] = 'true'
-        worker.environment['CONTINUOUS_INTEGRATION'] = 'true'
-        worker.environment['ARTISAN_BUILD_TRIGGER'] = 'manual'
-
-        # Set the Artisan version.
-        from .. import __version__
-        worker.environment['ARTISAN_VERSION'] = __version__
-
-        # Set the build directory to the current directory.
-        worker.environment['ARTISAN_BUILD_DIR'] = worker.cwd
-
-    def make_temporary_directory(self, worker):
-        """ Creates and navigates to a temporary directory. """
-        assert isinstance(worker, Worker)
-        worker.chdir(worker.tmp)
-        tmp_dir = uuid.uuid4().hex
-        while worker.isdir(tmp_dir):
-            tmp_dir = uuid.uuid4().hex
-        worker.mkdir(tmp_dir)
-        worker.chdir(tmp_dir)
-        tmp_dir = worker.cwd
-        self.add_cleanup(worker.remove, tmp_dir)
-        return tmp_dir
-
-    def setup_python(self, worker):
-        """ Creates a Python virtual environment from a Python interpreter. """
-        venv = os.path.join(worker.tmp, '.artisan-ci-venv')
-        if worker.isdir(venv):
-            worker.remove(venv)
-        worker.execute('virtualenv -p %s %s' % (self.params['python'], venv))
+    def setup_python_virtualenv(self, worker):
+        venv = os.path.join(worker.tmp, uuid.uuid4().hex)
+        while worker.isdir(venv):
+            venv = os.path.join(worker.tmp, uuid.uuid4().hex)
+        worker.execute('virtualenv -p python3.5 %s' % venv)
         if worker.platform == 'Windows':
             worker.environment['PATH'] = (os.path.join(venv, 'Scripts') + ';' +
                                           worker.environment.get('PATH', ''))
@@ -189,7 +92,24 @@ class BaseJob(object):
             worker.environment['PATH'] = (os.path.join(venv, 'bin') + ':' +
                                           worker.environment.get('PATH', ''))
         worker.environment['VIRTUAL_ENV'] = venv
-        self.add_cleanup(worker.remove, venv)
+
+    def setup_project(self, worker):
+        sys.stdout.write('s'); sys.stdout.flush()
+        no_filter = {'PATH', 'LD_LIBRARY_PATH', 'SYSTEMROOT'}
+        for key in six.iterkeys(worker.environment.copy()):
+            if key not in no_filter and not key.startswith('ARTISAN_'):
+                del worker.environment[key]
+
+        from .. import __version__
+        worker.environment['ARTISAN_VERSION'] = __version__
+
+        self.setup_python_virtualenv(worker)
+
+    def fetch_project(self, worker):
+        pass
+
+    def cleanup_project(self, worker):
+        pass
 
     def as_args(self):
         """
@@ -197,3 +117,12 @@ class BaseJob(object):
         ``python -m artisan ...[job.as_args()]``
         """
         raise NotImplementedError()
+
+    def __str__(self):
+        return '<%s name=\'%s\' script=\'%s\' labels=%s>' % (type(self).__name__,
+                                                             self.name,
+                                                             self.script,
+                                                             self.labels)
+
+    def __repr__(self):
+        return self.__str__()

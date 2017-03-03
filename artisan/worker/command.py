@@ -183,7 +183,6 @@ class Command(object):
             try:
                 while True:
                     data = self._queue_stdout.get_nowait()
-                    self.worker._notify_listeners('command_output', data.decode('utf-8'))
                     self._stdout += data
             except Empty:
                 pass
@@ -191,10 +190,8 @@ class Command(object):
                 while True:
                     data = self._queue_stderr.get_nowait()
                     if self._merge_stderr:
-                        self.worker._notify_listeners('command_output', data.decode('utf-8'))
                         self._stdout += data
                     else:
-                        self.worker._notify_listeners('command_error', data.decode('utf-8'))
                         self._stderr += data
             except Empty:
                 pass

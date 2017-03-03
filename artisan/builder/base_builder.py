@@ -55,25 +55,12 @@ class BaseBuilder(object):
         return False
 
     def build_job(self, job):
-        proc = multiprocessing.Process(target=self._run, args=(job,))
+        proc = multiprocessing.Process(target=self._build_job_target, args=(job,))
         proc.start()
-        proc.join()
+        return proc
 
-    def _execute(self, job):
+    def _build_job_target(self, job):
         raise NotImplementedError()
-
-    def _setup(self, job):
-        raise NotImplementedError()
-
-    def _teardown(self, job):
-        raise NotImplementedError()
-
-    def _run(self, job):
-        try:
-            self._setup(job)
-            self._execute(job)
-        finally:
-            self._teardown(job)
 
     def __getstate__(self):
         __dict__ = self.__dict__.copy()

@@ -38,6 +38,7 @@ if __name__ == '__main__':
           install_requires=['colorama',
                             'distro',
                             'enum34',
+                            'fire',
                             'monotonic',
                             'psutil',
                             'requests',
