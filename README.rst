@@ -46,6 +46,14 @@ Features
 
 Supported Platforms
 -------------------
+
+Artisan CI supports the following Python versions:
+
+- CPython 2.7, 3.3+
+- PyPy 5.3.1+
+
+We do not yet support PyPy3 as it's still on Python 3.2.5. This will change when PyPy3 supports 3.3+
+
 Artisan CI supports the following four platforms as capable of running a builder farm:
 
 - Windows Vista SP1+
@@ -55,6 +63,7 @@ Artisan CI supports the following four platforms as capable of running a builder
 
 Virtualized builders support a very large range of guest platforms
 (Copied from `VirtualBox website <https://www.virtualbox.org/manual/ch03.html#guestossupport>`_):
+
 - Windows NT 4.0
 - Windows 2000, XP, Vista, 7, 8, 8.1, 10
 - Windows Server 2003, 2008, 2012
