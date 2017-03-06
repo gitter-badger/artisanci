@@ -16,16 +16,18 @@
 
 import multiprocessing
 from ..compat import Semaphore
+from ..watchable import Watchable
 
 __all__ = [
     'BaseBuilder'
 ]
 
 
-class BaseBuilder(object):
+class BaseBuilder(Watchable):
     """ Interface for Executors which setup and teardown the
     environment that a worker executes a job inside of. """
     def __init__(self, python, builders):
+        super(BaseBuilder, self).__init__()
         if not isinstance(python, str):
             raise TypeError('`python` must be of type `str`.')
         if not isinstance(builders, int):
@@ -39,12 +41,15 @@ class BaseBuilder(object):
         if self._semaphore is None:
             self._semaphore = Semaphore(self.builders)
         success = self._semaphore.acquire(blocking=False)
+        if success:
+            self.notify_watchers('acquire', None)
         return success
 
     def release(self):
         if self._semaphore is None:
             raise ValueError('Builder is not acquired.')
         self._semaphore.release()
+        self.notify_watchers('release', None)
 
     @property
     def is_secure(self):
@@ -57,6 +62,7 @@ class BaseBuilder(object):
     def build_job(self, job):
         proc = multiprocessing.Process(target=self._build_job_target, args=(job,))
         proc.start()
+        self.notify_watchers('build_job', job)
         return proc
 
     def _build_job_target(self, job):

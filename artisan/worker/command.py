@@ -98,7 +98,6 @@ class Command(object):
         """
         File-like object used for streaming a commands stderr.
         """
-        self._check_exit()
         return self._stderr
 
     @property
@@ -106,7 +105,6 @@ class Command(object):
         """
         File-like object used for streaming a commands stdout.
         """
-        self._check_exit()
         return self._stdout
 
     @property
@@ -116,7 +114,6 @@ class Command(object):
 
         :returns: Exit status of the command as an `int` or None if not complete.
         """
-        self._check_exit()
         return self._exit_status
 
     def _wait(self, timeout=None, error_on_exit=False, error_on_timeout=False):
@@ -184,15 +181,21 @@ class Command(object):
                 while True:
                     data = self._queue_stdout.get_nowait()
                     self._stdout += data
+                    if self.worker.job is not None:
+                        self.worker.job.notify_watchers('command_output', data)
             except Empty:
                 pass
             try:
                 while True:
                     data = self._queue_stderr.get_nowait()
+                    event_type = 'output'
                     if self._merge_stderr:
                         self._stdout += data
                     else:
                         self._stderr += data
+                        event_type = 'error'
+                    if self.worker.job is not None:
+                        self.worker.job.notify_watchers('command_' + event_type, data)
             except Empty:
                 pass
             if timeout is not None and monotonic() - start_time > timeout:

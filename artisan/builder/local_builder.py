@@ -36,6 +36,7 @@ class LocalBuilder(BaseBuilder):
 
     def _build_job_target(self, job):
         worker = Worker()
+        worker.job = job
         job.fetch_project(worker)
         job.setup_project(worker)
         job.execute_project(worker)

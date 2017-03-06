@@ -19,19 +19,22 @@ import six
 import sys
 import uuid
 from ..exceptions import ArtisanException
+from ..watchable import Watchable
 
 __all__ = [
     'BaseJob'
 ]
 
 
-class BaseJob(object):
+class BaseJob(Watchable):
     def __init__(self, name, script):
+        super(BaseJob, self).__init__()
         self.name = name
         self.script = script
         self.report = None
         self.labels = {}
         self.environment = {}
+        self.tmp_dir = None
 
     def execute_project(self, worker):
         worker.environment['ARTISAN_BUILD_DIR'] = worker.cwd
@@ -41,29 +44,27 @@ class BaseJob(object):
 
         try:
             if hasattr(script, 'install'):
-                sys.stdout.write('I')
-                sys.stdout.flush()
+                self.notify_watchers('status_change', 'install')
                 script.install(worker)
 
             if hasattr(script, 'script'):
-                sys.stdout.write('S')
-                sys.stdout.flush()
+                self.notify_watchers('status_change', 'script')
                 script.script(worker)
 
-            sys.stdout.write('P')
             if hasattr(script, 'after_success'):
-                sys.stdout.flush()
                 script.after_success(worker)
+            self.notify_watchers('status_change', 'success')
 
         except Exception as e:
-            sys.stdout.write('F')
+            self.notify_watchers('status_change', 'failure')
             if hasattr(script, 'after_failure'):
-                sys.stdout.flush()
                 script.after_failure(worker)
 
     def display_worker_environment(self, worker):
+        self.notify_watchers('command', 'env')
+        line_feed = '\r\n' if worker.platform == 'Windows' else '\n'
         for name, value in six.iteritems(worker.environment):
-            pass
+            self.notify_watchers('command_output', '%s=%s%s' % (name, value, line_feed))
 
     def load_script(self, worker):
         script_path = self.script
@@ -94,7 +95,10 @@ class BaseJob(object):
         worker.environment['VIRTUAL_ENV'] = venv
 
     def setup_project(self, worker):
-        sys.stdout.write('s'); sys.stdout.flush()
+        self.notify_watchers('status_change', 'setup')
+
+
+
         no_filter = {'PATH', 'LD_LIBRARY_PATH', 'SYSTEMROOT'}
         for key in six.iterkeys(worker.environment.copy()):
             if key not in no_filter and not key.startswith('ARTISAN_'):
@@ -106,10 +110,13 @@ class BaseJob(object):
         self.setup_python_virtualenv(worker)
 
     def fetch_project(self, worker):
-        pass
+        self.notify_watchers('status_change', 'fetch')
 
     def cleanup_project(self, worker):
-        pass
+        self.notify_watchers('status_change', 'cleanup')
+
+        if self.tmp_dir is not None:
+            worker.remove(self.tmp_dir)
 
     def as_args(self):
         """

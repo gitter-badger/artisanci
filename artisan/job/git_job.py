@@ -32,6 +32,7 @@ class GitJob(BaseJob):
         self.commit = commit
 
     def fetch_project(self, worker):
+        super(GitJob, self).fetch_project(worker)
         worker.execute('git --version')
 
         project = os.path.join(worker.cwd, 'project')

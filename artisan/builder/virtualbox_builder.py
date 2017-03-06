@@ -127,7 +127,7 @@ class MachinePool(object):
             token = ''.join(random.choice(string.ascii_letters) for _ in range(32))
             clone = machine.clone(name='%s clone-%s' % (self.machine, token))
             p = clone.launch_vm_process(type_p=frontend)
-            p.wait_for_completion(60 * 1000)
+            p.wait_for_completion(60000)
             session = clone.create_session()
             return session
 

@@ -12,28 +12,16 @@
 # either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-import os
-from .base_job import BaseJob
+""" Module for a single description of a job from `.artisan.yml`. """
 
 __all__ = [
-    'LocalJob'
+    'JobYml'
 ]
 
 
-class LocalJob(BaseJob):
-    def __init__(self, name, script, path=None):
-        if path is None:
-            path = os.getcwd()
-        super(LocalJob, self).__init__(name, script)
-
-        self.path = path
-
-    def fetch_project(self, worker):
-        super(LocalJob, self).fetch_project(worker)
-        worker.chdir(self.path)
-
-    def as_args(self):
-        return ['--type', 'local',
-                '--script', self.script,
-                '--name', self.name,
-                '--path', self.path]
+class JobYml(object):
+    def __init__(self, name, script):
+        self.name = name
+        self.script = script
+        self.environment = {}
+        self.labels = {}

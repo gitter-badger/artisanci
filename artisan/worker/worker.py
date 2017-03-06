@@ -33,12 +33,10 @@ __all__ = [
 class Worker(object):
     def __init__(self):
         self.environment = os.environ.copy()
+        self.job = None
 
         self._closed = False
         self._cwd = os.getcwd()
-
-    def _notify_listeners(self, _, p):
-        pass
 
     def execute(self, command, environment=None, timeout=None, merge_stderr=False):
         """
@@ -83,7 +81,8 @@ class Worker(object):
 
         :param str path: Path to create directories.
         """
-        self._notify_listeners('next_command', 'mkdir %s' % path)
+        if self.job is not None:
+            self.job.notify_watchers('command', 'mkdir %s' % path)
         try:
             os.makedirs(self._normalize_path(path))
         except OSError:
@@ -95,7 +94,8 @@ class Worker(object):
 
         :param str path: Path to change workers cwd to.
         """
-        self._notify_listeners('next_command', 'cd %s' % path)
+        if self.job is not None:
+            self.job.notify_watchers('command', 'cd %s' % path)
         cwd = self._normalize_path(path)
         if not os.path.isdir(cwd):
             raise ValueError('`%s` is not a valid directory.' % cwd)
@@ -108,8 +108,21 @@ class Worker(object):
         :param str path: Path to the directory to list.
         :return: List of filenames as strings.
         """
-        self._notify_listeners('next_command', 'ls %s' % path)
+        if self.job is not None:
+            self.job.notify_watchers('command', 'ls %s' % path)
         return os.listdir(self._normalize_path(path))
+
+    def copy(self, source_path, destination_path):
+        """
+        Copies a file or directory recursively to a destination directory.
+
+        :param str source_path: File or directory to copy.
+        :param str destination_path: Directory to copy the file or directory to.
+        """
+        if os.path.isdir(source_path):
+            shutil.copytree(source_path, destination_path)
+        else:
+            shutil.copy(source_path, destination_path)
 
     def chmod(self, path, mode, follow_symlinks=True):
         """
@@ -135,8 +148,9 @@ class Worker(object):
                 raise NotImplementedError('stat.S_IREAD and stat.S_IWRITE are'
                                           'the only operations supported by Windows.')
 
-        self._notify_listeners('next_command', 'chmod %s %s' % (str(oct(mode)).lstrip('0o'),
-                                                                path))
+        if self.job is not None:
+            self.job.notify_watchers('command', 'chmod %s %s' % (str(oct(mode)).lstrip('0o'),
+                                                                 path))
         path = self._normalize_path(path)
         if PY33 and follows_symlinks('os.chmod'):
             os.chmod(path, mode, follow_symlinks=follow_symlinks)
@@ -158,7 +172,8 @@ class Worker(object):
         """
         _check_chown_support()
         st = _stat_follow(path, follow_symlinks)
-        self._notify_listeners('next_command', 'chown %s %d %d' % (path, user_id, st.st_gid))
+        if self.job is not None:
+            self.job.notify_watchers('command', 'chown %s %d %d' % (path, user_id, st.st_gid))
         path = self._normalize_path(path)
         if PY33 and follows_symlinks('os.chown'):
             os.chown(path, user_id, st.st_gid,
@@ -181,7 +196,8 @@ class Worker(object):
         """
         _check_chown_support()
         st = _stat_follow(path, follow_symlinks)
-        self._notify_listeners('next_command', 'chown %s %d %d' % (path, st.st_uid, group_id))
+        if self.job is not None:
+            self.job.notify_watchers('command', 'chown %s %d %d' % (path, st.st_uid, group_id))
         path = self._normalize_path(path)
         if PY33 and follows_symlinks('os.chown'):
             os.chown(path, st.st_uid, group_id,
@@ -199,8 +215,9 @@ class Worker(object):
         :param bool follow_symlinks: If True will follow symlinks in the path.
         :returns: :class:`artisan.worker.FileAttributes` object.
         """
+        if self.job is not None:
+            self.job.notify_watchers('command', 'stat %s' % path)
         st = _stat_follow(self._normalize_path(path), follow_symlinks)
-        self._notify_listeners('next_command', 'stat %s' % path)
         return st
 
     def isdir(self, path):
@@ -210,7 +227,8 @@ class Worker(object):
         :param str path: Path to the directory.
         :returns: True if the path is a directory, False otherwise.
         """
-        self._notify_listeners('next_command', 'test -d %s' % path)
+        if self.job is not None:
+            self.job.notify_watchers('command', 'test -d %s' % path)
         return os.path.isdir(self._normalize_path(path))
 
     def isfile(self, path):
@@ -220,7 +238,8 @@ class Worker(object):
         :param str path: Path to the file.
         :returns: True if the path is a file, False otherwise.
         """
-        self._notify_listeners('next_command', 'test -f %s' % path)
+        if self.job is not None:
+            self.job.notify_watchers('command', 'test -f %s' % path)
         return os.path.isfile(self._normalize_path(path))
 
     def islink(self, path):
@@ -230,7 +249,8 @@ class Worker(object):
         :param str path: Path to the symlink.
         :returns: True if the path is a symlink, False otherwise.
         """
-        self._notify_listeners('next_command', 'test -L %s' % path)
+        if self.job is not None:
+            self.job.notify_watchers('command', 'test -L %s' % path)
         path = expandvars(self, os.path.expanduser(path))
         if not os.path.isabs(path):
             path = os.path.join(self._cwd, path)
@@ -269,10 +289,12 @@ class Worker(object):
         """
         norm_path = self._normalize_path(path)
         if os.path.isdir(path):
-            self._notify_listeners('next_command', 'rm -rf %s' % path)
+            if self.job is not None:
+                self.job.notify_watchers('command', 'rm -rf %s' % path)
             shutil.rmtree(norm_path, ignore_errors=True)
         else:
-            self._notify_listeners('next_command', 'rm %s' % path)
+            if self.job is not None:
+                self.job.notify_watchers('command', 'rm %s' % path)
             os.remove(norm_path)
 
     def symlink(self, source_path, link_path):
@@ -282,7 +304,8 @@ class Worker(object):
         :param str source_path: Path of the file or directory to link to.
         :param str link_path: Path to the symbolic link.
         """
-        self._notify_listeners('next_command', 'ln -s %s %s' % (source_path, link_path))
+        if self.job is not None:
+            self.job.notify_watchers('command', 'ln -s %s %s' % (source_path, link_path))
         os.symlink(self._normalize_path(source_path),
                    self._normalize_path(link_path))
 
@@ -316,7 +339,8 @@ class Worker(object):
         :param str path: Path to save the file to.
         :returns: HTTP code of the request as an :class:`int`.
         """
-        self._notify_listeners('next_command', 'curl %s --output %s' % (url, path))
+        if self.job is not None:
+            self.job.notify_watchers('command', 'curl %s --output %s' % (url, path))
         r = requests.get(url, stream=True)
         with self.open(path, 'wb') as f:
             for chunk in r.iter_content(8192):
