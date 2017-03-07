@@ -1,5 +1,5 @@
 #### Version Information
-- Artisan Version: [Example: 1.0.0]
+- Artisan CI Version: [Example: 1.0.0]
 - Python Version: [Example: Python 2.7.12+]
 - Happens in latest released version?: [Yes/No]
 - Happens in latest development version?: [Yes/No]
@@ -15,7 +15,7 @@ Explain what actually happens when the code is run.
 #### Minimal Example of Issue
 
 ```python
-import artisan
+import artisanci
 
 # Please show the smallest possible example where
 # the issue occurs. This will drastically decrease

@@ -1,14 +1,14 @@
 Builders
 ========
 
-.. autoclass:: artisan.builder.BaseBuilder
+.. autoclass:: artisanci.BaseBuilder
 
 Implementations
 ---------------
 
-These are the :class:`artisan.builder.BaseBuilder` implementations that
-are provided by default by the Artisan module.
+These are the :class:`artisan.BaseBuilder` implementations that
+are provided by default by the ``artisanci`` module.
 
-.. autoclass:: artisan.builder.LocalBuilder
+.. autoclass:: artisanci.LocalBuilder
 
-.. autoclass:: artisan.builder.VirtualBoxBuilder
+.. autoclass:: artisanci.VirtualBoxBuilder

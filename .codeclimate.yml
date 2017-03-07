@@ -9,4 +9,4 @@ ratings:
 exclude_paths:
   - "tests/"
   - "docs/"
-  - "artisan/worker/expandvars.py"
+  - "artisanci/worker/expandvars.py"

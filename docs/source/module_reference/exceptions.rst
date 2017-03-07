@@ -1,4 +1,4 @@
 Exceptions
 ==========
 
-.. automodule:: artisan.exceptions
+.. automodule:: artisanci.exceptions

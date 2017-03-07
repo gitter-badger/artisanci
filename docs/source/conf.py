@@ -18,7 +18,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
-import artisan
+import artisanci
 
 # -- General configuration ------------------------------------------------
 
@@ -64,7 +64,7 @@ author = 'Seth Michael Larson'
 # built documents.
 #
 # The short X.Y version.
-version = artisan.__version__
+version = artisanci.__version__
 # The full version, including alpha/beta/rc tags.
 release = version
 

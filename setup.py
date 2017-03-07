@@ -2,7 +2,7 @@ import os
 import re
 from setuptools import setup, find_packages
 
-base_package = 'artisan'
+base_package = 'artisanci'
 
 # Get the version (borrowed from SQLAlchemy)
 base_path = os.path.dirname(__file__)
@@ -14,6 +14,7 @@ with open(os.path.join(base_path, 'artisan', '__init__.py')) as f:
 
 with open('README.rst') as f:
     readme = f.read()
+    readme = readme.replace(' :beers: ', ' ')
 
 with open('CHANGELOG.rst') as f:
     changes = f.read()
@@ -25,11 +26,11 @@ if base_package not in packages:
 
 
 if __name__ == '__main__':
-    setup(name='artisan',
+    setup(name='artisanci',
           description='Community powered Continuous Integration!',
           long_description='\n\n'.join([readme, changes]),
           license=LICENSE,
-          url='http://artisan.readthedocs.io',
+          url='http://artisanci.readthedocs.io',
           version=VERSION,
           author='Seth Michael Larson',
           author_email='sethmichaellarson@protonmail.com',
@@ -51,7 +52,7 @@ if __name__ == '__main__':
           zip_safe=False,
           entry_points={
               'console_scripts': [
-                  'artisan = artisan.cli:main'
+                  'artisan = artisanci.cli:main'
               ]
           },
           classifiers=['Development Status :: 2 - Pre-Alpha',

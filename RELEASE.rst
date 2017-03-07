@@ -1,5 +1,5 @@
-How-To Release Artisan
-======================
+How-To Release Artisan CI
+=========================
 
 These are the steps to take to create a release for Artisan:
 
@@ -17,7 +17,7 @@ These are the steps to take to create a release for Artisan:
 
 3. Update the module ``__version__`` to be the current version.
 
-  - ``artisan/__init__.py``
+  - ``artisanci/__init__.py``
     
 4. Add and commit the changes.
 
@@ -36,7 +36,7 @@ These are the steps to take to create a release for Artisan:
 
 6. Tag a new release on GitHub.
 
-  - Go to the URL: https://github.com/SethMichaelLarson/artisan/releases/new
+  - Go to the URL: https://github.com/artisanci/artisanci/releases/new
   - Enter in the release version for tag and title.
   - Copy the changelog for the release into the description.
   - Add the zip file as well as the wheel as distributables.

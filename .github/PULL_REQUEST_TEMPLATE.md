@@ -2,12 +2,6 @@
 
 What does this PR change or add to Artisan?
 
-```python
-import artisan
-
-# Optional: Show the use-case this Pull Request helps with.
-```
-
 #### TO-DO Checklist:
 
 - [ ] Fixes Issue #: [Optional Issue #]

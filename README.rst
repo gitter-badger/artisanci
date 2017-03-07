@@ -1,32 +1,32 @@
 Artisan CI
 ==========
 
-.. image:: https://img.shields.io/travis/SethMichaelLarson/artisan-ci/master.svg
-    :target: https://travis-ci.org/SethMichaelLarson/artisan-ci
+.. image:: https://img.shields.io/travis/artisanci/artisanci/master.svg
+    :target: https://travis-ci.org/artisanci/artisanci
     :alt: Linux and MacOS Build Status
-.. image:: https://img.shields.io/appveyor/ci/SethMichaelLarson/artisan-ci/master.svg
-    :target: https://ci.appveyor.com/project/SethMichaelLarson/artisan-ci
+.. image:: https://img.shields.io/appveyor/ci/artisanci/artisanci/master.svg
+    :target: https://ci.appveyor.com/project/artisanci/artisanci
     :alt: Windows Build Status
-.. image:: https://img.shields.io/codecov/c/github/SethMichaelLarson/artisan-ci/master.svg
-    :target: https://codecov.io/gh/SethMichaelLarson/artisan-ci
+.. image:: https://img.shields.io/codecov/c/github/artisanci/artisanci/master.svg
+    :target: https://codecov.io/gh/artisanci/artisanci
     :alt: Code Coverage
-.. image:: https://img.shields.io/codeclimate/github/SethMichaelLarson/artisan-ci.svg
-    :target: https://codeclimate.com/github/SethMichaelLarson/artisan-ci
+.. image:: https://img.shields.io/codeclimate/github/artisanci/artisanci.svg
+    :target: https://codeclimate.com/github/artisanci/artisanci
     :alt: Code Health
 .. image:: https://readthedocs.org/projects/artisan-ci/badge/?version=latest
     :target: http://artisan-ci.readthedocs.io
     :alt: Documentation Build Status
-.. image:: https://pyup.io/repos/github/sethmichaellarson/artisan-ci/shield.svg
-     :target: https://pyup.io/repos/github/sethmichaellarson/artisan-ci
+.. image:: https://pyup.io/repos/github/artisanci/artisanci/shield.svg
+     :target: https://pyup.io/repos/github/artisanci/artisanci
      :alt: Dependency Versions
-.. image:: https://img.shields.io/pypi/v/artisan.svg
-    :target: https://pypi.python.org/pypi/artisan
+.. image:: https://img.shields.io/pypi/v/artisanci.svg
+    :target: https://pypi.python.org/pypi/artisanci
     :alt: PyPI Version
 .. image:: https://img.shields.io/badge/say-thanks-ff69b4.svg
     :target: https://saythanks.io/to/SethMichaelLarson
     :alt: Say Thanks to the Maintainers
-.. image:: https://img.shields.io/twitter/follow/artisan_ci.svg?style=social&label=Follow
-    :target: https://twitter.com/artisan_ci
+.. image:: https://img.shields.io/twitter/follow/artisanci.svg?style=social&label=Follow
+    :target: https://twitter.com/artisanci
     :alt: Follow Artisan CI on Twitter
 
 Community powered Continuous Integration! :beers: Run your own CI service out of
@@ -84,21 +84,25 @@ There are many guides on how to get started hosting your own builders or
 setting up a project to use other builders. Guides are written for each platform
 that Artisan CI supports.
 
+ .. code-block:: bash
+
+   python -m pip install artisanci
+
 The guides also feature many examples on how best to configure a farm. If you're
 having trouble getting Artisan CI working correctly do not hesitate to `open an
-issue on GitHub <https://github.com/SethMichaelLarson/artisan-ci/issues>`_.
+issue on GitHub <https://github.com/artisanci/artisanci/issues>`_.
 
 References
 ----------
 
 The `Module and API Reference on readthedocs.io <http://artisan-ci.readthedocs.io>`_
-provides documentation for the web API and the module ``artisan``.
+provides documentation for the web API and the module ``artisanci``.
 
 Issues and Support
 ------------------
 
 All support requests and issue reports should be
-`filed on GitHub as an issue <https://github.com/SethMichaelLarson/artisan-ci/issues>`_.
+`filed on GitHub as an issue <https://github.com/artisanci/artisanci/issues>`_.
 Make sure to follow the template so your request may be as handled as quickly as possible.
 
 Contributing
@@ -109,4 +113,4 @@ We welcome community contributions, please see `our guide for Contributors <http
 License
 -------
 
-Artisan CI is made available under the Apache 2.0 License. For more details, see `LICENSE.txt <https://github.com/SethMichaelLarson/artisan-ci/blob/master/LICENSE.txt>`_.
+Artisan CI is made available under the Apache 2.0 License. For more details, see `LICENSE.txt <https://github.com/artisanci/artisanci/blob/master/LICENSE.txt>`_.

@@ -1,9 +1,9 @@
 [run]
 include =
-    artisan/*
+    artisanci/*
 omit =
-    artisan/compat.py
-    artisan/worker/expandvars.py
+    artisanci/compat.py
+    artisanci/worker/expandvars.py
 concurrency = multiprocessing
 
 [report]

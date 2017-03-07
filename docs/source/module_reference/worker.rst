@@ -1,4 +1,10 @@
 Workers
 =======
 
-.. autoclass:: artisan.Worker
+.. autoclass:: artisanci.Worker
+
+Command
+-------
+
+.. autoclass:: artisanci.Command
+

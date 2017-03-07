@@ -66,3 +66,4 @@ on_success:
 branches:
   only:
     - master
+    - release
