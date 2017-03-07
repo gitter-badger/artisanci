@@ -1,10 +1,11 @@
 colorama==0.3.7
 distro==1.0.2
 enum34==1.1.6
-fire==0.1.0
 monotonic==1.2
 requests==2.13.0
-psutil==5.1.3
+pendulum==1.1.0
+psutil==5.2.0
+pytzdata==2017.1
 pyvbox==1.0.0
 PyYAML==3.12
 semver==2.7.6
