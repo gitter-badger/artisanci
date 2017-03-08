@@ -31,10 +31,7 @@ class ArtisanYml(object):
     """ Instance describing a project's ``.artisan.yml`` file. """
     def __init__(self):
         self.jobs = []
-        self.source_farms = []
-        self.include_farms = []
-        self.omit_farms = []
-        self.community_farms = False
+        self.farms = []
 
     @staticmethod
     def from_path(path):
@@ -97,13 +94,8 @@ class ArtisanYml(object):
                 project.jobs.append(build)
 
         if 'farms' in artisan_yml:
-            sources, include, omit, community = parse_farms(artisan_yml['farms'])
-            project.source_farms = sources
-            project.include_farms = include
-            project.omit_farms = omit
-            project.community_farms = community
+            project.farms = parse_farms(artisan_yml['farms'])
         else:
-            project.community_farms = True
-            project.source_farms = ['https://farms.artisan.io']
+            project.farms = ['https://farms.artisan.io']
 
         return project
