@@ -2,8 +2,8 @@ import os
 import pickle
 import tempfile
 import unittest
-from artisan import LocalBuilder
-from artisan.job import LocalJob
+from artisanci import LocalBuilder
+from artisanci.job import LocalJob
 
 
 class TestLocalBuilder(unittest.TestCase):

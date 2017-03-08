@@ -1,7 +1,7 @@
 How-To Release Artisan CI
 =========================
 
-These are the steps to take to create a release for Artisan:
+These are the steps to take to create a release for Artisan CI:
 
 1. Switch to the release branch
 

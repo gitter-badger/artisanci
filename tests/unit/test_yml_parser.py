@@ -2,11 +2,11 @@ import os
 import random
 import tempfile
 import unittest
-from artisan import ArtisanException
-from artisan.yml import ArtisanYml
-from artisan.yml.label_parser import parse_labels
-from artisan.yml.env_parser import parse_env
-from artisan.yml.farms_parser import parse_farms
+from artisanci import ArtisanException
+from artisanci.yml import ArtisanYml
+from artisanci.yml.label_parser import parse_labels
+from artisanci.yml.env_parser import parse_env
+from artisanci.yml.farms_parser import parse_farms
 
 
 class _BaseTestArtisanYmlParser(unittest.TestCase):

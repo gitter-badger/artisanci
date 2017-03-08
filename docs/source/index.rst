@@ -19,11 +19,11 @@ Getting Started with Artisan CI
 
 Artisan CI is available on PyPI can be installed with `pip <https://pip.pypa.io>`_.::
 
-    $ python -m pip install artisan
+    $ python -m pip install artisanci
 
-To install the latest development version from `Github <https://github.com/SethMichaelLarson/artisan-ci>`_::
+To install the latest development version from `Github <https://github.com/artisanci/artisanci>`_::
 
-    $ python -m pip install git+git://github.com/SethMichaelLarson/artisan-ci.git
+    $ python -m pip install git+git://github.com/artisanci/artisanci.git
 
 
 If your current Python installation doesn't have pip available, try `get-pip.py <bootstrap.pypa.io>`_
@@ -35,13 +35,13 @@ References
 ----------
 
 The :doc:`module_reference/index` provides documentation for all structures
-that the Artisan CI core module ``artisan`` uses.
+that the Artisan CI core module ``artisanci`` uses.
 
 Support / Report Issues
 -----------------------
 
 All support requests and issue reports should be
-`filed on GitHub as an issue <https://github.com/SethMichaelLarson/artisan-ci/issues>`_.
+`filed on GitHub as an issue <https://github.com/artisanci/artisanci/issues>`_.
 Make sure to follow the template so your request may be as handled as quickly as possible.
 
 Contributing

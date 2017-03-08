@@ -12,7 +12,7 @@ as a set of guidelines for its community.
 
 Our community strives to:
 
-  - Be friendly an patient.
+  - Be friendly and patient.
   - Be welcoming.
   - Be considerate.
   - Be respectful.
@@ -38,12 +38,12 @@ at all times when interacting with other contributors.
 Adding Features / Fixing Bugs
 -----------------------------
 
-1. `Check for open issues <https://github.com/SethMichaelLarson/artisan/issues>`_ or open
+1. `Check for open issues <https://github.com/artisanci/artisanci/issues>`_ or open
    a new issue to start a discussion around a new feature or a bug.  Issues labeled with
    *Contributor Friendly* are for issues that are great for new contributors that are
    new to the project or not as familiar with the codebase.
 
-2. Fork the `Artisan repository on Github <https://github.com/SethMichaelLarson/artisan>`_
+2. Fork the `Artisan CI repository on Github <https://github.com/artisanci/artisanci>`_
    to start making changes.
 
 3. Write a test which shows that the bug was fixed or that the feature works as expected.
@@ -102,6 +102,6 @@ Security Issues
 ---------------
 
 In the case a security issue is found please email me at ``sethmichaellarson@protonmail.com`` and we will
-discuss the issue privately. Please do not post or disclose security issues on the Github issue tracker
+discuss the issue privately. Please do not post or disclose security issues on the GitHub issue tracker
 until the issue is resolved. After the issue is resolved you will be recognized publicly for the security issue
 at your discretion.

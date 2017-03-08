@@ -4,8 +4,8 @@ Artisan CI
 .. image:: https://img.shields.io/travis/artisanci/artisanci/master.svg
     :target: https://travis-ci.org/artisanci/artisanci
     :alt: Linux and MacOS Build Status
-.. image:: https://img.shields.io/appveyor/ci/artisanci/artisanci/master.svg
-    :target: https://ci.appveyor.com/project/artisanci/artisanci
+.. image:: https://img.shields.io/appveyor/ci/SethMichaelLarson/artisanci/master.svg
+    :target: https://ci.appveyor.com/project/SethMichaelLarson/artisanci
     :alt: Windows Build Status
 .. image:: https://img.shields.io/codecov/c/github/artisanci/artisanci/master.svg
     :target: https://codecov.io/gh/artisanci/artisanci
@@ -13,8 +13,8 @@ Artisan CI
 .. image:: https://img.shields.io/codeclimate/github/artisanci/artisanci.svg
     :target: https://codeclimate.com/github/artisanci/artisanci
     :alt: Code Health
-.. image:: https://readthedocs.org/projects/artisan-ci/badge/?version=latest
-    :target: http://artisan-ci.readthedocs.io
+.. image:: https://readthedocs.org/projects/artisanci/badge/?version=latest
+    :target: http://artisanci.readthedocs.io
     :alt: Documentation Build Status
 .. image:: https://pyup.io/repos/github/artisanci/artisanci/shield.svg
      :target: https://pyup.io/repos/github/artisanci/artisanci
@@ -95,7 +95,7 @@ issue on GitHub <https://github.com/artisanci/artisanci/issues>`_.
 References
 ----------
 
-The `Module and API Reference on readthedocs.io <http://artisan-ci.readthedocs.io>`_
+The `Module and API Reference on Read the Docs <http://artisanci.readthedocs.io>`_
 provides documentation for the web API and the module ``artisanci``.
 
 Issues and Support
@@ -108,7 +108,7 @@ Make sure to follow the template so your request may be as handled as quickly as
 Contributing
 ------------
 
-We welcome community contributions, please see `our guide for Contributors <http://artisan-ci.readthedocs.io/en/latest/contributing.html>`_ for the best places to start and help.
+We welcome community contributions, please see `our guide for Contributors <http://artisanci.readthedocs.io/en/latest/contributing.html>`_ for the best places to start and help.
 
 License
 -------

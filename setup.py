@@ -6,7 +6,7 @@ base_package = 'artisanci'
 
 # Get the version (borrowed from SQLAlchemy)
 base_path = os.path.dirname(__file__)
-with open(os.path.join(base_path, 'artisan', '__init__.py')) as f:
+with open(os.path.join(base_path, 'artisanci', '__init__.py')) as f:
     module_content = f.read()
     VERSION = re.compile(r'.*__version__ = \'(.*?)\'', re.S).match(module_content).group(1)
     LICENSE = re.compile(r'.*__license__ = \'(.*?)\'', re.S).match(module_content).group(1)
