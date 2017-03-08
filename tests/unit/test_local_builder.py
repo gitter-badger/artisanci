@@ -30,7 +30,7 @@ class TestLocalBuilder(unittest.TestCase):
         open(delete_this, 'w+').close()
         self.addCleanup(_safe_remove, delete_this)
 
-        job = LocalBuild('simple', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'jobs', 'simple.py'), '')
+        job = LocalBuild(script=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'builds', 'simple.py'))
         job.environment['DELETE_THIS'] = delete_this
 
         builder.acquire()

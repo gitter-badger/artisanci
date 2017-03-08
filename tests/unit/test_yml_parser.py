@@ -16,8 +16,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
     def test_single_job(self):
         yml = self.parse_artisan_yml("""
         builds:
-          - name: 'test'
-            script: '.artisan/test.py'
+          - script: '.artisan/test.py'
             labels:
               python: 'cpython==2.7'
         """)
@@ -26,18 +25,15 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
 
         job = yml.jobs[0]
         self.assertEqual(job.labels, {'python': 'cpython==2.7'})
-        self.assertEqual(job.name, 'test')
         self.assertEqual(job.script, '.artisan/test.py')
 
     def test_multiple_jobs(self):
         yml = self.parse_artisan_yml("""
         builds:
-          - name: 'test1'
-            script: 'script1'
+          - script: 'script1'
             labels:
               a: '1'
-          - name: 'test2'
-            script: 'script2'
+          - script: 'script2'
             labels:
               a: '2'
         """)
@@ -46,33 +42,28 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
 
         job = yml.jobs[0]
         self.assertEqual(job.labels, {'a': '1'})
-        self.assertEqual(job.name, 'test1')
         self.assertEqual(job.script, 'script1')
 
         job = yml.jobs[1]
         self.assertEqual(job.labels, {'a': '2'})
-        self.assertEqual(job.name, 'test2')
         self.assertEqual(job.script, 'script2')
 
     def test_unlabeled_job(self):
         yml = self.parse_artisan_yml("""
         builds:
-          - name: 'test1'
-            script: 'script1'
+          - script: 'script1'
         """)
         self.assertIsInstance(yml, ArtisanYml)
         self.assertEqual(len(yml.jobs), 1)
 
         job = yml.jobs[0]
         self.assertEqual(job.labels, {})
-        self.assertEqual(job.name, 'test1')
         self.assertEqual(job.script, 'script1')
 
     def test_job_with_single_env(self):
         yml = self.parse_artisan_yml("""
         builds:
-          - name: 'test1'
-            script: script1
+          - script: script1
             env: ARTISAN=true
         """)
 
@@ -83,8 +74,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
     def test_job_with_list_env(self):
         yml = self.parse_artisan_yml("""
         builds:
-          - name: 'test1'
-            script: script1
+          - script: script1
             env:
               - ARTISAN=true
               - CI=false
@@ -97,8 +87,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
     def test_job_with_dict_env(self):
         yml = self.parse_artisan_yml("""
         builds:
-          - name: 'test1'
-            script: script1
+          - script: script1
             env:
               ARTISAN: 'true'
               CI: 'false'
@@ -111,8 +100,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
     def test_job_with_dict_env_convert_bool_to_string(self):
         yml = self.parse_artisan_yml("""
         builds:
-          - name: 'test1'
-            script: script1
+          - script: script1
             env:
               ARTISAN: true
               CI: false
@@ -125,8 +113,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
     def test_job_with_dict_env_convert_int_to_string(self):
         yml = self.parse_artisan_yml("""
         builds:
-          - name: 'test1'
-            script: script1
+          - script: script1
             env:
               ARTISAN: 1
               CI: -1
@@ -142,16 +129,11 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
           - 'gh/SethMichaelLarson'
         """)
 
-    def test_job_has_no_name(self):
-        self.assertRaises(ArtisanException, self.parse_artisan_yml, """
-        builds:
-          - script: script1
-        """)
-
     def test_job_has_no_script(self):
         self.assertRaises(ArtisanException, self.parse_artisan_yml, """
         builds:
-          - name: test1
+          - labels:
+              test: a
         """)
 
     def test_farms_include(self):
@@ -160,8 +142,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
           include:
             - 'gh/artisan-bot'
         builds:
-          - name: 'test1'
-            script: 'script1'
+          - script: 'script1'
         """)
         self.assertIsInstance(yml, ArtisanYml)
         self.assertEqual(yml.include_farms, ['gh/artisan-bot'])
@@ -174,8 +155,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
           omit:
             - 'gh/artisan-bot'
         builds:
-          - name: 'test1'
-            script: 'script1'
+          - script: 'script1'
         """)
         self.assertIsInstance(yml, ArtisanYml)
         self.assertEqual(yml.include_farms, [])
@@ -185,8 +165,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
     def test_farms_sources_default(self):
         yml = self.parse_artisan_yml("""
         builds:
-          - name: 'test'
-            script: '.artisan/test.py'
+          - script: '.artisan/test.py'
             labels:
               python: 'cpython==2.7'
         """)
@@ -200,8 +179,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
             - https://farm-a.com
             - https://farm-b.com
         builds:
-          - name: 'test'
-            script: '.artisan/test.py'
+          - script: '.artisan/test.py'
             labels:
               python: 'cpython==2.7'
         """)

@@ -72,13 +72,10 @@ class ArtisanYml(object):
         artisan_yml = yaml.load(string)
         project = ArtisanYml()
 
-        if 'jobs' not in artisan_yml:
+        if 'builds' not in artisan_yml:
             raise ArtisanException('Could not parse project configuration. '
-                                   'Requires a `jobs` entry.')
+                                   'Requires a `builds` entry.')
         for build_yml in artisan_yml['builds']:
-            if 'name' not in build_yml:
-                raise ArtisanException('Could not parse project configuration. '
-                                       'Requires a `name` entry in each build.')
             if 'script' not in build_yml:
                 raise ArtisanException('Could not parse project configuration. '
                                        'Requires a `script` entry in each build.')
@@ -89,15 +86,13 @@ class ArtisanYml(object):
 
             if 'labels' in build_yml:
                 for label_json in parse_labels(build_yml['labels']):
-                    build = BuildYml(name=build_yml['name'],
-                                     script=build_yml['script'])
+                    build = BuildYml(script=build_yml['script'])
                     for key, value in six.iteritems(label_json):
                         build.labels[key] = value
                     build.environment = env
                     project.jobs.append(build)
             else:
-                build = BuildYml(name=build_yml['name'],
-                                 script=build_yml['script'])
+                build = BuildYml(script=build_yml['script'])
                 build.environment = env
                 project.jobs.append(build)
 
