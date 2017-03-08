@@ -16,14 +16,14 @@ import os
 import six
 import yaml
 from .env_parser import parse_env
-from .job import JobYml
+from .build_yml import BuildYml
 from .label_parser import parse_labels
 from .farms_parser import parse_farms
 from ..exceptions import ArtisanException
 
 __all__ = [
     'ArtisanYml',
-    'JobYml'
+    'BuildYml'
 ]
 
 
@@ -66,7 +66,6 @@ class ArtisanYml(object):
         from a string.
 
         :param str string: String of a ``.artisan.yml`` file.
-        :param str path: Optional, if given means that this function was called from_path().
         :rtype: artisan.ArtisanYml
         :return: :class:`artisan.ArtisanYml` instance.
         """
@@ -76,31 +75,31 @@ class ArtisanYml(object):
         if 'jobs' not in artisan_yml:
             raise ArtisanException('Could not parse project configuration. '
                                    'Requires a `jobs` entry.')
-        for job_yml in artisan_yml['jobs']:
-            if 'name' not in job_yml:
+        for build_yml in artisan_yml['builds']:
+            if 'name' not in build_yml:
                 raise ArtisanException('Could not parse project configuration. '
-                                       'Requires a `name` entry in each job.')
-            if 'script' not in job_yml:
+                                       'Requires a `name` entry in each build.')
+            if 'script' not in build_yml:
                 raise ArtisanException('Could not parse project configuration. '
-                                       'Requires a `script` entry in each job.')
+                                       'Requires a `script` entry in each build.')
 
             env = {}
-            if 'env' in job_yml:
-                env = parse_env(job_yml['env'])
+            if 'env' in build_yml:
+                env = parse_env(build_yml['env'])
 
-            if 'labels' in job_yml:
-                for label_json in parse_labels(job_yml['labels']):
-                    job = JobYml(name=job_yml['name'],
-                                 script=job_yml['script'])
+            if 'labels' in build_yml:
+                for label_json in parse_labels(build_yml['labels']):
+                    build = BuildYml(name=build_yml['name'],
+                                     script=build_yml['script'])
                     for key, value in six.iteritems(label_json):
-                        job.labels[key] = value
-                    job.environment = env
-                    project.jobs.append(job)
+                        build.labels[key] = value
+                    build.environment = env
+                    project.jobs.append(build)
             else:
-                job = JobYml(name=job_yml['name'],
-                             script=job_yml['script'])
-                job.environment = env
-                project.jobs.append(job)
+                build = BuildYml(name=build_yml['name'],
+                                 script=build_yml['script'])
+                build.environment = env
+                project.jobs.append(build)
 
         if 'farms' in artisan_yml:
             sources, include, omit, community = parse_farms(artisan_yml['farms'])

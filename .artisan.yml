@@ -14,10 +14,10 @@ farms:
   # The default is `https://farms.artisan.ci` if not given.
   - 'https://farms.artisan.ci'
 
-jobs:
+builds:
   # Documentation Builds
   - name: 'docs'
-    script: '.artisan/docs.py'
+    script: '.builds/docs.py'
     duration: 5 # This job should take 5 minutes or less.
     labels:
       python: 'cpython>=2.7'
@@ -32,14 +32,14 @@ jobs:
 
   # Flake8 Style Checking
   - name: 'flake8'
-    script: '.artisan/flake8.py'
+    script: '.builds/flake8.py'
     duration: 5
     labels:
       python: 'cpython>=2.7'
 
   # Test Builds on Many Platforms
   - name: 'tests'
-    script: '.artisan/tests.py'
+    script: '.builds/tests.py'
     duration: 5
     labels:
 

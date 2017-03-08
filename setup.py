@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 from setuptools import setup, find_packages
 
 base_package = 'artisanci'
@@ -11,10 +12,13 @@ with open(os.path.join(base_path, 'artisanci', '__init__.py')) as f:
     VERSION = re.compile(r'.*__version__ = \'(.*?)\'', re.S).match(module_content).group(1)
     LICENSE = re.compile(r'.*__license__ = \'(.*?)\'', re.S).match(module_content).group(1)
 
+# Safety check to ensure a 'dev' version is not published.
+if VERSION == 'dev' and 'upload' in sys.argv:
+    raise ValueError('Can\'t publish with __version__ = \'dev\'.')
 
 with open('README.rst') as f:
     readme = f.read()
-    readme = readme.replace(' :beers: ', ' ')
+    readme = readme.replace(' :beers: ', ' ')  # Remove :beers: because PyPI won't understand it.
 
 with open('CHANGELOG.rst') as f:
     changes = f.read()
@@ -30,7 +34,7 @@ if __name__ == '__main__':
           description='Community powered Continuous Integration!',
           long_description='\n\n'.join([readme, changes]),
           license=LICENSE,
-          url='http://artisanci.readthedocs.io',
+          url='https://artisanci.readthedocs.io',
           version=VERSION,
           author='Seth Michael Larson',
           author_email='sethmichaellarson@protonmail.com',
@@ -48,12 +52,14 @@ if __name__ == '__main__':
                             'PyYAML',
                             'semver',
                             'six'],
-          keywords=['artisan', 'ci', 'build', 'continuous', 'integration', 'testing'],
+          keywords=['artisanci', 'artisan', 'ci', 'build',
+                    'continuous', 'integration', 'testing',
+                    'test', 'tool'],
           packages=packages,
           zip_safe=False,
           entry_points={
               'console_scripts': [
-                  'artisan = artisanci.cli:main'
+                  'artisanci = artisanci.cli:main'
               ]
           },
           classifiers=['Development Status :: 2 - Pre-Alpha',
