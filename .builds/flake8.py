@@ -1,4 +1,4 @@
-from artisan import Worker
+from artisanci import Worker
 
 
 def install(worker):

@@ -3,7 +3,7 @@
 # Artisan CI project against itself. :)
 
 # When running locally, everything that can be built
-# given the labels will be built. Other jobs will be
+# given the requires will be built. Other jobs will be
 # skipped. If the jobs are run globally then jobs that
 # can be run locally will be run locally and non-local
 # jobs will be sent to the global farm.
@@ -18,7 +18,7 @@ builds:
   # Documentation Builds
   - script: '.builds/docs.py'
     duration: 5 # This job should take 5 minutes or less.
-    labels:
+    requires:
       python: 'cpython>=2.7'
 
       # Make sure that documentation
@@ -32,13 +32,13 @@ builds:
   # Flake8 Style Checking
   - script: '.builds/flake8.py'
     duration: 5
-    labels:
+    requires:
       python: 'cpython>=2.7'
 
   # Test Builds on Many Platforms
   - script: '.builds/tests.py'
     duration: 5
-    labels:
+    requires:
 
       # Matrixes allow easy expansion of repeated values.
       # NOTE: You must use `include` in order to have multiple
@@ -87,7 +87,7 @@ builds:
   # Matrix for builds with VirtualBox
   - script: '.artisan/tests.py'
     duration: 20
-    labels:
+    requires:
       virtualbox: '>=5.1.14'
       matrix:
         platform:

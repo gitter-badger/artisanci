@@ -17,7 +17,7 @@ import six
 import yaml
 from .env_parser import parse_env
 from .build_yml import BuildYml
-from .label_parser import parse_labels
+from .requires_parser import parse_requires
 from .farms_parser import parse_farms
 from ..exceptions import ArtisanException
 
@@ -81,11 +81,11 @@ class ArtisanYml(object):
             if 'env' in build_yml:
                 env = parse_env(build_yml['env'])
 
-            if 'labels' in build_yml:
-                for label_json in parse_labels(build_yml['labels']):
+            if 'requires' in build_yml:
+                for label_json in parse_requires(build_yml['requires']):
                     build = BuildYml(script=build_yml['script'])
                     for key, value in six.iteritems(label_json):
-                        build.labels[key] = value
+                        build.requires[key] = value
                     build.environment = env
                     project.jobs.append(build)
             else:

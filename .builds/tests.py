@@ -1,4 +1,4 @@
-from artisan import Worker
+from artisanci import Worker
 
 
 def install(worker):
@@ -16,5 +16,5 @@ def script(worker):
 
 def after_success(worker):
     assert isinstance(worker, Worker)
-    if worker.environment['ARTISAN_BUILD_TRIGGER'] != 'manual':
-        worker.execute('codecov --env ARTISAN_BUILD_ID,ARTISAN_JOB_ID')
+    if worker.environment.get('ARTISAN_BUILD_TRIGGER', 'manual') != 'manual':
+        worker.execute('codecov --env ARTISAN_BUILD_ID')

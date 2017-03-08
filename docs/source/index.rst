@@ -1,5 +1,4 @@
-Artisan CI
-==========
+.. include:: ../../README.rst
 
 .. toctree::
     :hidden:
@@ -11,46 +10,3 @@ Artisan CI
     changelog
     contributing
     about
-
-Community powered Continuous Integration!
-
-Getting Started with Artisan CI
--------------------------------
-
-Artisan CI is available on PyPI can be installed with `pip <https://pip.pypa.io>`_.::
-
-    $ python -m pip install artisanci
-
-To install the latest development version from `Github <https://github.com/artisanci/artisanci>`_::
-
-    $ python -m pip install git+git://github.com/artisanci/artisanci.git
-
-
-If your current Python installation doesn't have pip available, try `get-pip.py <bootstrap.pypa.io>`_
-
-Next read the :doc:`getting_started/index` documentation for guides on how to setup
-your first farm and builders and how to use the Artisan CI for your own projects.
-
-References
-----------
-
-The :doc:`module_reference/index` provides documentation for all structures
-that the Artisan CI core module ``artisanci`` uses.
-
-Support / Report Issues
------------------------
-
-All support requests and issue reports should be
-`filed on GitHub as an issue <https://github.com/artisanci/artisanci/issues>`_.
-Make sure to follow the template so your request may be as handled as quickly as possible.
-
-Contributing
-------------
-
-We happily welcome contributions, please see :doc:`contributing` for details.
-
-License
--------
-
-Artisan CI is made available under the Apache 2.0 License.
-For more details, see :doc:`about`.

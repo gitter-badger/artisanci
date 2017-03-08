@@ -41,6 +41,9 @@ class BaseBuild(BuildYml):
         return cls(yml.script, **kwargs)
 
     def fetch_project(self, worker):
+        for key, value in six.iteritems(self.environment):
+            worker.environment[key] = value
+
         self.notify_watchers('status_change', 'fetch')
 
         tmp_dir = os.path.join(worker.tmp, uuid.uuid4().hex)
@@ -73,16 +76,15 @@ class BaseBuild(BuildYml):
             self.notify_watchers('status_change', 'failure')
             if hasattr(script, 'after_failure'):
                 script.after_failure(worker)
-            print('fail!')
-            print(str(e))
-            raise e
 
     def setup_project(self, worker):
         self.notify_watchers('status_change', 'setup')
 
         no_filter = {'PATH', 'LD_LIBRARY_PATH', 'SYSTEMROOT'}
         for key in six.iterkeys(worker.environment.copy()):
-            if key not in no_filter and not key.startswith('ARTISAN_'):
+            if (key not in no_filter and
+                    not key.startswith('ARTISAN_') and
+                    key not in self.environment):
                 del worker.environment[key]
 
         from .. import __version__

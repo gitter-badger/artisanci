@@ -10,24 +10,12 @@ Artisan CI
 .. image:: https://img.shields.io/codecov/c/github/artisanci/artisanci/master.svg
     :target: https://codecov.io/gh/artisanci/artisanci
     :alt: Code Coverage
-.. image:: https://img.shields.io/codeclimate/github/artisanci/artisanci.svg
-    :target: https://codeclimate.com/github/artisanci/artisanci
-    :alt: Code Health
-.. image:: https://readthedocs.org/projects/artisanci/badge/?version=latest
-    :target: http://artisanci.readthedocs.io
-    :alt: Documentation Build Status
-.. image:: https://pyup.io/repos/github/artisanci/artisanci/shield.svg
-     :target: https://pyup.io/repos/github/artisanci/artisanci
-     :alt: Dependency Versions
 .. image:: https://img.shields.io/pypi/v/artisanci.svg
     :target: https://pypi.python.org/pypi/artisanci
     :alt: PyPI Version
 .. image:: https://img.shields.io/badge/say-thanks-ff69b4.svg
     :target: https://saythanks.io/to/SethMichaelLarson
     :alt: Say Thanks to the Maintainers
-.. image:: https://img.shields.io/twitter/follow/artisanci.svg?style=social&label=Follow
-    :target: https://twitter.com/artisanci
-    :alt: Follow Artisan CI on Twitter
 
 Community powered Continuous Integration! :beers: Run your own CI service out of
 the box and donate cycles to your favorite projects and developers.

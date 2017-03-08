@@ -3,7 +3,7 @@ import pickle
 import tempfile
 import unittest
 from artisanci import LocalBuilder
-from artisanci.build import LocalBuild
+from artisanci.builds import LocalBuild
 
 
 class TestLocalBuilder(unittest.TestCase):

@@ -63,6 +63,7 @@ class BaseBuilder(Watchable):
         proc = multiprocessing.Process(target=self._build_job_target, args=(job,))
         proc.start()
         self.notify_watchers('build_job', job)
+        proc.join()
         return proc
 
     def _build_job_target(self, job):

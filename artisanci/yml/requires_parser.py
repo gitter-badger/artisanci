@@ -12,7 +12,7 @@
 # either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-""" Module for parsing the label expression
+""" Module for parsing the require expression
 from the projects ``.artisan.yml`` file. """
 
 import itertools
@@ -21,51 +21,51 @@ from ..compat import xrange
 from ..exceptions import ArtisanException
 
 __all__ = [
-    'parse_labels'
+    'parse_requires'
 ]
 
-# These are words that are used within a labels: option but
-# are definitely not labels themselves. Each has a special meaning.
+# These are words that are used within a requires: option but
+# are definitely not requires themselves. Each has a special meaning.
 _LABEL_KEYWORDS = set(['matrix', 'include', 'omit'])
 
 
-def parse_labels(labels):
-    """ Parses a ``labels`` entry in a label expression.
-    Also the starting point for the global labels option. """
-    if not isinstance(labels, dict):
+def parse_requires(requires):
+    """ Parses a ``requires`` entry in a require expression.
+    Also the starting point for the global requires option. """
+    if not isinstance(requires, dict):
         raise ArtisanException('Project configuration `artisan.yml` is not '
-                               'structured properly at `jobs.*.labels`. '
+                               'structured properly at `jobs.*.requires`. '
                                'See the documentation for more details.')
 
     groups = []
-    global_labels = {}
+    global_requires = {}
 
-    for label, desc in six.iteritems(labels):
-        if label in _LABEL_KEYWORDS:
-            if label == 'matrix':
+    for require, desc in six.iteritems(requires):
+        if require in _LABEL_KEYWORDS:
+            if require == 'matrix':
                 groups.extend(expand_matrix(desc))
-            if label == 'include':
+            if require == 'include':
                 groups.extend(expand_include(desc))
         else:
-            global_labels[label] = desc
+            global_requires[require] = desc
 
-    # Now apply global level labels to each grouping.
+    # Now apply global level requires to each grouping.
     for group in groups:
-        for label, desc in six.iteritems(global_labels):
-            # Don't overwrite lower-level labels with globals.
-            if label not in group:
-                group[label] = desc
+        for require, desc in six.iteritems(global_requires):
+            # Don't overwrite lower-level requires with globals.
+            if require not in group:
+                group[require] = desc
 
     # If no groups were found then we only have a single entry of globals.
     if len(groups) == 0:
-        groups = [global_labels]
+        groups = [global_requires]
 
-    expand_omit(groups, labels.get('omit', []))
+    expand_omit(groups, requires.get('omit', []))
     return groups
 
 
 def expand_include(include):
-    """ Expands an ``include`` entry in a label expression. """
+    """ Expands an ``include`` entry in a require expression. """
     if not isinstance(include, list):
         raise ArtisanException('Project configuration `artisan.yml` is not '
                                'structured properly. See the documentation '
@@ -73,12 +73,12 @@ def expand_include(include):
 
     groups = []
     for entry in include:
-        groups.extend(parse_labels(entry))
+        groups.extend(parse_requires(entry))
     return groups
 
 
 def expand_matrix(matrix):
-    """ Expands a ``matrix`` entry in a label expression. """
+    """ Expands a ``matrix`` entry in a require expression. """
     if not isinstance(matrix, dict):
         raise ArtisanException('Project configuration `artisan.yml` is not '
                                'structured properly. See the documentation '
@@ -120,7 +120,7 @@ def expand_matrix(matrix):
 
 
 def expand_omit(groups, omit):
-    """ Applies an ``omit`` entry in a label expression. """
+    """ Applies an ``omit`` entry in a require expression. """
     if len(omit) > 0:
         for i in xrange(len(groups) - 1, -1, -1):
             group = groups[i]
