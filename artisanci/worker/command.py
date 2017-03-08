@@ -181,8 +181,8 @@ class Command(object):
                 while True:
                     data = self._queue_stdout.get_nowait()
                     self._stdout += data
-                    if self.worker.job is not None:
-                        self.worker.job.notify_watchers('command_output', data)
+                    if self.worker.build is not None:
+                        self.worker.build.notify_watchers('command_output', data)
             except Empty:
                 pass
             try:
@@ -194,8 +194,8 @@ class Command(object):
                     else:
                         self._stderr += data
                         event_type = 'error'
-                    if self.worker.job is not None:
-                        self.worker.job.notify_watchers('command_' + event_type, data)
+                    if self.worker.build is not None:
+                        self.worker.build.notify_watchers('command_' + event_type, data)
             except Empty:
                 pass
             if timeout is not None and monotonic() - start_time > timeout:

@@ -9,9 +9,12 @@
 """
 
 from .exceptions import ArtisanException
-from .builder import (BaseBuilder,
-                      LocalBuilder,
-                      VirtualBoxBuilder)
+from .builds import (BaseBuild,
+                     LocalBuild,
+                     GitBuild)
+from .builders import (BaseBuilder,
+                       LocalBuilder,
+                       VirtualBoxBuilder)
 from .worker import (Command,
                      Worker)
 from .yml import ArtisanYml
@@ -40,8 +43,11 @@ __all__ = [
     'ArtisanException',
     'ArtisanYml',
     'BaseBuilder',
+    'BaseBuild',
     'Command',
     'LocalBuilder',
+    'LocalBuild',
+    'GitBuild',
     'VirtualBoxBuilder',
     'Worker'
 ]

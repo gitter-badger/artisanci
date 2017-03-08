@@ -12,18 +12,15 @@
 # either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-""" Module for a single description of a build from `.artisan.yml`. """
+""" Module with all implementations of
+builds that builders can execute. """
 
-from ..watchable import Watchable
+from .base_build import BaseBuild
+from .git_build import GitBuild
+from .local_build import LocalBuild
 
 __all__ = [
-    'BuildYml'
+    'BaseBuild',
+    'GitBuild',
+    'LocalBuild'
 ]
-
-
-class BuildYml(Watchable):
-    def __init__(self, script):
-        super(BuildYml, self).__init__()
-        self.script = script
-        self.environment = {}
-        self.requires = {}

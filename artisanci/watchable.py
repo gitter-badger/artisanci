@@ -39,5 +39,5 @@ class Watchable(object):
     def notify_watchers(self, event_type, data):
         event_handler = 'on_' + event_type
         for watcher in self._watchers:
-            if hasattr(event_type, event_handler):
+            if hasattr(watcher, event_handler):
                 getattr(watcher, event_handler)(self, data)

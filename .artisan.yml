@@ -16,8 +16,7 @@ farms:
 
 builds:
   # Documentation Builds
-  - name: 'docs'
-    script: '.builds/docs.py'
+  - script: '.builds/docs.py'
     duration: 5 # This job should take 5 minutes or less.
     labels:
       python: 'cpython>=2.7'
@@ -31,15 +30,13 @@ builds:
           - 'windows'
 
   # Flake8 Style Checking
-  - name: 'flake8'
-    script: '.builds/flake8.py'
+  - script: '.builds/flake8.py'
     duration: 5
     labels:
       python: 'cpython>=2.7'
 
   # Test Builds on Many Platforms
-  - name: 'tests'
-    script: '.builds/tests.py'
+  - script: '.builds/tests.py'
     duration: 5
     labels:
 
@@ -87,9 +84,8 @@ builds:
               - 'pypy2>=5.6.0'   # PyPy2 (~2.7)
               - 'pypy3>=5.5'     # PyPy3 (~3.3)
 
-        # Matrix for builds with VirtualBox
-  - name: 'tests-virtualbox'
-    script: '.artisan/tests.py'
+  # Matrix for builds with VirtualBox
+  - script: '.artisan/tests.py'
     duration: 20
     labels:
       virtualbox: '>=5.1.14'
