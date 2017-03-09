@@ -19,6 +19,8 @@ __all__ = [
     'LocalBuild'
 ]
 
+_SKIP_FILE_NAMES = {'.git', '.tox'}
+
 
 class LocalBuild(BaseBuild):
     def __init__(self, script, path=None):
@@ -31,7 +33,8 @@ class LocalBuild(BaseBuild):
     def fetch_project(self, worker):
         super(LocalBuild, self).fetch_project(worker)
         for fileobj in os.listdir(self.path):
-            worker.copy(os.path.join(self.path, fileobj), self.working_dir)
+            if fileobj not in _SKIP_FILE_NAMES:
+                worker.copy(os.path.join(self.path, fileobj), self.working_dir)
 
     def as_args(self):
         return ['--type', 'local',

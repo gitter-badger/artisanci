@@ -123,7 +123,7 @@ class BaseBuild(BuildYml):
         venv = os.path.join(worker.tmp, uuid.uuid4().hex)
         while worker.isdir(venv):
             venv = os.path.join(worker.tmp, uuid.uuid4().hex)
-        worker.execute('virtualenv -p python3.5 %s' % venv)
+        worker.execute('virtualenv -p %s %s' % (sys.executable, venv))
         if worker.platform == 'Windows':
             worker.environment['PATH'] = (os.path.join(venv, 'Scripts') + ';' +
                                           worker.environment.get('PATH', ''))
