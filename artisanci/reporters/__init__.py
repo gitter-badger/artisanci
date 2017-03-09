@@ -10,6 +10,9 @@ class BaseReporter(object):
     def on_command_output(self, _, output):
         raise NotImplementedError()
 
+    def on_status_change(self, _, status):
+        raise NotImplementedError()
+
 
 class BasicCommandLineReporter(BaseReporter):
     def on_command(self, _, command):
@@ -25,4 +28,4 @@ class BasicCommandLineReporter(BaseReporter):
         if status == 'success':
             print(colorama.Fore.LIGHTGREEN_EX + 'Build Status: SUCCESS' + colorama.Style.RESET_ALL)
         elif status == 'failure':
-            print(colorama.Fore.LIGHTGREEN_EX + 'Build Status: FAILURE' + colorama.Style.RESET_ALL)
+            print(colorama.Fore.LIGHTRED_EX + 'Build Status: FAILURE' + colorama.Style.RESET_ALL)

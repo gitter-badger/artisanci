@@ -97,8 +97,8 @@ html_theme = 'alabaster'
 html_theme_path = [alabaster.get_path()]
 html_theme_options = {
     'description': 'Community powered Continuous Integration!',
-    'github_user': 'SethMichaelLarson',
-    'github_repo': 'artisan-ci',
+    'github_user': 'artisanci',
+    'github_repo': 'artisanci',
     'github_button': True,
     'github_banner': True,
     'font_family': "'Cabin', Georgia, sans",

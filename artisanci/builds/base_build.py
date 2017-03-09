@@ -30,6 +30,7 @@ class BaseBuild(BuildYml):
     def __init__(self, script, build_type):
         super(BaseBuild, self).__init__(script)
         self.build_type = build_type
+        self.build_id = None
         self.working_dir = None
 
     @classmethod
@@ -46,10 +47,17 @@ class BaseBuild(BuildYml):
 
         self.notify_watchers('status_change', 'fetch')
 
-        tmp_dir = os.path.join(worker.tmp, uuid.uuid4().hex)
-        while os.path.isdir(tmp_dir):
-            tmp_dir = os.path.join(worker.tmp, uuid.uuid4().hex)
-        worker.mkdir(tmp_dir)
+        if self.build_id is None:
+            build_id = uuid.uuid4().hex
+            while os.path.isdir(os.path.join(worker.tmp, build_id)):
+                build_id = uuid.uuid4().hex
+            tmp_dir = os.path.join(worker.tmp, build_id)
+            self.build_id = build_id
+        else:
+            tmp_dir = os.path.join(worker.tmp, self.build_id)
+        if not worker.isdir(tmp_dir):
+            worker.mkdir(tmp_dir)
+
         self.working_dir = tmp_dir
         worker.chdir(tmp_dir)
 
@@ -71,11 +79,10 @@ class BaseBuild(BuildYml):
             if hasattr(script, 'after_success'):
                 script.after_success(worker)
             self.notify_watchers('status_change', 'success')
-
-        except Exception as e:
-            self.notify_watchers('status_change', 'failure')
+        except Exception:
             if hasattr(script, 'after_failure'):
                 script.after_failure(worker)
+            self.notify_watchers('status_change', 'failure')
 
     def setup_project(self, worker):
         self.notify_watchers('status_change', 'setup')

@@ -16,7 +16,9 @@
 
 from contextlib import contextmanager
 import random
+import os
 import semver
+import shutil
 import string
 import time
 import virtualbox
@@ -91,27 +93,30 @@ class VirtualBoxBuilder(BaseBuilder):
     def is_secure(self):
         return self._pool.is_secure
 
-    def _setup(self, _):
+    def _build_job_target(self, job):
         self._session = self._pool.acquire()
-
-    def _execute(self, job):
         console = self._session.console
         guest = console.guest
         try:
             guest_session = guest.create_session(self.username,
                                                  self.password,
                                                  timeout_ms=5 * 60 * 1000)
-            guest_session.run(self.python, ['-m', 'artisan'] + job.as_args())
+            guest_session.run(self.python, ['-m', 'artisanci'] + job.as_args())
             guest_session.close()
         except Exception:
             pass
-
-    def _teardown(self, _):
+        machine_dir = os.path.dirname(self._session.machine.snapshot_folder)
         if self._pool is not None:
             if self._session is not None:
                 self._pool.release(self._session)
                 self._session = None
             self._pool = None
+        for _ in range(10):
+            try:
+                shutil.rmtree(machine_dir)
+                break
+            except OSError:
+                time.sleep(1.0)
 
 
 class MachinePool(object):
@@ -119,7 +124,7 @@ class MachinePool(object):
         self.machine = machine
         self._is_secure = False
 
-    def acquire(self, frontend='headless'):
+    def acquire(self, frontend='gui'):
         if self._is_secure is None:
             self.run_security_check()
         with self._lock() as root_session:
