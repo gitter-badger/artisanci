@@ -27,8 +27,8 @@ __all__ = [
 
 
 class BaseBuild(BuildYml):
-    def __init__(self, script, build_type):
-        super(BaseBuild, self).__init__(script)
+    def __init__(self, build_type, script, duration):
+        super(BaseBuild, self).__init__(script, duration)
         self.build_type = build_type
         self.build_id = None
         self.working_dir = None
@@ -39,7 +39,7 @@ class BaseBuild(BuildYml):
             raise TypeError('`yml` must be of type `BuildYml`.')
         if cls is BaseBuild:
             raise ValueError('Do not execute BaseBuild.from_yml().')
-        return cls(yml.script, **kwargs)
+        return cls(yml.script, yml.duration, **kwargs)
 
     def fetch_project(self, worker):
         for key, value in six.iteritems(self.environment):

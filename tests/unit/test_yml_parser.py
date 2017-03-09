@@ -17,6 +17,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
         yml = self.parse_artisan_yml("""
         builds:
           - script: '.artisan/test.py'
+            duration: 5
             requires:
               python: 'cpython==2.7'
         """)
@@ -26,14 +27,17 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
         job = yml.jobs[0]
         self.assertEqual(job.requires, {'python': 'cpython==2.7'})
         self.assertEqual(job.script, '.artisan/test.py')
+        self.assertEqual(job.duration, 5)
 
     def test_multiple_jobs(self):
         yml = self.parse_artisan_yml("""
         builds:
           - script: 'script1'
+            duration: 5
             requires:
               a: '1'
           - script: 'script2'
+            duration: 5
             requires:
               a: '2'
         """)
@@ -52,6 +56,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
         yml = self.parse_artisan_yml("""
         builds:
           - script: 'script1'
+            duration: 5
         """)
         self.assertIsInstance(yml, ArtisanYml)
         self.assertEqual(len(yml.jobs), 1)
@@ -64,6 +69,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
         yml = self.parse_artisan_yml("""
         builds:
           - script: script1
+            duration: 5
             env: ARTISAN=true
         """)
 
@@ -75,6 +81,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
         yml = self.parse_artisan_yml("""
         builds:
           - script: script1
+            duration: 5
             env:
               - ARTISAN=true
               - CI=false
@@ -88,6 +95,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
         yml = self.parse_artisan_yml("""
         builds:
           - script: script1
+            duration: 5
             env:
               ARTISAN: 'true'
               CI: 'false'
@@ -101,6 +109,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
         yml = self.parse_artisan_yml("""
         builds:
           - script: script1
+            duration: 5
             env:
               ARTISAN: true
               CI: false
@@ -114,6 +123,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
         yml = self.parse_artisan_yml("""
         builds:
           - script: script1
+            duration: 5
             env:
               ARTISAN: 1
               CI: -1
@@ -132,7 +142,8 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
     def test_job_has_no_script(self):
         self.assertRaises(ArtisanException, self.parse_artisan_yml, """
         builds:
-          - requires:
+          - duration: 5
+            requires:
               test: a
         """)
 
@@ -140,6 +151,7 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
         yml = self.parse_artisan_yml("""
         builds:
           - script: '.artisan/test.py'
+            duration: 5
             requires:
               python: 'cpython==2.7'
         """)
@@ -153,11 +165,18 @@ class _BaseTestArtisanYmlParser(unittest.TestCase):
           - https://farm-b.com
         builds:
           - script: '.artisan/test.py'
+            duration: 5
             requires:
               python: 'cpython==2.7'
         """)
         self.assertIsInstance(yml, ArtisanYml)
         self.assertEqual(yml.farms, ['https://farm-a.com', 'https://farm-b.com'])
+
+    def test_no_duration(self):
+        self.assertRaises(ArtisanException, self.parse_artisan_yml, """
+        builds:
+          - script: '.artisan/test.py'
+        """)
 
 
 class TestArtisanYmlLabelParser(unittest.TestCase):

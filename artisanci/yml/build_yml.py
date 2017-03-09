@@ -22,8 +22,9 @@ __all__ = [
 
 
 class BuildYml(Watchable):
-    def __init__(self, script):
+    def __init__(self, script, duration):
         super(BuildYml, self).__init__()
         self.script = script
         self.environment = {}
         self.requires = {}
+        self.duration = duration

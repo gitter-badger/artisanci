@@ -76,6 +76,15 @@ class ArtisanYml(object):
             if 'script' not in build_yml:
                 raise ArtisanException('Could not parse project configuration. '
                                        'Requires a `script` entry in each build.')
+            if not isinstance(build_yml['script'], six.string_types):
+                raise ArtisanException('The `duration` entry must be either an `str` value.')
+
+            if 'duration' not in build_yml:
+                raise ArtisanException('Could not parse project configuration. '
+                                       'Requires a `duration` entry in each build.')
+            if not isinstance(build_yml['duration'], (float, int)):
+                raise ArtisanException('The `duration` entry must be either an '
+                                       '`int` or `float` value.')
 
             env = {}
             if 'env' in build_yml:
@@ -83,13 +92,15 @@ class ArtisanYml(object):
 
             if 'requires' in build_yml:
                 for label_json in parse_requires(build_yml['requires']):
-                    build = BuildYml(script=build_yml['script'])
+                    build = BuildYml(script=build_yml['script'],
+                                     duration=build_yml['duration'])
                     for key, value in six.iteritems(label_json):
                         build.requires[key] = value
                     build.environment = env
                     project.jobs.append(build)
             else:
-                build = BuildYml(script=build_yml['script'])
+                build = BuildYml(script=build_yml['script'],
+                                 duration=build_yml['duration'])
                 build.environment = env
                 project.jobs.append(build)
 

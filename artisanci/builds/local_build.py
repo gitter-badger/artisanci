@@ -23,10 +23,10 @@ _SKIP_FILE_NAMES = {'.git', '.tox'}
 
 
 class LocalBuild(BaseBuild):
-    def __init__(self, script, path=None):
+    def __init__(self, script, duration, path=None):
         if path is None:
             path = os.getcwd()
-        super(LocalBuild, self).__init__(script, 'local')
+        super(LocalBuild, self).__init__('local', script, duration)
 
         self.path = path
 

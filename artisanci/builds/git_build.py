@@ -21,11 +21,11 @@ __all__ = [
 
 
 class GitBuild(BaseBuild):
-    def __init__(self, script, repo, branch, commit=None):
+    def __init__(self, script, duration, repo, branch, commit=None):
         if commit is None:
             commit = 'HEAD'  # Get the latest if commit is None.
 
-        super(GitBuild, self).__init__(script, 'git')
+        super(GitBuild, self).__init__('git', script, duration)
 
         self.repo = repo
         self.branch = branch
