@@ -59,14 +59,16 @@ class BaseBuilder(Watchable):
         # environment is **strongly** discouraged.
         return False
 
-    def build_job(self, job):
-        proc = multiprocessing.Process(target=self._build_job_target, args=(job,))
+    def execute_build(self, build):
+        self.acquire()
+        proc = multiprocessing.Process(target=self._build_target, args=(build,))
         proc.start()
-        self.notify_watchers('build_job', job)
-        proc.join()
-        return proc
+        self.notify_watchers('execute_build', build)
+        build._proc = proc
+        self._build_target(build)
+        build._builder = self
 
-    def _build_job_target(self, job):
+    def _build_target(self, build):
         raise NotImplementedError()
 
     def __getstate__(self):

@@ -33,6 +33,21 @@ class BaseBuild(BuildYml):
         self.build_id = None
         self.working_dir = None
 
+        self._process = None
+        self._builder = None
+
+    @property
+    def running(self):
+        return self._process is not None
+
+    def wait(self, timeout=None):
+        if self._process is not None:
+            success = self._process.join(timeout=timeout)
+            if success and self._builder:
+                self._builder.release()
+            return success
+        return True
+
     @classmethod
     def from_yml(cls, yml, **kwargs):
         if not isinstance(yml, BuildYml):

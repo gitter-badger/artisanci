@@ -19,7 +19,7 @@ __all__ = [
     'LocalBuild'
 ]
 
-_SKIP_FILE_NAMES = {'.git', '.tox'}
+_SKIP_FILE_NAMES = {'.git', '.tox', '.hg'}
 
 
 class LocalBuild(BaseBuild):

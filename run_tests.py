@@ -10,7 +10,11 @@ from artisanci.reporters import BasicCommandLineReporter
 
 if __name__ == '__main__':
     l = LocalBuilder()
+    builds = []
     for script in ['.builds/tests.py', '.builds/docs.py', '.builds/flake8.py']:
-        b = LocalBuild(script, path=os.getcwd())
+        b = LocalBuild(script, 5.0, path=os.getcwd())
         b.add_watcher(BasicCommandLineReporter())
-        l.build_job(b)
+        l.execute_build(b)
+        builds.append(b)
+    for b in builds:
+        b.wait()

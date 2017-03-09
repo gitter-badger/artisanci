@@ -12,7 +12,7 @@ with open(os.path.join(base_path, 'artisanci', '__init__.py')) as f:
     VERSION = re.compile(r'.*__version__ = \'(.*?)\'', re.S).match(module_content).group(1)
     LICENSE = re.compile(r'.*__license__ = \'(.*?)\'', re.S).match(module_content).group(1)
 
-# Safety check to ensure a 'dev' version is not published.
+# Safety check to ensure a 'dev' version cannot be published.
 if VERSION == 'dev' and 'upload' in sys.argv:
     raise ValueError('Can\'t publish with __version__ = \'dev\'.')
 
@@ -31,7 +31,11 @@ if base_package not in packages:
 
 if __name__ == '__main__':
     setup(name='artisanci',
-          description='Community powered Continuous Integration!',
+          description=('Community powered Continuous Integration! Run '
+                       'your own CI service out of the box, easily setup '
+                       'virtualized builders for testing your software, '
+                       'and donate cycles to your favorite projects '
+                       'and developers.'),
           long_description='\n\n'.join([readme, changes]),
           license=LICENSE,
           url='https://artisanci.readthedocs.io',

@@ -16,7 +16,7 @@
 
 import sys
 from .base_builder import BaseBuilder
-from ..worker import Worker
+from ..workers import Worker
 
 __all__ = [
     'LocalBuilder'
@@ -34,10 +34,10 @@ class LocalBuilder(BaseBuilder):
     def __init__(self, builders=1, python=sys.executable):
         super(LocalBuilder, self).__init__(builders=builders, python=python)
 
-    def _build_job_target(self, job):
+    def _build_target(self, build):
         worker = Worker()
-        worker.build = job
-        job.fetch_project(worker)
-        job.setup_project(worker)
-        job.execute_project(worker)
-        job.cleanup_project(worker)
+        worker.build = build
+        build.fetch_project(worker)
+        build.setup_project(worker)
+        build.execute_project(worker)
+        build.cleanup_project(worker)

@@ -1,9 +1,11 @@
 import os
+import sys
 import pickle
 import tempfile
 import unittest
 from artisanci import LocalBuilder
 from artisanci.builds import LocalBuild
+from artisanci.reporters import BasicCommandLineReporter
 
 
 class TestLocalBuilder(unittest.TestCase):
@@ -24,20 +26,21 @@ class TestLocalBuilder(unittest.TestCase):
         self.assertEqual(builder.python, builder2.python)
 
     def test_run_simple_job(self):
-        builder = LocalBuilder()
+        builder = LocalBuilder(builders=1, python=sys.executable)
 
         delete_this = os.path.join(tempfile.gettempdir(), 'delete-this')
         open(delete_this, 'w+').close()
         self.addCleanup(_safe_remove, delete_this)
 
-        job = LocalBuild(script=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'builds', 'simple.py'))
-        job.environment['DELETE_THIS'] = delete_this
+        build = LocalBuild(script=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'builds', 'simple.py'),
+                           duration=5.0)
+        build.add_watcher(BasicCommandLineReporter())
+        build.environment['DELETE_THIS'] = delete_this
 
-        builder.acquire()
         self.assertTrue(os.path.isfile(delete_this))
-        builder.build_job(job)
+        builder.execute_build(build)
+        build.wait()
         self.assertFalse(os.path.isfile(delete_this))
-        builder.release()
 
 
 def _safe_remove(path):

@@ -11,12 +11,13 @@
 from .exceptions import ArtisanException
 from .builds import (BaseBuild,
                      LocalBuild,
-                     GitBuild)
+                     GitBuild,
+                     MercurialBuild)
 from .builders import (BaseBuilder,
                        LocalBuilder,
                        VirtualBoxBuilder)
-from .worker import (Command,
-                     Worker)
+from .workers import (Command,
+                      Worker)
 from .yml import ArtisanYml
 
 __copyright__ = """
@@ -45,9 +46,10 @@ __all__ = [
     'BaseBuilder',
     'BaseBuild',
     'Command',
+    'GitBuild',
     'LocalBuilder',
     'LocalBuild',
-    'GitBuild',
+    'MercurialBuild',
     'VirtualBoxBuilder',
     'Worker'
 ]

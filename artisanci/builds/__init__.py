@@ -18,9 +18,11 @@ builds that builders can execute. """
 from .base_build import BaseBuild
 from .git_build import GitBuild
 from .local_build import LocalBuild
+from .mercurial_build import MercurialBuild
 
 __all__ = [
     'BaseBuild',
     'GitBuild',
-    'LocalBuild'
+    'LocalBuild',
+    'MercurialBuild'
 ]

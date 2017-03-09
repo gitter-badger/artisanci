@@ -20,7 +20,7 @@ Artisan CI
 Community powered Continuous Integration! :beers: Run your own CI service out of
 the box and donate cycles to your favorite projects and developers.
 
-**WARNING: This project is very young and not nearly complete. Many many things can change. Do NOT use yet.**
+**WARNING: This project is very young and not nearly complete. Many things can change. Not recommended for use.**
 
 Features
 --------
@@ -39,8 +39,6 @@ Artisan CI supports the following Python versions:
 
 - CPython 2.7, 3.3+
 - PyPy 5.3.1+
-
-We do not yet support PyPy3 as it's still on Python 3.2.5. This will change when PyPy3 supports 3.3+
 
 Artisan CI supports the following four platforms as capable of running a builder farm:
 

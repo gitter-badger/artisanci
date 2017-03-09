@@ -93,7 +93,7 @@ class VirtualBoxBuilder(BaseBuilder):
     def is_secure(self):
         return self._pool.is_secure
 
-    def _build_job_target(self, job):
+    def _build_target(self, job):
         self._session = self._pool.acquire()
         console = self._session.console
         guest = console.guest
@@ -167,6 +167,7 @@ class MachinePool(object):
         - Disable Drag-and-Drop.
         - Disable Page Fusion.
         - Disable Audio.
+        - Limit the network transmit bandwidth to 1MB/s.
         - Verify the host OS is older than Vista with SP1.
 
         :param bool allow_insecure:
