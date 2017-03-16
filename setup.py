@@ -56,16 +56,14 @@ if __name__ == '__main__':
                             'PyYAML',
                             'semver',
                             'six'],
+          extras_require={'server': ['Flask',
+                                     'Flask-SQLAlchemy',
+                                     'Flask-Redis']},
           keywords=['artisanci', 'artisan', 'ci', 'build',
                     'continuous', 'integration', 'testing',
                     'test', 'tool'],
           packages=packages,
           zip_safe=False,
-          entry_points={
-              'console_scripts': [
-                  'artisanci = artisanci.cli:main'
-              ]
-          },
           classifiers=['Development Status :: 2 - Pre-Alpha',
                        'Intended Audience :: Developers',
                        'License :: OSI Approved :: Apache Software License',
