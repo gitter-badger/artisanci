@@ -18,7 +18,6 @@ import yaml
 from .env_parser import parse_env
 from .build_yml import BuildYml
 from .requires_parser import parse_requires
-from .farms_parser import parse_farms
 from ..exceptions import ArtisanException
 
 __all__ = [
@@ -31,7 +30,6 @@ class ArtisanYml(object):
     """ Instance describing a project's ``.artisan.yml`` file. """
     def __init__(self):
         self.jobs = []
-        self.farms = []
 
     @staticmethod
     def from_path(path):
@@ -67,11 +65,19 @@ class ArtisanYml(object):
         :return: :class:`artisan.ArtisanYml` instance.
         """
         artisan_yml = yaml.load(string)
+        if not isinstance(artisan_yml, dict):
+            raise ArtisanException('Could not parse project configuration. '
+                                   'See documentation for more details.')
         project = ArtisanYml()
 
         if 'builds' not in artisan_yml:
             raise ArtisanException('Could not parse project configuration. '
                                    'Requires a `builds` entry.')
+        if not isinstance(artisan_yml['builds'], list):
+            raise ArtisanException('Could not parse project configuration. '
+                                   '`builds` must be a list type.')
+        if len(artisan_yml['builds']) == 0:
+            raise ArtisanException('Requires more than one build to run.')
         for build_yml in artisan_yml['builds']:
             if 'script' not in build_yml:
                 raise ArtisanException('Could not parse project configuration. '
@@ -103,10 +109,5 @@ class ArtisanYml(object):
                                  duration=build_yml['duration'])
                 build.environment = env
                 project.jobs.append(build)
-
-        if 'farms' in artisan_yml:
-            project.farms = parse_farms(artisan_yml['farms'])
-        else:
-            project.farms = ['https://farms.artisan.io']
 
         return project

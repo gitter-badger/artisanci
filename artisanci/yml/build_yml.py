@@ -27,7 +27,7 @@ class BuildYml(Watchable):
         super(BuildYml, self).__init__()
         if len(script) > 256:
             raise ArtisanException('`script` cannot be longer than 256 characters.')
-        if duration > 2 * 60:
+        if duration > 60:
             raise ArtisanException('`duration` cannot be longer than an hour (60 minutes).')
         self.script = script
         self.environment = {}
