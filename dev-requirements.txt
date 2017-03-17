@@ -3,7 +3,7 @@ codecov==2.0.5
 hypothesis==3.5.3
 pytest==3.0.7
 pytest-cov==2.4.0
-pytest-sugar==0.7.1
+pytest-sugar==0.8.0
 Sphinx==1.5.3
 six==1.10.0
 mock==2.0.0
